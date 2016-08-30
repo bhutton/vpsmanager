@@ -1,0 +1,51 @@
+{% extends "base.html" %} 
+{% block content %}
+
+{% if status == "added" %}
+        <p class="success">User Added Successfully</p>
+{% elif status == "updated" %}
+        <p class="success">User Updated Successfully</p>
+{% elif userupdated == "yes" %}
+        <p class="success">User Updated Successfully</p>
+{% endif %}
+
+<!-- <p><a href="/addUser">Add User</a></p> -->
+
+        <nav>
+          <ul class="nav nav-pills pull-left">
+                <li role="presentation"><a href="/addUser">Add User</a>
+          </ul>
+        </nav>
+
+        <div class="row marketing">
+        
+            {% if deleted == "yes" %}
+            <p>VPS Successfully Deleted</p>
+            {% endif %}
+
+            {% if row %}
+            <table width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Modify</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for line in row %}
+                    <tr>
+                        <td>{{ line.1 }}</td>
+                        <td>{{ line.2 }}</td>
+                        <td><a href="/modifyUser?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
+                        <a href="/deleteUser?id={{ line.0 }}" onclick="return confirm('Are you sure you want to delete this server?')"><i class="material-icons md-18">delete</i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        
+        </div>
+
+{% endblock %}

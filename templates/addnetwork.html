@@ -1,0 +1,23 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<p>Select Bridge Interface to attach Network Interface</p>
+
+      <form class="form-signin">
+        <input type="hidden" name="id" value="{{ id }}">
+        <table>
+          <tr>
+            <td><label>Bridge:</label></td>
+            <td><select name=bridge>
+            {% for brid in bridge %}
+                <option>{{ brid.1 }}</option>
+            {% endfor %}
+              </select>
+            </td>
+          </tr>
+        </table>
+        
+        <button id="btnCreateNetwork" class="btn btn-lg btn-primary btn-block" type="button">Create</button>
+      </form>
+      
+{% endblock %}

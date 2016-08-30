@@ -1,0 +1,39 @@
+{% extends "base.html" %} 
+
+{% block content %}
+      <h1>{% if error != None %}{{error}}{% endif %}</h1>
+      <div class="jumbotron">
+
+        <form class="form-signin" onsubmit="return checkForm(this);">
+        <input type="hidden" name="id" value="{{ row.0 }}">
+        <label for="inputName" class="sr-only">Name</label>
+        <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" value="{{ row.1 }}" required autofocus>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" value="{{ row.2 }}" required autofocus>
+        <!--<label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="currPassword" id="CurrPassword" class="form-control" placeholder="Current Password" required>-->
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="newPassword" id="txtNewPassword" class="form-control" placeholder="New Password" required>
+        
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="repPassword" id="txtConfirmPassword" class="form-control" placeholder="New Password Again" required>
+        <div class="registrationFormAlert" id="divCheckPasswordMatch"></div>
+
+        
+        <button id="btnUpdateUser" class="btn btn-lg btn-primary btn-block" type="button">Update User</button>
+      </form>
+      </div>
+    
+
+      <script type='text/javascript'>
+      $(function() {
+          $("#txtConfirmPassword").keyup(function() {
+              var password = $("#txtNewPassword").val();
+              $("#divCheckPasswordMatch").html(password == $(this).val() ? "Passwords match." : "Passwords do not match!");
+          });
+
+      });
+      </script>
+
+
+{% endblock %}

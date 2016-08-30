@@ -1,0 +1,48 @@
+{% extends "base.html" %} 
+{% block content %}
+
+{% if vpsadded == "yes" %}
+        <p class="success">VPS Added Successfully</p>
+{% endif %}
+
+<!--<p><a href="/AddVPS"><i class="material-icons md-18">add</i></a></p>-->
+        <nav>
+          <ul class="nav nav-pills pull-left">
+                <li role="presentation"><a href="/AddVPS">Create VPS</a>
+          </ul>
+        </nav>
+
+        <div class="row marketing">
+        
+            {% if deleted == "yes" %}
+            <p>VPS Successfully Deleted</p>
+            {% endif %}
+
+            {% if row %}
+            <table width="100%">
+                <thead>
+                    <tr class="title">
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>RAM</th>
+                        <th>Modify</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for line in row %}
+                    <tr class="list">
+                        <td class="list"><a href="/viewVPS?id={{ line.0 }}">{{ line.1 }}</a></td>
+                        <td class="list">{{ line.2 }}</td>
+                        <td class="list">{{ line.3 }}</td>
+                        <td class="list"><a href="/modifyVPS?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
+                        <a href="/deleteVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to delete this server?')"><i class="material-icons md-18">delete</i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        
+        </div>
+
+{% endblock %}

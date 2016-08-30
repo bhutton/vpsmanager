@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+{% block content %}
+
+      <form class="form-signin">
+        <input type="hidden" name="id" value="{{ id }}">
+        <table>
+          <tr>
+            <td><label>Name:</label></td>
+            <td><input type="text" name="name" required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Size:</label></td>
+            <td><select name=disk>
+                <option>20GB</option>
+                <option>30GB</option>
+                <option>40GB</option>
+              </select>
+            </td>
+            <!-- <td><input type="text" name="disk" required></td> -->
+          </tr>
+        </table>
+        
+        <button id="btnCreateDisk" class="btn btn-lg btn-primary btn-block" type="button">Create</button>
+      </form>
+      
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<a href="/">Return to list</a>
+
+{% if updated == "yes" %}
+  <p class="success">Machine successfully updated</p>
+{% endif %}
+
+{% for line in row %}
+
+      <form class="form-signin">
+        <input type="hidden" name="id" value="{{ line.0 }}">
+        
+        <table width-="100%">
+          <tr>
+            <td><label>Name:</label></td>
+            <td colspan="2"><input type="text" name="name" value="{{ line.1 }}" required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Description:</label></td>
+            <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Memory:</label></td>
+            <td colspan="2"><select name=ram>
+                <option {% if line.3 == 512 %} selected {% endif %}>512MB</option>
+                <option {% if line.3 == 1024 %} selected {% endif %}>1GB</option>
+                <option {% if line.3 == 2048 %} selected {% endif %}>2GB</option>
+              </select>
+            </td>
+          </tr>
+          
+          {% for disk in disks %}
+          <tr>
+            <td><label>Disk:</label></td>
+            <td>{{ (disk.4/1024)|int }} GB</td>
+            <td>
+              <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td><label>Disk:</label></td>
+            <td colspan="2"><a href="/addDisk?id={{ line.0 }}">Add Disk</a></td>
+          </tr>
+
+          {% for dev in device %}
+          <tr>
+            <td><label>Network:</label></td>
+            <td>tap{{ dev.1 }} : {{ dev.3 }}</td>
+            <td><a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a></td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td><label>Network:</label></td>
+            
+            <td colspan="2"><a href="/addNetwork?id={{ line.0 }}">Add Device</a></td>
+          </tr>
+          <tr>
+            <td><label>Console:</label></td>
+            <td colspan="2">{{ line.4 }}</td>
+          </tr>
+          
+        </table>
+        
+        <button id="btnUpdateVPS" class="btn btn-lg btn-primary btn-block" type="button">Update</button>
+      </form>
+
+{% endfor %}
+      
+{% endblock %}

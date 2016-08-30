@@ -1,0 +1,50 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<a href="/">Return to list</a>
+
+      <form class="form-signin">
+        
+        <table>
+          <tr>
+            <td><label>Name:</label></td>
+            <td><input type="text" name="name" required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Description:</label></td>
+            <td><input type="text" name="description"  required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Memory:</label></td>
+            <td><select name=ram>
+                <option>512MB</option>
+                <option>1GB</option>
+                <option>2GB</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Disk:</label></td>
+            <td><select name=disk>
+                <option>20GB</option>
+                <option>30GB</option>
+                <option>40GB</option>
+              </select>
+            </td>
+            <!-- <td><input type="text" name="disk" required></td> -->
+          </tr>
+          <tr>
+            <td><label>Bridge:</label></td>
+            <td><select name=bridge>
+            {% for brid in bridge %}
+                <option>{{ brid.1 }}</option>
+            {% endfor %}
+              </select>
+            </td>
+          </tr>
+        </table>
+        
+        <button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button">Create</button>
+      </form>
+      
+{% endblock %}

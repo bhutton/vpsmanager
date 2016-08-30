@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% if title %}
+    <title>{{ title }} - VPS Manager</title>
+    {% else %}
+    <title>VPS Manager</title>
+    {% endif %}
+   
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    <link href="../static/css/base.css" rel="stylesheet">
+    <script src="../static/js/jquery-1.11.2.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+    {% if title %}
+      {% 
+        if title == 'Add VPS' 
+        or title == 'Modify VPS' 
+        or title == 'Add Disk' 
+        or title == 'Add Network Interface' 
+        or title == 'Add User'
+        or title == 'Modify User' 
+      %}
+    <script src="../static/js/formbuttons.js"></script>
+      {% endif %}
+    {% endif %}
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            {% if title != 'Login' %}
+            {% for item in menu %}
+                <li role="presentation" {% if active == item.0 %} class="active" {% endif %}><a href="{{ item.0 }}">{{ item.1 }}</a>
+            </li>
+            {% endfor %}
+            {% endif %}
+          </ul>
+        </nav>
+        {% if title %}
+        <h3 class="text-muted">{{ title }}</h3>
+        {% else %}
+        <h3 class="text-muted">VPS Manager</h3>
+        {% endif %}
+      </div>
+
+      {% block content %}{% endblock %}
+
+      <footer class="footer">
+        <p>&copy; Altair Hosting 2016</p>
+      </footer>
+
+    </div>
+  </body>
+</html>
+
