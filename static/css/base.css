@@ -45,6 +45,12 @@ body {
   border-bottom: 1px solid #eeeeee;
 }
 
+.view_vps label {
+  //position: relative;
+  clear: left;
+  //float: left;
+}
+
 .list tr,td {
   padding: 5px;
   padding-left: 15px;

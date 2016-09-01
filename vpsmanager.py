@@ -1,9 +1,8 @@
 from flask import Flask, render_template, json, request, redirect, session, g
 from flaskext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
-from flask_table import Table, Col
 
-from sqlite3 import dbapi2 as sqlite3
+#from sqlite3 import dbapi2 as sqlite3
 
 import socket
 import sys

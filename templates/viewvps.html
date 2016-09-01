@@ -2,6 +2,7 @@
 {% block content %}
 
 <p><a href="/">Return to list</a></p>
+       
 
 {% for line in row %}
 
@@ -17,7 +18,7 @@
         <div><label>Disk:</label> {{ (disk.4/1024)|int }} GB
         {% endfor %}
         {% for dev in device %}</div>
-        <div><label>Network:</label> tap{{ dev.1 }} : {{ dev.3 }}
+        <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}
         {% endfor %}</div>
         <div><label>Console:</label> <button onclick="myFunction()">Open Console</button></div>
         <div><label>Controls:</label> <a href="/restartConsole?id={{ line.0 }}">Restart Console</a> | 
@@ -31,7 +32,6 @@
         </script>
 
 {% endfor %}
-
 
 
 

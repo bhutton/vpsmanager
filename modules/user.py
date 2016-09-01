@@ -1,68 +1,77 @@
 from flask import Flask, render_template, json, request, redirect, session, g
-from flaskext.mysql import MySQL
+#from flaskext.mysql import MySQL
+from werkzeug import generate_password_hash, check_password_hash
+
+import modules.database
 
 app = Flask(__name__)
 
 
 app.config.from_object(__name__)
 
-mysql = MySQL()
+#mysql = MySQL()
 
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER']       = 'ah_vps'
+"""app.config['MYSQL_DATABASE_USER']       = 'ah_vps'
 app.config['MYSQL_DATABASE_PASSWORD']   = 'Mnie7865sh'
 app.config['MYSQL_DATABASE_DB']         = 'ah_vps'
 app.config['MYSQL_DATABASE_HOST']       = 'mysql'
-mysql.init_app(app)
+mysql.init_app(app)"""
 
 class User:
 
     def __init__(self):
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
+        #self.conn = mysql.connect()
+        #self.cursor = self.conn.cursor()
+        self.db = modules.database.DB_Users()
 
     def getUsers(self):
-    	
-        self.cursor.execute("select id,name,email,password from users")    
-        User.row = self.cursor.fetchall()
-        return User.row
+        return self.db.getUsers()
 
     def getUser(self,id):
-        User.id = id
+        """User.id = id
 
         self.cursor.execute("select id,name,email,password from users where id = %s",(User.id,))
         User.row = self.cursor.fetchone()
-        return User.row
+        return User.row"""
+
+        #db = modules.database.MySQL()
+        return self.db.getUser(id)
     
     def createUser(self,name,email,password):
-        User.name = name
-        User.email = email
-        User.password = password
+        self.name = name
+        self.email = email
+        self.password = password
         
-        User.hashed_password = generate_password_hash(User.password)
+        self.hashed_password = generate_password_hash(self.password)
 
-        self.cursor.callproc('sp_createUser',(User.name,User.email,User.hashed_password))
+        """self.cursor.callproc('sp_createUser',(User.name,User.email,User.hashed_password))
         self.data = self.cursor.fetchall()
         self.conn.commit()
 
-        return self.data
+        return self.data"""
+
+        return self.db.createUser(self.name,self.email,self.hashed_password)
 
     def deleteUser(self,id):
-        User.id = id
+        return self.db.deleteUser(id)
+        """User.id = id
 
         self.cursor.execute("delete from users where id = %s",(User.id,))
         self.data = self.cursor.fetchall()
         self.conn.commit()
 
-        return self.data
+        return self.data"""
 
     def checkUser(self,email,password):
         User.email = email
         User.password = password
 
-        get_user = "select password from users where email=%s"
+        """get_user = "select password from users where email=%s"
         self.cursor.execute(get_user,(User.email,))
-        data = self.cursor.fetchone()
+        data = self.cursor.fetchone()"""
+
+        data = self.db.checkUser(self.email)
 
         if (check_password_hash(str(data[0]),User.password)):
     	    return "valid"
@@ -70,12 +79,15 @@ class User:
             return "invalid"
 
     def checkUsername(self,name):
-        User.name = name
+        """User.name = name
 
         self.cursor.callproc('sp_validateLogin',(User.name,))
-        data = self.cursor.fetchall()
+        data = self.cursor.fetchall()"""
 
-        return data
+        #return data
+
+        return self.db.checkUsername(name)
+
 
     def checkPassword(self,newPassword,repPassword):
         User.newPassword = newPassword
@@ -90,19 +102,8 @@ class User:
             return "invalid"
 
     def updateUser(self,id,name,email,password=''):
-        User.id = id
-        User.name = name
-        User.email = email
-        User.password = password
-
-        if (len(User.password) > 0):
-            User.hashed_password = generate_password_hash(User.password)
-            update_user = "update users set name=%s,email=%s,password=%s where id=%s"
-            self.cursor.execute(update_user,(User.name,User.email,User.hashed_password,User.id))
+        if (len(password) > 0):
+            self.hashed_password = generate_password_hash(password)
+            return self.db.updateUserandPassword(name,email,self.hashed_password,id)
         else:
-            update_user = "update users set name=%s,email=%s where id=%s"
-            self.cursor.execute(update_user,(User.name,User.email,User.id))
-
-        data = self.cursor.fetchone()
-        self.conn.commit()
-        return "User Updated"
+            return self.db.updateUser(name,email,id)
