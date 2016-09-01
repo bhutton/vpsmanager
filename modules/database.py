@@ -2,8 +2,6 @@ from flask import Flask
 from flaskext.mysql import MySQL
 
 app = Flask(__name__)
-
-
 app.config.from_object(__name__)
 
 mysql = MySQL()
@@ -14,6 +12,7 @@ app.config['MYSQL_DATABASE_PASSWORD']   = 'Mnie7865sh'
 app.config['MYSQL_DATABASE_DB']         = 'ah_vps'
 app.config['MYSQL_DATABASE_HOST']       = 'mysql'
 mysql.init_app(app)
+
 
 class DB_Users:
 
@@ -64,10 +63,7 @@ class DB_Users:
 		self.conn.commit()
 		return self.data
 
-	
 
-
-	####################################################
 class DB_VPS:
 
 	def __init__(self):

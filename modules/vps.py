@@ -1,22 +1,4 @@
-from flask import Flask, render_template, json, request, redirect, session, g
-from flaskext.mysql import MySQL
-import socket
-import sys
-import os
-import modules.database
-
-app = Flask(__name__)
-
-app.config.from_object(__name__)
-
-mysql = MySQL()
-
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER']       = 'ah_vps'
-app.config['MYSQL_DATABASE_PASSWORD']   = 'Mnie7865sh'
-app.config['MYSQL_DATABASE_DB']         = 'ah_vps'
-app.config['MYSQL_DATABASE_HOST']       = 'mysql'
-mysql.init_app(app)
+import socket, modules.database
 
 min_console = 100
 min_device = 100
@@ -25,8 +7,6 @@ HOST, PORT = "10.128.2.1", 9999
 class VPS:
 
     def __init__(self):
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
         self.db = modules.database.DB_VPS()
 
     def getVPS(self):
@@ -186,8 +166,6 @@ class VPS:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         try:
-            
-        
             # Connect to server and send data
             sock.connect((HOST, PORT))
             sock.sendall(data + ",restartConsole\n")
@@ -196,8 +174,7 @@ class VPS:
             received = sock.recv(1024)
         finally:
             sock.close()
-
-        return "success"
+            return "success"
 
     def ctrlVPS(self,id,command):
         data = str(id)

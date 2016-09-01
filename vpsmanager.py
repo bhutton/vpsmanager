@@ -2,7 +2,7 @@ from flask import Flask, render_template, json, request, redirect, session, g
 from flaskext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
 
-#from sqlite3 import dbapi2 as sqlite3
+from sqlite3 import dbapi2 as sqlite3
 
 import socket
 import sys
@@ -14,16 +14,6 @@ app = Flask(__name__)
 
 
 app.config.from_object(__name__)
-
-"""# Load default config and override config from an environment variable
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, './vpsmanager.db'),
-    SECRET_KEY='development key',
-    USERNAME='admin',
-    PASSWORD='default'
-))
-app.config.from_envvar('VPSMANAGER_SETTINGS', silent=True)
-"""
 
 mysql = MySQL()
 
