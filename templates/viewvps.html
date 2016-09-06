@@ -15,7 +15,7 @@
               {% if line.3 == 2048 %}2GB{% endif %}
           
         {% for disk in disks %}</div>
-        <div><label>Disk:</label> {{ (disk.4/1024)|int }} GB
+        <div><label>Disk:</label> {{ (disk.4)|int }} GB
         {% endfor %}
         {% for dev in device %}</div>
         <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}

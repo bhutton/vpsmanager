@@ -34,7 +34,7 @@
           {% for disk in disks %}
           <tr>
             <td><label>Disk:</label></td>
-            <td>{{ (disk.4/1024)|int }} GB</td>
+            <td>{{ (disk.4)|int }} GB</td>
             <td>
               <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a>
             </td>

@@ -58,6 +58,14 @@ body {
   border-bottom: 1px solid #eeeeee;
 }
 
+div#loading {
+    width: 100%;
+    height: 256px;
+    display: none;
+    background: url(/static/gears.gif) no-repeat center;
+    cursor: wait;
+    }
+
 th {
   padding-left: 15px;
   background:#eeeeee;

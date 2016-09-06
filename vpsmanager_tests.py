@@ -44,6 +44,13 @@ class VpsmanagerTestCase(unittest.TestCase):
             password=password
         ), follow_redirects=True)
 
+    def add_user(self, username, email, password):
+        return self.app.post('/createUser', data=dict(
+            inputName=username,
+            inputEmail=email,
+            inputPassword=password
+        ), follow_redirects=True)
+
     def logout(self):
         return self.app.get('/Logout', follow_redirects=True)
 
@@ -72,6 +79,21 @@ class VpsmanagerTestCase(unittest.TestCase):
         delete_cmd = "/deleteVPS?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'VPS Successfully Deleted' in rv.data
+
+    def test_add_delete_user(self):
+
+        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+        rv = self.add_user("Fred Bloggs","fred@bloggs.com","abc123")
+        assert rv.data >= 0, 'User Added Successfully'
+
+        delete_cmd = "/deleteUser?id=" + str(rv.data)
+        rv = self.app.get(delete_cmd, follow_redirects=True)
+        assert 'User Successfully Deleted' in rv.data
+
+    #def test_add_image(self):
+    #    rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+    #    rv = self.adduser("IMG01","")
+
         
 
 

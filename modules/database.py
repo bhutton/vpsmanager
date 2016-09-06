@@ -30,9 +30,11 @@ class DB_Users:
 
 	def createUser(self,name,email,password):
 		self.cursor.callproc('sp_createUser',(name,email,password))
-		self.data = self.cursor.fetchall()
 		self.conn.commit()
-		return self.data
+
+		self.cursor.execute('SELECT last_insert_id()')
+		self.vps_id = self.cursor.fetchone()
+		return self.vps_id[0]
 
 	def deleteUser(self,id):
 		self.cursor.execute("delete from users where id = %s",(id,))
@@ -114,11 +116,18 @@ class DB_VPS:
 	def addDisk(self,name,size,order,vps_id):
 		add_disk = ("insert into disk (name,size,ord,vps_id) values (%s,%s,%s,%s)")
 
-		self.cursor.execute(add_disk,(name,size,order,vps_id))
-		self.data = self.cursor.fetchone()
+		self.cursor.callproc('sp_createDisks',(name,order,size,vps_id))
+
+		#self.cursor.execute(add_disk,(name,size,order,vps_id))
+		#self.data = self.cursor.fetchone()
 		self.conn.commit()
 
-		return str(self.vps_id)
+		#return str(vps_id)
+
+		self.cursor.execute('SELECT last_insert_id()')
+		self.vps_id = self.cursor.fetchone()
+
+		return self.vps_id[0]
 
 	def delDisk(self,id):
 		self.id = int(id)
@@ -160,7 +169,7 @@ class DB_VPS:
 
 		self.conn.commit()
 
-		return str(self.vps_id)
+		return str(self.vps_id[0])
 
 	def delVPS(self,id):
 		self.cursor.execute("delete from vps where id=%s",(id,))

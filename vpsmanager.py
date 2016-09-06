@@ -1,41 +1,25 @@
 from flask import Flask, render_template, json, request, redirect, session, g
-from flaskext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
-
-from sqlite3 import dbapi2 as sqlite3
-
-import socket
-import sys
-import os
 import modules.vps
 import modules.user
+
+#from sqlite3 import dbapi2 as sqlite3
+
 
 app = Flask(__name__)
 
 
 app.config.from_object(__name__)
 
-mysql = MySQL()
-
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER']       = 'ah_vps'
-app.config['MYSQL_DATABASE_PASSWORD']   = 'Mnie7865sh'
-app.config['MYSQL_DATABASE_DB']         = 'ah_vps'
-app.config['MYSQL_DATABASE_HOST']       = 'mysql'
-mysql.init_app(app)
-
 app.secret_key = 'why would I tell you my secret key?'
-
-
 
 menu = ([['/','Home'],
          ['/UserManagement','User Management'],
          ['/Logout','Logout']])
 
-min_console = 100
-min_device = 100
-HOST, PORT = "10.128.2.1", 9999
 
+## Unit Test Functions
+##########################################################
 
 def connect_db():
     """Connects to the specific database."""
@@ -73,25 +57,12 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-
+## End of Unit Test Functions
+##########################################################
 
     
         
-"""
-class Network:
-    def __init__(self):
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
-
-class Disk:
-    def __init__(self):
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
-
-"""
-
-
-        
+  
 
 @app.route("/",methods=['POST','GET'])
 def main():
@@ -177,10 +148,14 @@ def createUser():
             users = modules.user.User()
             data = users.createUser(_name,_email,_password)
 
-            if len(data) is 0:
+            #return data
+            return json.dumps(data)
+
+            """if len(data) is 0:
                 return json.dumps({'message':'User created successfully !'})
+                
             else:
-                return json.dumps({'error':str(data[0])})
+                return json.dumps({'error':str(data[0])})"""
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
 
@@ -386,16 +361,16 @@ def createDisk():
         name 	= request.form['name']
         disk	= request.form['disk']
 
-        if (disk == "20GB"): disk = 20480
-        elif (disk == "30GB"): disk = 30720
-        elif (disk == "40GB"): disk = 40960
+        if (disk == "20GB"): disk = 20
+        elif (disk == "30GB"): disk = 30
+        elif (disk == "40GB"): disk = 40
 
         order = 0
 
         network = modules.vps.VPS()
-        #data = network.addDisk(name,disk,order,id)
+        data = network.addDisk(name,disk,order,id)
 
-        data = network.createDisk(name,order,disk,id)
+        #data = network.createDisk(name,order,disk,id)
     
         active = ""
         title = "Add Disk"
@@ -509,20 +484,17 @@ def createVPS():
         bridge 		= request.form['bridge']
 
         if (name and description and ram):
-            conn = mysql.connect()
-            cursor = conn.cursor()
-
             if (ram == "512MB"): ram = 512
             elif (ram == "1GB"): ram = 1024
             elif (ram == "2GB"): ram = 2048
 
-            if (disk == "20GB"):   disk = 20480
-            elif (disk == "30GB"): disk = 30720
-            elif (disk == "40GB"): disk = 40960
+            if (disk == "20GB"):   disk = 20
+            elif (disk == "30GB"): disk = 30
+            elif (disk == "40GB"): disk = 40
 
             order = 0
 
-            vps = modules.vps.VPS()
+            vps         = modules.vps.VPS()
             console     = vps.getMaxConsole()
             vps_id      = vps.createVPS(name,description,ram,console)
             new_device  = vps.getInt()
@@ -556,13 +528,6 @@ def deleteVPS():
         return render_template('index.html', menu=menu, title=title, active=active, row=row, deleted='yes')
     else:
         return redirect('/Login')
-
-@app.route("/test")
-def test():
-    command = "./cgi-mode-example.sh"
-    output = subprocess.Popen(['/bin/sh', '-c', command], stdout=subprocess.PIPE)
-
-
 
 @app.route("/Login",methods=['POST','GET'])
 def Login():

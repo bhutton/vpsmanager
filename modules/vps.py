@@ -76,16 +76,16 @@ class VPS:
 
     def addDisk(self,name,size,order,vps_id):
         
-        self.data = self.db.addDisk(name,size,order,vps_id)
-
         try:
+            self.data = self.db.addDisk(name,size,order,vps_id)
+            
             # Create a socket (SOCK_STREAM means a TCP socket)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",create\n")
-    
+            sock.sendall(str(self.data) + ",createdisk\n")
+
             # Receive data from the server and shut down
             received = sock.recv(1024)
         finally:
@@ -95,9 +95,23 @@ class VPS:
 
 
     def delDisk(self,id):
-        return self.db.delDisk(id)
 
-        # Need code to physically delete disk
+        try:
+            #self.data = self.db.delDisk(id)
+
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(str(id) + ",deletedisk\n")
+
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+        finally:
+            sock.close()
+            self.data = self.db.delDisk(id)
+            return self.data
 
     def getDisks(self,id):
         return self.db.getDisks(id)
@@ -127,7 +141,7 @@ class VPS:
         
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",create\n")
+            sock.sendall(self.data + ",createvps\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -135,6 +149,9 @@ class VPS:
             sock.close()
         
         return "created"
+
+    #def deleteDisk(self,vps_id,disk_id):
+
 
     def delVPS(self,id):
 
