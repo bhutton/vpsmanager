@@ -45,10 +45,53 @@ class VPS:
 
 
     def addDevice(self,device,vps_id,bridge_id):
-        return self.db.addDevice(device,vps_id,bridge_id)
+        
+        self.db.addDevice(device,vps_id,bridge_id)
 
-    def delNetwork(self,id):
-        return self.db.delNetwork(id)
+        try:
+            
+            self.data = str(vps_id)
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(self.data + ",updatevps\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+            if (len(received) > 0):
+                status = "Running"
+            else:
+                status = "Stopped"
+        finally:
+            sock.close()
+            return received
+
+    def delNetwork(self,id,vps_id):
+        self.db.delNetwork(id)
+
+        try:
+            
+            self.data = str(vps_id)
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(self.data + ",updatevps\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+            if (len(received) > 0):
+                status = "Running"
+            else:
+                status = "Stopped"
+        finally:
+            sock.close()
+            return received
 
     def getStatus(self,vps_id):
         try:
@@ -110,8 +153,8 @@ class VPS:
             received = sock.recv(1024)
         finally:
             sock.close()
-            self.data = self.db.delDisk(id)
-            return self.data
+            #self.data = self.db.delDisk(id)
+            return "deleted"
 
     def getDisks(self,id):
         return self.db.getDisks(id)

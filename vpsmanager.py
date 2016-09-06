@@ -3,7 +3,7 @@ from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
 import modules.user
 
-#from sqlite3 import dbapi2 as sqlite3
+from sqlite3 import dbapi2 as sqlite3
 
 
 app = Flask(__name__)
@@ -346,7 +346,7 @@ def delNetwork():
         del_network = ("delete from interface where id=%s")
 
         network = modules.vps.VPS()
-        data = network.delNetwork(id)
+        data = network.delNetwork(id,vps_id)
 
         location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 
