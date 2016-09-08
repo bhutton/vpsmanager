@@ -22,7 +22,7 @@
         {% endfor %}</div>
         <div><label>Console:</label> <button onclick="myFunction()">Open Console</button></div>
         <div><label>Controls:</label> <a href="/restartConsole?id={{ line.0 }}">Restart Console</a> | 
-          <a href="/startVPS?id={{ line.0 }}">Start VPS</a> | 
+          <a href="/startVPS?id={{ line.0 }}" onclick="loading();">Start VPS</a> | 
           <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')">Stop VPS</a></div>
 
         <script>

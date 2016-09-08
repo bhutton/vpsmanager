@@ -1,4 +1,4 @@
-import socket, modules.database
+import socket, modules.database, time
 
 min_console = 100
 min_device = 100
@@ -10,7 +10,30 @@ class VPS:
         self.db = modules.database.DB_VPS()
 
     def getVPS(self):
-        return self.db.getVPS()
+        row = self.db.getVPS()
+
+        if (len(row) > 0):
+
+            row2 = [[]]
+
+            count = 0
+            num_items = len(row)
+
+            for line in row:
+
+                # Get running status of machine
+                status = self.getStatus(line[0])
+
+                row2[count].append(line[0])
+                row2[count].append(line[1])
+                row2[count].append(line[2])
+                row2[count].append(status)
+
+                if (count < num_items-1): row2.append([])
+
+                count+=1
+
+            return row2
         
     def getIndVPS(self,id):
         return self.db.getIndVPS(id)
@@ -46,6 +69,30 @@ class VPS:
 
     def addDevice(self,device,vps_id,bridge_id):
         
+        self.db.addDevice(device,vps_id,bridge_id)
+
+        """try:
+            
+            self.data = str(vps_id)
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(self.data + ",updatevps\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+            if (len(received) > 0):
+                status = "Running"
+            else:
+                status = "Stopped"
+        finally:
+            sock.close()
+            return received"""
+
+    def addDeviceUpdate(self,device,vps_id,bridge_id):
         self.db.addDevice(device,vps_id,bridge_id)
 
         try:
@@ -85,10 +132,6 @@ class VPS:
             # Receive data from the server and shut down
             received = sock.recv(1024)
 
-            if (len(received) > 0):
-                status = "Running"
-            else:
-                status = "Stopped"
         finally:
             sock.close()
             return received
@@ -197,24 +240,34 @@ class VPS:
 
 
     def delVPS(self,id):
+        status = self.getStatus(id)
 
-        try:
-            self.db.delVPS(id)
+        if (status == "Stopped"):
 
-            data = str(id)
+            try:
+                self.db.delVPS(id)
 
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                data = str(id)
 
+                # Create a socket (SOCK_STREAM means a TCP socket)
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            
+                # Connect to server and send data
+                sock.connect((HOST, PORT))
+                sock.sendall(data + ",delete\n")
         
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(data + ",delete\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-        finally:
-            sock.close()
+                # Receive data from the server and shut down
+                received = sock.recv(1024)
+            except:
+                return ("error","An unknown error has occurred")
+            finally:
+                sock.close()
+                return ("success","VPS Successfully Deleted")
+        else:
+            return ("error","Error, VPS must be stopped before Deleting it!")
+
+
 
         return "success"
 
@@ -252,5 +305,7 @@ class VPS:
             received = sock.recv(1024)
         finally:
             sock.close()
+
+            if (command == "start"): time.sleep(1)
             return received
     

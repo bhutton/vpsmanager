@@ -255,15 +255,12 @@ def stopVPS():
     if session.get('user'):
         id = request.args.get('id')
 
-        
-
-        #return render_template('stopvps.html', menu=menu)
-        vps     = modules.vps.VPS()
-        received = vps.ctrlVPS(id,'stop')
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
+        vps         = modules.vps.VPS()
+        received    = vps.ctrlVPS(id,'stop')
+        row         = vps.getIndVPS(id)
+        disks       = vps.getDisks(id)
+        device      = vps.getIntVPS(id)
+        status      = vps.getStatus(id)
 
         active  = '/'
         title   = 'View VPS'
@@ -325,7 +322,7 @@ def createNetwork():
 
         bridge_id = network.getBridgeID(bridge)
         
-        data = network.addDevice(new_device,id,bridge_id)
+        data = network.addDeviceUpdate(new_device,id,bridge_id)
     
         active = ""
         title = "Add Network Interface"
@@ -516,16 +513,17 @@ def createVPS():
 @app.route("/deleteVPS")
 def deleteVPS():
     if session.get('user'):
+        active  = '/'
+        title   = 'VPS Manager'
+
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        error = vps.delVPS(id)
+        delstatus,message = vps.delVPS(id)
+
         row = vps.getVPS()
 
-        active 	= '/'
-        title 	= 'VPS Manager'
-
-        return render_template('index.html', menu=menu, title=title, active=active, row=row, deleted='yes')
+        return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
     else:
         return redirect('/Login')
 

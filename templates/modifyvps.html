@@ -1,11 +1,13 @@
 {% extends "base.html" %} 
 {% block content %}
 
-  <a href="/">Return to list</a>
+  
 
 {% if updated == "yes" %}
   <p class="success">Machine successfully updated</p>
 {% endif %}
+
+<a href="/">Return to list</a>
 
 {% for line in row %}
 

@@ -3,17 +3,26 @@
 
       <a href="/">Return to list</a>
 
-      <form class="form-signin">
+      <form name="vps" class="form-signin">
         
         <table>
           <tr>
             <td><label>Name:</label></td>
-            <td><input type="text" name="name" required autofocus></td>
+            <td><input type="text" name="name" required autofocus onchange="return validateVPSName()">
           </tr>
           <tr>
             <td><label>Description:</label></td>
-            <td><input type="text" name="description"  required autofocus></td>
+            <td><input type="text" name="description" required autofocus onchange="return validateVPSDescription()"></td>
           </tr>
+          <!--<tr>
+            <td><label>Image:</label></td>
+            <td><select name=ram>
+                <option>FreeBSD</option>
+                <option>Centos</option>
+                <option>Debian</option>
+              </select>
+            </td>
+          </tr>-->
           <tr>
             <td><label>Memory:</label></td>
             <td><select name=ram>
@@ -43,8 +52,12 @@
             </td>
           </tr>
         </table>
+
+        <p id="valName"></p></td>
+        <p id="valDescription"></p></td>
         
-        <button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button" onclick="loading();">Create</button>
+        <!--<button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button" onclick="loading();">Create</button>-->
+        <button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button">Create</button>
       </form>
 
       

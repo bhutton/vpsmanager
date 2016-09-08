@@ -1,6 +1,19 @@
 $(function(){
     $('#btnCreateVPS').click(function(){
-        
+
+        if (document.forms["vps"]["name"].value == "") {
+            document.getElementById("valName").innerHTML = "Name must be filled out";
+            return(false)
+        }
+
+        if (document.forms["vps"]["description"].value == "") {
+            document.getElementById("valDescription").innerHTML = "Description must be filled out";
+            return(false)
+        }
+
+        $("#loading").show();
+        $("#content").hide();
+
         $.ajax({
             url: '/createVPS',
             data: $('form').serialize(),
@@ -60,6 +73,22 @@ $(function(){
     });
 
     $('#btnCreateUser').click(function(){
+
+        if (document.forms["createUser"]["inputName"].value == "") {
+            document.getElementById("valName").innerHTML = "Name must be filled out";
+            return(false)
+        }
+
+        if (document.forms["createUser"]["inputEmail"].value == "") {
+            document.getElementById("valEmail").innerHTML = "Email must be filled out";
+            return(false)
+        }
+
+        if (document.forms["createUser"]["inputPassword"].value == "") 
+        {
+            document.getElementById("valPassword").innerHTML = "Password must be filled out";
+            return(false)
+        }
         
         $.ajax({
             url: '/createUser',

@@ -118,12 +118,9 @@ class DB_VPS:
 
 		self.cursor.callproc('sp_createDisks',(name,order,size,vps_id))
 
-		#self.cursor.execute(add_disk,(name,size,order,vps_id))
-		#self.data = self.cursor.fetchone()
 		self.conn.commit()
 
-		#return str(vps_id)
-
+		
 		self.cursor.execute('SELECT last_insert_id()')
 		self.vps_id = self.cursor.fetchone()
 

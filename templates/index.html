@@ -5,6 +5,7 @@
         <p class="success">VPS Added Successfully</p>
 {% endif %}
 
+
         <nav>
           <ul class="nav nav-pills pull-left">
                 <li role="presentation"><a href="/AddVPS">Create VPS</a>
@@ -13,9 +14,7 @@
 
         <div class="row marketing">
         
-            {% if deleted == "yes" %}
-            <p>VPS Successfully Deleted</p>
-            {% endif %}
+            <div class="{{ delstatus }}">{{ message }}</div>
 
             {% if row %}
             <table width="100%">
@@ -23,7 +22,7 @@
                     <tr class="title">
                         <th width="150px">Name</th>
                         <th>Description</th>
-                        <th width="80px">RAM</th>
+                        <th width="80px">Status</th>
                         <th width="80px">Modify</th>
                     </tr>
                 </thead>
@@ -33,13 +32,15 @@
                     <tr class="list">
                         <td class="list"><a href="/viewVPS?id={{ line.0 }}">{{ line.1 }}</a></td>
                         <td class="list">{{ line.2 }}</td>
-                        <td class="list">{{ line.3 }}</td>
+                        <td class="{{ line.3 }}">{{ line.3 }}</td>
                         <td class="list"><a href="/modifyVPS?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
                         <a href="/deleteVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to delete this server?')"><i class="material-icons md-18">delete</i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+            <div class="message">No machines have been created</div>
             {% endif %}
         
         </div>
