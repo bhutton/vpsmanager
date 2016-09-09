@@ -2,6 +2,7 @@ from flask import Flask, render_template, json, request, redirect, session, g
 from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
 import modules.user
+import ConfigParser
 
 from sqlite3 import dbapi2 as sqlite3
 
@@ -16,6 +17,11 @@ app.secret_key = 'why would I tell you my secret key?'
 menu = ([['/','Home'],
          ['/UserManagement','User Management'],
          ['/Logout','Logout']])
+
+# Get VPS configurations from configuration.cfg
+Config = ConfigParser.ConfigParser()
+Config.read("./configuration.cfg")
+ShellInABoxPref = Config.get('Global','ShellInABoxPref')
 
 
 ## Unit Test Functions
@@ -246,7 +252,7 @@ def startVPS():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
     else:
         return redirect('/Login')
 
@@ -265,7 +271,7 @@ def stopVPS():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
 
     else:
         return redirect('/Login')
@@ -366,8 +372,6 @@ def createDisk():
 
         network = modules.vps.VPS()
         data = network.addDisk(name,disk,order,id)
-
-        #data = network.createDisk(name,order,disk,id)
     
         active = ""
         title = "Add Disk"
@@ -423,10 +427,13 @@ def viewVPS():
         device  = vps.getIntVPS(id)
         status  = vps.getStatus(id)
 
+        prefport = ShellInABoxPref
+
+
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
     else:
         return redirect('/Login')
 
@@ -446,7 +453,7 @@ def restartConsole():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
     else:
         return redirect('/Login')
 

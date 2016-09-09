@@ -1,8 +1,12 @@
-import socket, modules.database, time
+import socket, modules.database, time, ConfigParser
 
-min_console = 100
-min_device = 100
-HOST, PORT = "10.128.2.1", 9999
+# Get VPS configurations from configuration.cfg
+Config = ConfigParser.ConfigParser()
+Config.read("./configuration.cfg")
+min_console = Config.get('VPS','minconsole')
+min_device = Config.get('VPS','mindevice')
+HOST = str(Config.get('VPS','host'))
+PORT = int(Config.get('VPS','port'))
 
 class VPS:
 
@@ -49,6 +53,7 @@ class VPS:
 
         if (self.console == None):
             self.console = min_console
+            #self.console = "test"
         else:
             self.console = int(self.console) + 1
 

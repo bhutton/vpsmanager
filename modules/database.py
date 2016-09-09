@@ -1,16 +1,19 @@
 from flask import Flask
 from flaskext.mysql import MySQL
+import ConfigParser
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 mysql = MySQL()
 
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER']       = 'ah_vps'
-app.config['MYSQL_DATABASE_PASSWORD']   = 'Mnie7865sh'
-app.config['MYSQL_DATABASE_DB']         = 'ah_vps'
-app.config['MYSQL_DATABASE_HOST']       = 'mysql'
+# Get MySQL configurations from configuration.cfg
+Config = ConfigParser.ConfigParser()
+Config.read("./configuration.cfg")
+app.config['MYSQL_DATABASE_USER']       = Config.get('Database','mysql_username')
+app.config['MYSQL_DATABASE_PASSWORD']   = Config.get('Database','mysql_password')
+app.config['MYSQL_DATABASE_DB']         = Config.get('Database','mysql_dbname')
+app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','mysql_dbhost')
 mysql.init_app(app)
 
 
