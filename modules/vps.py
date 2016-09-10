@@ -1,8 +1,11 @@
 import socket, modules.database, time, ConfigParser
+import os 
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Get VPS configurations from configuration.cfg
 Config = ConfigParser.ConfigParser()
-Config.read("./configuration.cfg")
+Config.read("{}/../configuration.cfg".format(dir_path))
 min_console = Config.get('VPS','minconsole')
 min_device = Config.get('VPS','mindevice')
 HOST = str(Config.get('VPS','host'))
@@ -215,8 +218,8 @@ class VPS:
         return self.db.updateVPS(name,description,ram,id)
 
         
-    def createVPS(self,name,description,ram,con):
-        return self.db.createVPS(name,description,ram,con)
+    def createVPS(self,name,description,ram,con,image):
+        return self.db.createVPS(name,description,ram,con,image)
 
     def createDisk(self,name,order,disk,vps_id):
         

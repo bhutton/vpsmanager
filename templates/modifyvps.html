@@ -9,6 +9,8 @@
 
 <a href="/">Return to list</a>
 
+<div><label>Status:</label> {{ status }}</div>
+
 {% for line in row %}
 
       <form class="form-signin">
@@ -21,7 +23,7 @@
           </tr>
           <tr>
             <td><label>Description:</label></td>
-            <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required autofocus></td>
+            <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required></td>
           </tr>
           <tr>
             <td><label>Memory:</label></td>
@@ -37,21 +39,30 @@
           <tr>
             <td><label>Disk:</label></td>
             <td>{{ (disk.4)|int }} GB</td>
+            
             <td>
+              {% if status == "Stopped" %}
               <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a>
+              {% endif %}
             </td>
+            
           </tr>
           {% endfor %}
+         
           <tr>
             <td><label>Disk:</label></td>
             <td colspan="2"><a href="/addDisk?id={{ line.0 }}">Add Disk</a></td>
           </tr>
+          
 
           {% for dev in device %}
           <tr>
             <td><label>Network:</label></td>
             <td>tap{{ dev.1 }} : {{ dev.3 }}</td>
-            <td><a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a></td>
+            <td>
+            {% if status == "Stopped" %}
+              <a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a></td>
+            {% endif %}
           </tr>
           {% endfor %}
           <tr>

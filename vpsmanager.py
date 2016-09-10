@@ -3,8 +3,12 @@ from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
 import modules.user
 import ConfigParser
+import os 
 
 from sqlite3 import dbapi2 as sqlite3
+
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 app = Flask(__name__)
@@ -20,7 +24,7 @@ menu = ([['/','Home'],
 
 # Get VPS configurations from configuration.cfg
 Config = ConfigParser.ConfigParser()
-Config.read("./configuration.cfg")
+Config.read("{}/configuration.cfg".format(dir_path))
 ShellInABoxPref = Config.get('Global','ShellInABoxPref')
 
 
@@ -408,11 +412,12 @@ def modifyVPS():
         row     = vps.getIndVPS(id)
         disks   = vps.getDisks(id)
         device  = vps.getIntVPS(id)
+        status  = vps.getStatus(id)
        
         active 	= '/'
         title 	= 'Modify VPS'
 
-        return render_template('modifyvps.html', menu=menu, title=title, active=active, row=row, disks=disks, updated=updated, device=device)
+        return render_template('modifyvps.html', menu=menu, title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status)
     else:
         return redirect('/Login')
 
@@ -486,6 +491,7 @@ def createVPS():
         ram 		= request.form['ram']
         disk 		= request.form['disk']
         bridge 		= request.form['bridge']
+        image       = request.form['image']
 
         if (name and description and ram):
             if (ram == "512MB"): ram = 512
@@ -500,7 +506,7 @@ def createVPS():
 
             vps         = modules.vps.VPS()
             console     = vps.getMaxConsole()
-            vps_id      = vps.createVPS(name,description,ram,console)
+            vps_id      = vps.createVPS(name,description,ram,console,image)
             new_device  = vps.getInt()
             bridge_id   = vps.getBridgeID(bridge)
             device      = vps.addDevice(new_device,vps_id,bridge_id)
