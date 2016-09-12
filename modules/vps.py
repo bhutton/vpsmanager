@@ -35,6 +35,7 @@ class VPS:
                 row2[count].append(line[1])
                 row2[count].append(line[2])
                 row2[count].append(status)
+                row2[count].append(line[3])
 
                 if (count < num_items-1): row2.append([])
 

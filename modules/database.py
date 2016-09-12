@@ -79,7 +79,7 @@ class DB_VPS:
 		self.cursor = self.conn.cursor()
 
 	def getVPS(self):
-		self.cursor.execute("select * from vps")
+		self.cursor.execute("select id,name,description,image from vps")
 		return self.cursor.fetchall();
 
 	def getIndVPS(self,id):
