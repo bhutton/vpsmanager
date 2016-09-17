@@ -29,13 +29,14 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data
 
-    def add_vps(self, name, description, ram, disk, bridge):
+    def add_vps(self, name, description, ram, disk, bridge, image):
         return self.app.post('/createVPS', data=dict(
             name=name,
             description=description,
             ram=ram,
             disk=disk,
-            bridge=bridge
+            bridge=bridge,
+            image=1
         ), follow_redirects=True)
 
     def login(self, username, password):
@@ -72,7 +73,7 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         # Create VPS and return ID
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-        rv = self.add_vps("UnitTest2","Unit Test","512MB","20GB","0")
+        rv = self.add_vps("UnitTest2","Unit Test","512MB","20GB","0","1")
         assert rv.data >= 0, 'VPS Successfully Created'
 
         # Delete VPS created above
@@ -81,7 +82,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert 'VPS Successfully Deleted' in rv.data
 
     def test_add_delete_user(self):
-
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
         rv = self.add_user("Fred Bloggs","fred@bloggs.com","abc123")
         assert rv.data >= 0, 'User Added Successfully'
@@ -90,11 +90,17 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'User Successfully Deleted' in rv.data
 
-    #def test_add_image(self):
-    #    rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-    #    rv = self.adduser("IMG01","")
+    def test_start_vps(self):
+        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+        start_vps_cmd = "/startVPS?id=647"
+        rv = self.app.get(start_vps_cmd, follow_redirects=True)
+        assert 'Running' in rv.data
 
-        
+    def test_stop_vps(self):
+        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+        stop_vps_cmd = "/stopVPS?id=647"
+        rv = self.app.get(stop_vps_cmd, follow_redirects=True)
+        assert 'Stopped' in rv.data
 
 
 
