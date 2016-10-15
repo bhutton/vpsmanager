@@ -2,6 +2,7 @@ from flask import Flask, render_template, json, request, redirect, session, g
 from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
 import modules.user
+import modules.graph
 import ConfigParser
 import os 
 
@@ -158,14 +159,7 @@ def createUser():
             users = modules.user.User()
             data = users.createUser(_name,_email,_password)
 
-            #return data
             return json.dumps(data)
-
-            """if len(data) is 0:
-                return json.dumps({'message':'User created successfully !'})
-                
-            else:
-                return json.dumps({'error':str(data[0])})"""
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
 
@@ -252,11 +246,13 @@ def startVPS():
         disks       = vps.getDisks(id)
         device      = vps.getIntVPS(id)
         status      = vps.getStatus(id)
+        graph       = modules.graph.GraphTraffic()
+        file        = graph.genGraph(device)
 
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
     else:
         return redirect('/Login')
 
@@ -271,11 +267,13 @@ def stopVPS():
         disks       = vps.getDisks(id)
         device      = vps.getIntVPS(id)
         status      = vps.getStatus(id)
+        graph       = modules.graph.GraphTraffic()
+        file        = graph.genGraph(device)
 
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
 
     else:
         return redirect('/Login')
@@ -413,11 +411,13 @@ def modifyVPS():
         disks   = vps.getDisks(id)
         device  = vps.getIntVPS(id)
         status  = vps.getStatus(id)
+        graph   = modules.graph.GraphTraffic()
+        file    = graph.genGraph(device)
        
         active 	= '/'
         title 	= 'Modify VPS'
 
-        return render_template('modifyvps.html', menu=menu, title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status)
+        return render_template('modifyvps.html', menu=menu, title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
     else:
         return redirect('/Login')
 
@@ -431,6 +431,8 @@ def viewVPS():
         disks   = vps.getDisks(id)
         device  = vps.getIntVPS(id)
         status  = vps.getStatus(id)
+        graph   = modules.graph.GraphTraffic()
+        file    = graph.genGraph(device)
 
         prefport = ShellInABoxPref
 
@@ -438,7 +440,7 @@ def viewVPS():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
     else:
         return redirect('/Login')
 
@@ -452,13 +454,15 @@ def restartConsole():
         disks   = vps.getDisks(id)
         device  = vps.getIntVPS(id)
         status  = vps.getStatus(id)
+        graph   = modules.graph.GraphTraffic()
+        file    = graph.genGraph(device)
         
         console = vps.restartConsole(id)
 
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
     else:
         return redirect('/Login')
 
@@ -471,11 +475,8 @@ def updateVPS():
         description 	= request.form['description']
         ram 			= request.form['ram']
 
-        if (ram == "512MB"): ram = 512
-        elif (ram == "1GB"): ram = 1024
-        elif (ram == "2GB"): ram = 2048
-    
         vps = modules.vps.VPS()
+        ram = vps.convertRAM(ram)
         row = vps.updateVPS(name,description,ram,id)
         
         return id
@@ -494,17 +495,20 @@ def createVPS():
         image       = request.form['image']
 
         if (name and description and ram):
-            if (ram == "512MB"): ram = 512
-            elif (ram == "1GB"): ram = 1024
-            elif (ram == "2GB"): ram = 2048
-
-            if (disk == "20GB"):   disk = 20
-            elif (disk == "30GB"): disk = 30
-            elif (disk == "40GB"): disk = 40
 
             order = 0
 
+            # Create a VPS using options selected by user
+            #
+            # Note:
+            # new_device = is the Tunnel Interface device on the server i.e. tun2
+            # device = the actual device returned after the server is created
+            # console = is the port the user uses to connect to the terminal console
+            # data is the returned payload from the server connector
+
             vps         = modules.vps.VPS()
+            ram         = vps.convertRAM(ram)
+            disk        = vps.convertDisk(disk)
             console     = vps.getMaxConsole()
             vps_id      = vps.createVPS(name,description,ram,console,image)
             new_device  = vps.getInt()
@@ -512,10 +516,9 @@ def createVPS():
             device      = vps.addDevice(new_device,vps_id,bridge_id)
             data        = vps.createDisk(name,order,disk,vps_id)
                         
-            row         = vps.getVPS()
-
-            active 	= '/'
-            title 	= 'VPS Manager'
+            # Send ID of create VPS to ajax script which gets picked up by Unit/Function tests 
+            # Currently returns to main page but this allows the option of bringing
+            # up the newly created server
 
             return json.dumps(vps_id)
         else:

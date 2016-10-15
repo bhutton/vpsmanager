@@ -1,7 +1,7 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 import ConfigParser
-import os 
+import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -159,7 +159,6 @@ class DB_VPS:
 		return self.row
 
 	def createVPS(self,name,description,ram,con,image):
-		#self.cursor.callproc('sp_createVPS',(name,description,ram,con,image))
 		self.cursor.execute("insert into vps (name,description,ram,console,image) values (%s,%s,%s,%s,%s)",(name,description,ram,con,image))
 		self.conn.commit()
 
@@ -181,4 +180,8 @@ class DB_VPS:
 		self.conn.commit()
 
 		return self.data
+
+	def getTrafficData(self,interface):
+		self.cursor.execute("(SELECT `LastIpkts`,`LastOpkts`,`timestamp`,`index` FROM `traffic` where `interface`=%s ORDER BY `index` DESC LIMIT 289) ORDER BY `index` ASC", (interface,))
+		return self.cursor.fetchall()
 

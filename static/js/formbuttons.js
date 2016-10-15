@@ -1,6 +1,8 @@
 $(function(){
     $('#btnCreateVPS').click(function(){
 
+        // Form validation - user must enter Name and Description for processing to occur
+
         if (document.forms["vps"]["name"].value == "") {
             document.getElementById("valName").innerHTML = "Name must be filled out";
             return(false)
@@ -11,6 +13,8 @@ $(function(){
             return(false)
         }
 
+        // Show animation while VPS is being created
+
         $("#loading").show();
         $("#content").hide();
 
@@ -18,9 +22,13 @@ $(function(){
             url: '/createVPS',
             data: $('form').serialize(),
             type: 'POST',
+
+            // If it gets this far redirect to homepage passing vpsadded=yes argument
             success: function(response){
                 window.location.href = "/?vpsadded=yes";
             },
+
+            // Display error in browser console
             error: function(error){
                 console.log(error);
             }

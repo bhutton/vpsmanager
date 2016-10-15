@@ -92,13 +92,13 @@ class VpsmanagerTestCase(unittest.TestCase):
 
     def test_start_vps(self):
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-        start_vps_cmd = "/startVPS?id=647"
+        start_vps_cmd = "/startVPS?id=654"
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
         assert 'Running' in rv.data
 
     def test_stop_vps(self):
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-        stop_vps_cmd = "/stopVPS?id=647"
+        stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
         assert 'Stopped' in rv.data
 

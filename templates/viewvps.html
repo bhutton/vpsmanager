@@ -3,39 +3,67 @@
 
 <p><a href="/">Return to list</a></p>
 
+  
+
 {% for line in row %}
+      
 
-      <div><label>Name:</label> {{ line.1 }}</div>
-      <div><label>Status:</label> {{ status }}</div>
-      <div><label>Description:</label> {{ line.2 }}</div>
-      <div><label>Image:</label> 
-          {% if line.5 == 1 %}FreeBSD
-          {% elif line.5 == 2 %}Ubuntu
-          {% elif line.5 == 3 %}Centos
-          {% endif %}
-      <div><label>Memory:</label>
-              {% if line.3 == 512 %}512MB{% endif %}
-              {% if line.3 == 1024 %}1GB{% endif %}
-              {% if line.3 == 2048 %}2GB{% endif %}
-          
-        {% for disk in disks %}</div>
+
+
+      <div class="Details">
+        <div class="vpsDetails">  
+
+        <div><label>Name:</label> {{ line.1 }}</div>
+        <div><label>Status:</label> {{ status }}</div>
+        <div><label>Description:</label> {{ line.2 }}</div>
+        <div><label>Image:</label> 
+            {% if line.5 == 1 %}FreeBSD
+            {% elif line.5 == 2 %}Ubuntu
+            {% elif line.5 == 3 %}Centos
+            {% endif %}
+        <div><label>Memory:</label>
+                {% if line.3 == 512 %}512MB{% endif %}
+                {% if line.3 == 1024 %}1GB{% endif %}
+                {% if line.3 == 2048 %}2GB{% endif %}
+            
+          {% for disk in disks %}
+        </div>
         <div><label>Disk:</label> {{ (disk.4)|int }} GB
-        {% endfor %}
-        {% for dev in device %}</div>
+          {% endfor %}
+          {% for dev in device %}
+        </div>
         <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}
-        {% endfor %}</div>
-        <div><label>Console:</label> <button onclick="myFunction()">Open Console</button></div>
-        <div><label>Controls:</label> <a href="/restartConsole?id={{ line.0 }}">Restart Console</a> | 
+          {% endfor %}
+        </div>
+        <div>
+          <label>Console:</label> 
+          <button onclick="myFunction()">Open Console</button>
+        </div>
+        <div class="controls"><label>Controls:</label> <a href="/restartConsole?id={{ line.0 }}">Restart Console</a> | 
           <a href="/startVPS?id={{ line.0 }}" onclick="loading();">Start VPS</a> | 
-          <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')">Stop VPS</a></div>
+          <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')">Stop VPS</a>
+        </div>
+          
 
-        <script>
-        function myFunction() {
-            window.open("http://diablo.enlight:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600");
-        }
-        </script>
+          <script>
+          function myFunction() {
+              window.open("http://diablo.enlight:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600");
+          }
+          </script>
+       
+        </div>
+      </div>
+      
+        <div class="trafficGraph">
+          {% for filename in file %}
+          <img src="{{ filename }}.png" class="trafficGraph"">
+          {% endfor %}
+        </div>
+     </div>
+
 
 {% endfor %}
+  
 
 
 

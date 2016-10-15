@@ -317,4 +317,20 @@ class VPS:
 
             if (command == "start"): time.sleep(1)
             return received
+
+    def convertRAM(self,ram):
+        if (ram == "512MB"): ram = 512
+        elif (ram == "1GB"): ram = 1024
+        elif (ram == "2GB"): ram = 2048
+
+        return ram
+
+    def convertDisk(self,disk):
+        if (disk == "20GB"):   disk = 20
+        elif (disk == "30GB"): disk = 30
+        elif (disk == "40GB"): disk = 40
+
+        return disk
+
+
     

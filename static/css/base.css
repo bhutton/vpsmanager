@@ -115,3 +115,46 @@ td {
 tr:hover{
   background:#F9F9F9;
 }
+
+.controls {
+  width: 100%;
+}
+
+.Details {
+  width: 100%;
+}
+.vpsDetails {
+  width: 50% !important;
+  float: left;
+  clear: left;
+}
+
+.trafficGraph {
+  width: 50%;
+  float: right;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+}
+
+.trafficGraph img {
+  width: 100%;
+  //object-fit: contain;
+}
+
+.trafficGraph p {
+  margin-top: 0;
+  padding-top: 0;
+  text-align: center;
+}
+
+.footer {
+  width: 100%;
+  min-width: 100%;
+  clear: both;
+}
+
+#content {
+  min-width: 100%;
+}
+
