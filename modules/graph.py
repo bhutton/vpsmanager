@@ -2,6 +2,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.dates as md
 import modules.database as db
+import os
 
 class GraphTraffic:
 
@@ -14,9 +15,14 @@ class GraphTraffic:
 
 		for intdev in interface:
 
-			self.filename = "static/graphs/{}".format(intdev[1])
+			dir_path = os.path.dirname(os.path.realpath(__file__))
+
+			#self.filename = "static/graphs/{}".format(intdev[1])
+			self.returnfilename = "static/graphs/{}".format(intdev[1])
+			self.filename = "{}/../static/graphs/{}.png".format(dir_path,intdev[1])
+
 			self.interface = "tap{}".format(intdev[1])
-			self.filenames.append(self.filename)
+			self.filenames.append(self.returnfilename)
 			
 			row = []
 			row = self.db.getTrafficData(self.interface)
