@@ -215,7 +215,7 @@ class VPS:
     def getIntVPS(self,id):
         return self.db.getIntVPS(id)
 
-    def updateVPS(self,name,description,ram,id):
+    def updateVPS(self,name,description,ram,id,path,startScript,stopScript):
         
         try:
             
@@ -232,8 +232,9 @@ class VPS:
 
         finally:
             sock.close()
-            return self.db.updateVPS(name,description,ram,id)
+            return self.db.updateVPS(name,description,ram,id,path,startScript,stopScript)
 
+        
         
     def createVPS(self,name,description,ram,con,image):
         return self.db.createVPS(name,description,ram,con,image)

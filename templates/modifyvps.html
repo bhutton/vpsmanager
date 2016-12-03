@@ -7,16 +7,29 @@
   <p class="success">Machine successfully updated</p>
 {% endif %}
 
-<a href="/">Return to list</a>
 
-<div><label>Status:</label> {{ status }}</div>
+<a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
+
+
+<!--<i class="material-icons">navigate_before</i>
+<i class="material-icons">chevron_left</i>
+<i class="material-icons">arrow_back</i>-->
+
+
+<!--<div><label>Status:</label> {{ status }}</div>-->
 
 {% for line in row %}
+
+      <a href="/viewVPS?id={{ line.0 }}" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>
 
       <form class="form-signin">
         <input type="hidden" name="id" value="{{ line.0 }}">
         
         <table width-="100%">
+          <tr>
+            <td><label>Status:</label></td>
+            <td>{{ status }}</td>
+          </tr>
           <tr>
             <td><label>Name:</label></td>
             <td colspan="2"><input type="text" name="name" value="{{ line.1 }}" required autofocus></td>
@@ -24,6 +37,18 @@
           <tr>
             <td><label>Description:</label></td>
             <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required></td>
+          </tr>
+          <tr>
+            <td><label>Path:</label></td>
+            <td colspan="2"><input type="text" name="path" value="{{ line.6 }}" required></td>
+          </tr>
+          <tr>
+            <td><label>Start Script:</label></td>
+            <td colspan="2"><input type="text" name="startscript" value="{{ line.7 }}" required></td>
+          </tr>
+          <tr>
+            <td><label>Stop Script:</label></td>
+            <td colspan="2"><input type="text" name="stopscript" value="{{ line.8 }}" required></td>
           </tr>
           <tr>
             <td><label>Memory:</label></td>
@@ -40,9 +65,10 @@
             <td><label>Disk:</label></td>
             <td>{{ (disk.4)|int }} GB</td>
             
-            <td>
+            <td align="right">
               {% if status == "Stopped" %}
-              <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a>
+               <a href="/editDevice?id={{ line.0 }}&disk={{ disk.0 }}"><i class="material-icons md-18">edit</i></a>
+              <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a>
               {% endif %}
             </td>
             
@@ -51,7 +77,7 @@
          
           <tr>
             <td><label>Disk:</label></td>
-            <td colspan="2"><a href="/addDisk?id={{ line.0 }}">Add Disk</a></td>
+            <td colspan="2" align="right"><a href="/addDisk?id={{ line.0 }}"><i class="material-icons md-18">add</i></a></td>
           </tr>
           
 
@@ -59,16 +85,16 @@
           <tr>
             <td><label>Network:</label></td>
             <td>tap{{ dev.1 }} : {{ dev.3 }}</td>
-            <td>
+            <td align="right">
             {% if status == "Stopped" %}
-              <a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')">Delete</a></td>
+              <a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a></td>
             {% endif %}
           </tr>
           {% endfor %}
           <tr>
             <td><label>Network:</label></td>
             
-            <td colspan="2"><a href="/addNetwork?id={{ line.0 }}">Add Device</a></td>
+            <td colspan="2" align="right"><a href="/addNetwork?id={{ line.0 }}"><i class="material-icons md-18">add</i></a></td>
           </tr>
           <tr>
             <td><label>Console:</label></td>

@@ -66,6 +66,11 @@ body {
   color: #000000;
 }
 
+
+.material-icons {
+  vertical-align: middle;
+}
+
 .error {
   clear: left;
   width: 100%;
@@ -120,6 +125,10 @@ tr:hover{
   width: 100%;
 }
 
+.controlPanel {
+  margin-bottom: 10px;
+}
+
 .Details {
   width: 100%;
 }
@@ -158,3 +167,8 @@ tr:hover{
   min-width: 100%;
 }
 
+.console {
+  border:none;
+  background: #fff;
+  color: #337ab7;
+}

@@ -150,8 +150,8 @@ class DB_VPS:
 		self.cursor.execute(get_int_vps,(id,))
 		return self.cursor.fetchall()
 
-	def updateVPS(self,name,description,ram,id):
-		self.cursor.execute("update vps set name=%s,description=%s,ram=%s where id=%s",(name,description,ram,id))
+	def updateVPS(self,name,description,ram,id,path,start_script,stop_script):
+		self.cursor.execute("update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s where id=%s",(name,description,ram,path,start_script,stop_script,id))
 		self.row = self.cursor.fetchall()
 
 		self.conn.commit()

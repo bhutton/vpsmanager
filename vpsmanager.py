@@ -31,6 +31,7 @@ app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
 
 
 os.environ['LD_LIBRARY_PATH'] = Config.get('Global','gccpath')
+hostAddress = Config.get('VPS','host')
 
 
 ## Unit Test Functions
@@ -244,19 +245,24 @@ def startVPS():
         active 	= '/'
         title 	= 'Modify VPS'
 
-        vps         = modules.vps.VPS()
-        received    = vps.ctrlVPS(id,'start')
-        row         = vps.getIndVPS(id)
+        vps = modules.vps.VPS()
+        vps.ctrlVPS(id,'start')
+
+
+        #received    = vps.ctrlVPS(id,'start')
+        
+        """row         = vps.getIndVPS(id)
         disks       = vps.getDisks(id)
         device      = vps.getIntVPS(id)
         status      = vps.getStatus(id)
         graph       = modules.graph.GraphTraffic()
-        file        = graph.genGraph(device)
+        file        = graph.genGraph(device)"""
 
-        active  = '/'
-        title   = 'View VPS'
+        #active  = '/'
+        #title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        #return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        return redirect('/viewVPS?id=' + id)
     else:
         return redirect('/Login')
 
@@ -265,9 +271,13 @@ def stopVPS():
     if session.get('user'):
         id = request.args.get('id')
 
-        vps         = modules.vps.VPS()
-        received    = vps.ctrlVPS(id,'stop')
-        row         = vps.getIndVPS(id)
+        vps = modules.vps.VPS()
+        vps.ctrlVPS(id,'stop')        
+
+        #received    = vps.ctrlVPS(id,'stop')
+        
+
+        """row         = vps.getIndVPS(id)
         disks       = vps.getDisks(id)
         device      = vps.getIntVPS(id)
         status      = vps.getStatus(id)
@@ -275,9 +285,10 @@ def stopVPS():
         file        = graph.genGraph(device)
 
         active  = '/'
-        title   = 'View VPS'
+        title   = 'View VPS'"""
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        #return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        return redirect('/viewVPS?id=' + id)
 
     else:
         return redirect('/Login')
@@ -466,7 +477,12 @@ def restartConsole():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        #url :
+
+        #return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+
+
+        return redirect('/viewVPS?id=' + id)
     else:
         return redirect('/Login')
 
@@ -478,10 +494,13 @@ def updateVPS():
         name 			= request.form['name']
         description 	= request.form['description']
         ram 			= request.form['ram']
+        path            = request.form['path']
+        startScript     = request.form['startscript']
+        stopScript      = request.form['stopscript']
 
         vps = modules.vps.VPS()
         ram = vps.convertRAM(ram)
-        row = vps.updateVPS(name,description,ram,id)
+        row = vps.updateVPS(name,description,ram,id,path,startScript,stopScript)
         
         return id
     else:
@@ -555,4 +574,4 @@ def Login():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='localhost')

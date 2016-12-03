@@ -42,7 +42,7 @@
                         </td>
                         <td class="list"><a href="/viewVPS?id={{ line.0 }}">{{ line.1 }}</a></td>
                         <td class="list">{{ line.2 }}</td>
-                        <td class="{{ line.3 }}" align="center"><i class="material-icons md-18">power_settings_new</i></td>
+                        <td class="{{ line.3 }}" align="center"><a href="/viewVPS?id={{ line.0 }}" class="{{ line.3 }}"><i class="material-icons md-18">power_settings_new</i></a></td>
                         <td class="list" align="center"><a href="/modifyVPS?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
                         <a href="/deleteVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to delete this server?')"><i class="material-icons md-18">delete</i></a></td>
                     </tr>

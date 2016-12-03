@@ -1,11 +1,29 @@
 {% extends "base.html" %} 
 {% block content %}
 
-<p><a href="/">Return to list</a></p>
+<!--<p><a href="/">Return to list</a></p>-->
+
+<div class="controlPanel">
+  <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
+
 
   
 
 {% for line in row %}
+
+  <a href="/modifyVPS?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
+
+  {% if status == "Stopped" %}
+  <a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="icons"><i class="material-icons">play_arrow</i></a>
+
+  <!--<a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>-->
+  {% else %}
+  <!--<a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>-->
+
+  <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')"><i class="material-icons">stop</i></a>
+  {% endif %}
+  <button class="console" onclick="myFunction()" alt="Console"><i class="material-icons">video_label</i></button>
+</div>
       
 
 
@@ -35,19 +53,28 @@
         <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}
           {% endfor %}
         </div>
-        <div>
+        <!--<div>
           <label>Console:</label> 
-          <button onclick="myFunction()">Open Console</button>
+          <button class="console" onclick="myFunction()" onmouseover="mousePointer()"><i class="material-icons">video_label</i></button>
+          <a href="/restartConsole?id={{ line.0 }}"  class="icons"><i class="material-icons icons">replay</i></a>
         </div>
-        <div class="controls"><label>Controls:</label> <a href="/restartConsole?id={{ line.0 }}">Restart Console</a> | 
-          <a href="/startVPS?id={{ line.0 }}" onclick="loading();">Start VPS</a> | 
-          <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')">Stop VPS</a>
-        </div>
+        <div class="controls">
+          <label>Controls:</label>
+          <a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="icons"><i class="material-icons">play_arrow</i></a>
+          <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')"><i class="material-icons">stop</i></a>
+        </div>-->
           
 
           <script>
           function myFunction() {
-              window.open("http://diablo.enlight:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600");
+              window.location.href = "/restartConsole?id={{ line.0 }}";
+              
+              setTimeout('window.open("http://diablo.enlight:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600")', 5);
+          }
+
+          function mousePointer() {
+            document.getElementById("myP").style.cursor = "pointer";
+
           }
           </script>
        
