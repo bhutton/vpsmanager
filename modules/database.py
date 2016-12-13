@@ -145,13 +145,25 @@ class DB_VPS:
 		self.cursor.execute("select * from disk where vps_id=%s",(id,))
 		return self.cursor.fetchall()
 
+	def getDisk(self,id):
+		self.cursor.execute("select * from disk where id=%s", (id, ))
+		return self.cursor.fetchone()
+
+	def updateDisk(self,id,name):
+		self.cursor.execute("update disk set name=%s where id=%s", (name,id))
+
+		self.data = self.cursor.fetchone()
+		self.conn.commit()
+
+		return self.data
+
 	def getIntVPS(self,id):
 		get_int_vps = ("select interface.id,interface.device,interface.vps_id,bridge.device from interface,bridge where vps_id=%s and interface.bridge_id = bridge.id")
 		self.cursor.execute(get_int_vps,(id,))
 		return self.cursor.fetchall()
 
-	def updateVPS(self,name,description,ram,id,path,start_script,stop_script):
-		self.cursor.execute("update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s where id=%s",(name,description,ram,path,start_script,stop_script,id))
+	def updateVPS(self,name,description,ram,id,path,start_script,stop_script,image):
+		self.cursor.execute("update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s,image=%s where id=%s",(name,description,ram,path,start_script,stop_script,image,id))
 		self.row = self.cursor.fetchall()
 
 		self.conn.commit()

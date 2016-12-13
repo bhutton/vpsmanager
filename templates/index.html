@@ -4,6 +4,7 @@
 {% if vpsadded == "yes" %}
         <p class="success">VPS Added Successfully</p>
 {% endif %}
+        <div class="{{ delstatus }}">{{ message }}</div>
 
 
         <nav>
@@ -14,8 +15,6 @@
 
         <div class="row marketing">
         
-            <div class="{{ delstatus }}">{{ message }}</div>
-
             {% if row %}
             <table width="100%">
                 <thead>

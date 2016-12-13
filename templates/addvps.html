@@ -1,7 +1,7 @@
 {% extends "base.html" %} 
 {% block content %}
 
-      <a href="/">Return to list</a>
+      <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
 
       <form name="vps" class="form-signin">
         
@@ -49,6 +49,18 @@
                 <option>{{ brid.1 }}</option>
             {% endfor %}
               </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Create Disk:</label></td>
+            <td>
+              <input type="checkbox" name=createDisk checked>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Create Path:</label></td>
+            <td>
+              <input type="checkbox" name=createPath checked>
             </td>
           </tr>
         </table>

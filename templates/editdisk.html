@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+{% block content %}
+
+
+
+      <form class="form-signin">
+        <input type="hidden" name="id" value="{{ id }}">
+        <table>
+          <tr>
+            <td><label>Name:</label></td>
+            <td><input type="text" name="name" value="{{ disk.1 }}" required autofocus></td>
+          </tr>
+          <tr>
+            <td><label>Size:</label></td>
+            <td>{{ disk.4 }} GB</td>
+          </tr>
+        </table>
+
+        <input type="hidden" name="disk_id" value="{{ disk.0 }}">
+        
+        <button id="btnUpdateDisk" class="btn btn-lg btn-primary btn-block" type="button">Update</button>
+      </form>
+
+
+      
+{% endblock %}

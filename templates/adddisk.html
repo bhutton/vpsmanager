@@ -1,6 +1,8 @@
 {% extends "base.html" %} 
 {% block content %}
 
+      <a href="/modifyVPS?id={{ id }}"><i class="material-icons md-18">keyboard_backspace</i></a>
+
       <form class="form-signin">
         <input type="hidden" name="id" value="{{ id }}">
         <table>
@@ -19,6 +21,12 @@
                 <option>30GB</option>
                 <option>40GB</option>
               </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Create Disk:</label></td>
+            <td>
+              <input type="checkbox" name=createDisk checked>
             </td>
           </tr>
         </table>

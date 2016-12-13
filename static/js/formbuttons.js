@@ -65,6 +65,21 @@ $(function(){
         });
     });
 
+    $('#btnUpdateDisk').click(function(){
+        
+        $.ajax({
+            url: '/updateDisk',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response){
+                window.location.href = "/modifyVPS?id=" + response + "&updated=yes";
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    });
+
     $('#btnCreateNetwork').click(function(){
         
         $.ajax({
@@ -112,7 +127,7 @@ $(function(){
         });
     });
 
-     $('#btnUpdateUser').click(function(){
+    $('#btnUpdateUser').click(function(){
         
         $.ajax({
             url: '/updateUser',
@@ -131,4 +146,5 @@ $(function(){
             }
         });
     });
+
 });

@@ -1,5 +1,6 @@
 import socket, modules.database, time, ConfigParser
 import os 
+import re 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -10,6 +11,7 @@ min_console = Config.get('VPS','minconsole')
 min_device = Config.get('VPS','mindevice')
 HOST = str(Config.get('VPS','host'))
 PORT = int(Config.get('VPS','port'))
+PassString = Config.get('Global','PassString')
 
 class VPS:
 
@@ -88,7 +90,7 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",updatevps\n")
+            sock.sendall(PassString + "," + self.data + ",updatevps\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -112,7 +114,7 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",updatevps\n")
+            sock.sendall(PassString + "," + self.data + ",updatevps\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -136,7 +138,7 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",updatevps\n")
+            sock.sendall(PassString + "," + self.data + ",updatevps\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -154,7 +156,7 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",status\n")
+            sock.sendall(PassString + "," + self.data + ",status\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -167,24 +169,131 @@ class VPS:
             sock.close()
             return received
 
-        
+    def takeSnapShot(self,vps_id):
 
-    def addDisk(self,name,size,order,vps_id):
-        
         try:
-            self.data = self.db.addDisk(name,size,order,vps_id)
-            
+            self.data = str(vps_id)
+
             # Create a socket (SOCK_STREAM means a TCP socket)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(str(self.data) + ",createdisk\n")
-
+            sock.sendall(PassString + "," + self.data + ",takeSnapshot\n")
+    
             # Receive data from the server and shut down
             received = sock.recv(1024)
+
         finally:
             sock.close()
+            return received
+
+    def restoreSnapShot(self,vps_id,snapshot):
+        try:
+            self.data = str(vps_id)
+            self.snapshot = str(snapshot)
+
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(PassString + "," + self.data + ",restoreSnapshot," + self.snapshot + "\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+        finally:
+            sock.close()
+            return received
+
+    def removeSnapShot(self,vps_id,snapshot):
+        try:
+            self.data = str(vps_id)
+            self.snapshot = str(snapshot)
+
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(PassString + "," + self.data + ",removeSnapshot," + self.snapshot + "\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+        finally:
+            sock.close()
+            return received
+
+
+    def listSnapShot(self,vps_id):
+
+        try:
+            self.data = str(vps_id)
+
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(PassString + "," + self.data + ",listSnapshot\n")
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+        finally:
+            sock.close()
+
+            received = received.split('\n')
+
+            item = [[]]
+            count = 0
+
+            num_items = len(received)
+
+            for line in received:
+
+                #item[count].append(re.split('\@ | \s',line))
+
+                items = line.split()
+
+
+                if (len(items) > 0):
+                    item[count].append(items)
+
+                #if (count < num_items-1): item.append([])
+
+                item.append([])
+
+                count += 1
+
+
+            return item
+
+
+        
+
+    def addDisk(self,name,size,order,vps_id,createDisk):
+        
+        try:
+            self.data = self.db.addDisk(name,size,order,vps_id)
+
+            if (createDisk == "on"):
+            
+                # Create a socket (SOCK_STREAM means a TCP socket)
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                # Connect to server and send data
+                sock.connect((HOST, PORT))
+                sock.sendall(PassString + "," + str(self.data) + ",createdisk\n")
+
+                # Receive data from the server and shut down
+                received = sock.recv(1024)
+        finally:
+            if (createDisk == "on"):
+                sock.close()
+
             return self.data
 
 
@@ -199,7 +308,7 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(str(id) + ",deletedisk\n")
+            sock.sendall(PassString + "," + str(id) + ",deletedisk\n")
 
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -211,13 +320,19 @@ class VPS:
     def getDisks(self,id):
         return self.db.getDisks(id)
 
+    def getDisk(self,id):
+        return self.db.getDisk(id)
+
+    def updateDisk(self,id,name):
+        return self.db.updateDisk(id,name)
 
     def getIntVPS(self,id):
         return self.db.getIntVPS(id)
 
-    def updateVPS(self,name,description,ram,id,path,startScript,stopScript):
+    def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
         
         try:
+            output = self.db.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
             
             self.data = str(id)
             # Create a socket (SOCK_STREAM means a TCP socket)
@@ -225,21 +340,23 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",updatevps\n")
+            sock.sendall(PassString + "," + self.data + ",updatevps\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
 
         finally:
             sock.close()
-            return self.db.updateVPS(name,description,ram,id,path,startScript,stopScript)
+
+            return output
+            
 
         
         
     def createVPS(self,name,description,ram,con,image):
         return self.db.createVPS(name,description,ram,con,image)
 
-    def createDisk(self,name,order,disk,vps_id):
+    def createDisk(self,name,order,disk,vps_id,createDisk,createPath):
         
         try:
         
@@ -247,18 +364,21 @@ class VPS:
 
             self.data = str(vps_id)
 
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if (createPath == "on"):
 
+                # Create a socket (SOCK_STREAM means a TCP socket)
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            
+                # Connect to server and send data
+                sock.connect((HOST, PORT))
+                sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
         
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(self.data + ",createvps\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
+                # Receive data from the server and shut down
+                received = sock.recv(1024)
         finally:
-            sock.close()
+            if (createPath == "on"):
+                sock.close()
         
         return "created"
 
@@ -281,7 +401,7 @@ class VPS:
             
                 # Connect to server and send data
                 sock.connect((HOST, PORT))
-                sock.sendall(data + ",delete\n")
+                sock.sendall(PassString + "," + data + ",delete\n")
         
                 # Receive data from the server and shut down
                 received = sock.recv(1024)
@@ -307,7 +427,7 @@ class VPS:
         try:
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(data + ",restartConsole\n")
+            sock.sendall(PassString + "," + data + ",restartConsole\n")
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
@@ -325,7 +445,7 @@ class VPS:
         try:
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(data + "," + command + "\n")
+            sock.sendall(PassString + "," + data + "," + command + "\n")
         
             # Receive data from the server and shut down
             received = sock.recv(1024)

@@ -9,3 +9,5 @@ python2.7.core
 static/.DS_Store
 static/._.DS_Store
 virtualenv
+templates/._editdisk.html
+templates/._snapshotmanager.html

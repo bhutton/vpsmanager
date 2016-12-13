@@ -21,6 +21,7 @@
 {% for line in row %}
 
       <a href="/viewVPS?id={{ line.0 }}" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>
+      <a href="/snapShot?id={{ line.0 }}"><i class="material-icons">camera_enhance</i></a>
 
       <form class="form-signin">
         <input type="hidden" name="id" value="{{ line.0 }}">
@@ -28,7 +29,7 @@
         <table width-="100%">
           <tr>
             <td><label>Status:</label></td>
-            <td>{{ status }}</td>
+            <td colspan="2">{{ status }}</td>
           </tr>
           <tr>
             <td><label>Name:</label></td>
@@ -37,6 +38,15 @@
           <tr>
             <td><label>Description:</label></td>
             <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required></td>
+          </tr>
+          <tr>
+            <td><label>Image:</label></td>
+            <td><select name=image>
+                <option value="1" {% if line.5 == 1%} selected {% endif %}>FreeBSD</option>
+                <option value="2" {% if line.5 == 2%} selected {% endif %}>Ubuntu</option>
+                <option value="3" {% if line.5 == 3%} selected {% endif %}>Centos</option>
+              </select>
+            </td>
           </tr>
           <tr>
             <td><label>Path:</label></td>
@@ -63,11 +73,12 @@
           {% for disk in disks %}
           <tr>
             <td><label>Disk:</label></td>
-            <td>{{ (disk.4)|int }} GB</td>
+            <td>{{ (disk.4)|int }} GB ({{ disk.1 }})</td>
+
             
             <td align="right">
               {% if status == "Stopped" %}
-               <a href="/editDevice?id={{ line.0 }}&disk={{ disk.0 }}"><i class="material-icons md-18">edit</i></a>
+               <a href="/editDisk?id={{ line.0 }}&disk={{ disk.0 }}"><i class="material-icons md-18">edit</i></a>
               <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a>
               {% endif %}
             </td>
