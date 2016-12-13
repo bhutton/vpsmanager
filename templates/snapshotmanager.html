@@ -27,7 +27,16 @@
 
 	{% for item in row %}
 
-		
+		{% if item.0 == "no" %}
+
+			<p>No snapshots available</p>
+
+		{% elif item.0 == "cannot" %}
+
+			<p>Snapshot not available</p>
+
+		{% else %}
+
 			{% if item.0 == "NAME" %}
 	 	
         
@@ -55,7 +64,8 @@
         		
         	</tr>
     		{% endif %}
-    	
+    	{% endif %}
+
 	{% endfor %}
 
 		
