@@ -20,7 +20,15 @@
 
 <div class="row marketing">
 
+	<form action="/takeSnapShot" method="get">
+		<input type="test" name="snapshotName">
+		<input type="submit" value="Snapshot">
+		<input type="hidden" name="id" value="{{ line.0 }}">
+	</form>
+
 {% for row in snapshots %}
+
+
 
 
 	

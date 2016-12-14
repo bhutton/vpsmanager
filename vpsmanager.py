@@ -493,13 +493,14 @@ def snapShot():
     else:
         return redirect('/Login')
 
-@app.route("/takeSnapShot")
+@app.route("/takeSnapShot",methods=['POST','GET'])
 def takeSnapShot():
     if session.get('user'):
         id = request.args.get('id')
+        snapshotName = request.args.get('snapshotName')
 
         vps     = modules.vps.VPS()
-        vps.takeSnapShot(id)
+        vps.takeSnapShot(id,snapshotName)
         
         prefport = ShellInABoxPref
 
