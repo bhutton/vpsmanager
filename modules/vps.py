@@ -180,7 +180,6 @@ class VPS:
 
             # Connect to server and send data
             sock.connect((HOST, PORT))
-            #sock.sendall(PassString + "," + self.data + ",takeSnapshot\n")
             sock.sendall(PassString + "," + self.data + ",takeSnapshot," + self.snapshot + "\n")
     
             # Receive data from the server and shut down
@@ -374,7 +373,9 @@ class VPS:
             
                 # Connect to server and send data
                 sock.connect((HOST, PORT))
+                sock.settimeout(2048)
                 sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
+                #sock.sendall(PassString + "," + self.data + ",copydisk," + createDisk + "\n")
         
                 # Receive data from the server and shut down
                 received = sock.recv(1024)
