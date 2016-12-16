@@ -59,7 +59,6 @@ class VPS:
 
         if (self.console == None):
             self.console = min_console
-            #self.console = "test"
         else:
             self.console = int(self.console) + 1
 
@@ -82,8 +81,7 @@ class VPS:
         
         self.db.addDevice(device,vps_id,bridge_id)
 
-        """try:
-            
+        try:
             self.data = str(vps_id)
             # Create a socket (SOCK_STREAM means a TCP socket)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -99,9 +97,10 @@ class VPS:
                 status = "Running"
             else:
                 status = "Stopped"
+
         finally:
             sock.close()
-            return received"""
+            return received
 
     def addDeviceUpdate(self,device,vps_id,bridge_id):
         self.db.addDevice(device,vps_id,bridge_id)
