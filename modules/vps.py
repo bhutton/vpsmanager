@@ -160,13 +160,33 @@ class VPS:
             # Receive data from the server and shut down
             received = sock.recv(1024)
 
-            if (len(received) > 0):
-                status = "Running"
-            else:
-                status = "Stopped"
         finally:
             sock.close()
             return received
+
+
+    def connectServer(self,cmd):
+        try:
+            self.data = cmd
+
+            # Create a socket (SOCK_STREAM means a TCP socket)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect to server and send data
+            sock.connect((HOST, PORT))
+            sock.sendall(self.data)
+    
+            # Receive data from the server and shut down
+            received = sock.recv(1024)
+
+        finally:
+            sock.close()
+            return received
+
+
+
+    def getNetworkInterfaceStatus(self,vps_id):
+        return self.connectServer(PassString + "," + str(vps_id) + ",netStatus\n")
 
     def takeSnapShot(self,vps_id,snapshotName):
 
@@ -327,7 +347,33 @@ class VPS:
         return self.db.updateDisk(id,name)
 
     def getIntVPS(self,id):
-        return self.db.getIntVPS(id)
+        row = self.db.getIntVPS(id)
+        
+        row2 = [[]]
+
+        index = 0
+        #num_items = len(row)
+
+        for line in row:
+
+            tap = line[1]
+            bridge = line[3]
+
+            row2[index].append(line[0])
+            row2[index].append(tap)     # interfaces
+
+            row2[index].append(line[2])
+            row2[index].append(bridge)
+
+            row2[index].append(self.getNetworkInterfaceStatus(tap))
+
+            row2.append([])
+
+            index+=1
+
+        row2.pop()
+
+        return row2
 
     def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
         
@@ -349,12 +395,11 @@ class VPS:
             sock.close()
 
             return output
-            
-
         
         
     def createVPS(self,name,description,ram,con,image):
         return self.db.createVPS(name,description,ram,con,image)
+
 
     def createDisk(self,name,order,disk,vps_id,createDisk,createPath):
         
@@ -374,8 +419,7 @@ class VPS:
                 sock.connect((HOST, PORT))
                 sock.settimeout(2048)
                 sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
-                #sock.sendall(PassString + "," + self.data + ",copydisk," + createDisk + "\n")
-        
+                
                 # Receive data from the server and shut down
                 received = sock.recv(1024)
         finally:
@@ -383,8 +427,6 @@ class VPS:
                 sock.close()
         
         return "created"
-
-    #def deleteDisk(self,vps_id,disk_id):
 
 
     def delVPS(self,id):
@@ -399,7 +441,6 @@ class VPS:
 
                 # Create a socket (SOCK_STREAM means a TCP socket)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
             
                 # Connect to server and send data
                 sock.connect((HOST, PORT))
@@ -415,9 +456,8 @@ class VPS:
         else:
             return ("error","Error, VPS must be stopped before Deleting it!")
 
-
-
         return "success"
+
 
     def restartConsole(self,id):
 
@@ -436,6 +476,7 @@ class VPS:
         finally:
             sock.close()
             return "success"
+
 
     def ctrlVPS(self,id,command):
         data = str(id)
@@ -457,12 +498,14 @@ class VPS:
             if (command == "start"): time.sleep(1)
             return received
 
+
     def convertRAM(self,ram):
         if (ram == "512MB"): ram = 512
         elif (ram == "1GB"): ram = 1024
         elif (ram == "2GB"): ram = 2048
 
         return ram
+
 
     def convertDisk(self,disk):
         if (disk == "20GB"):   disk = 20

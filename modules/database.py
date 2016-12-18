@@ -115,9 +115,9 @@ class DB_VPS:
 
 	def delNetwork(self,id):
 		self.cursor.execute("delete from interface where id=%s",(id,))
-		self.data = self.cursor.fetchone()
+		#self.data = self.cursor.fetchone()
 		self.conn.commit()
-		return self.data
+		return "deleted"
 
 	def addDisk(self,name,size,order,vps_id):
 		add_disk = ("insert into disk (name,size,ord,vps_id) values (%s,%s,%s,%s)")

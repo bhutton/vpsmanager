@@ -1,13 +1,8 @@
 {% extends "base.html" %} 
 {% block content %}
 
-<!--<p><a href="/">Return to list</a></p>-->
-
 <div class="controlPanel">
   <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
-
-
-  
 
 {% for line in row %}
 
@@ -15,85 +10,61 @@
 
   {% if status == "Stopped" %}
   <a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="icons"><i class="material-icons">play_arrow</i></a>
-
-  <!--<a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>-->
   {% else %}
-  <!--<a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>-->
-
   <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')"><i class="material-icons">stop</i></a>
   {% endif %}
   <a href="/snapShot?id={{ line.0 }}"><i class="material-icons">camera_enhance</i></a>
   <button class="console" onclick="myFunction()" alt="Console"><i class="material-icons">video_label</i></button>
 </div>
       
+<div class="Details">
+  <div class="vpsDetails">  
 
-
-
-      <div class="Details">
-        <div class="vpsDetails">  
-
-        <div><label>Name:</label> {{ line.1 }}</div>
-        <div><label>Status:</label> {{ status }}</div>
-        <div><label>Description:</label> {{ line.2 }}</div>
-        <div><label>Image:</label> 
-            {% if line.5 == 1 %}FreeBSD
-            {% elif line.5 == 2 %}Ubuntu
-            {% elif line.5 == 3 %}Centos
-            {% endif %}
-        <div><label>Memory:</label>
-                {% if line.3 == 512 %}512MB{% endif %}
-                {% if line.3 == 1024 %}1GB{% endif %}
-                {% if line.3 == 2048 %}2GB{% endif %}
-            
-          {% for disk in disks %}
-        </div>
-        <div><label>Disk:</label> {{ (disk.4)|int }} GB
-          {% endfor %}
-          {% for dev in device %}
-        </div>
-        <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}
-          {% endfor %}
-        </div>
-        <!--<div>
-          <label>Console:</label> 
-          <button class="console" onclick="myFunction()" onmouseover="mousePointer()"><i class="material-icons">video_label</i></button>
-          <a href="/restartConsole?id={{ line.0 }}"  class="icons"><i class="material-icons icons">replay</i></a>
-        </div>
-        <div class="controls">
-          <label>Controls:</label>
-          <a href="/startVPS?id={{ line.0 }}" onclick="loading();" class="icons"><i class="material-icons">play_arrow</i></a>
-          <a href="/stopVPS?id={{ line.0 }}" onclick="return confirm('Are you sure you want to stop this server?')"><i class="material-icons">stop</i></a>
-        </div>-->
-          
-
-          <script>
-          function myFunction() {
-              window.location.href = "/restartConsole?id={{ line.0 }}";
-              
-              setTimeout('window.open("http://diablo.enlight:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600")', 5);
-          }
-
-          function mousePointer() {
-            document.getElementById("myP").style.cursor = "pointer";
-
-          }
-          </script>
-       
-        </div>
-      </div>
+  <div><label>Name:</label> {{ line.1 }}</div>
+  <div><label>Status:</label> {{ status }}</div>
+  <div><label>Description:</label> {{ line.2 }}</div>
+  <div><label>Image:</label> 
+    {% if line.5 == 1 %}FreeBSD
+    {% elif line.5 == 2 %}Ubuntu
+    {% elif line.5 == 3 %}Centos
+    {% endif %}
+  <div><label>Memory:</label>
+    {% if line.3 == 512 %}512MB{% endif %}
+    {% if line.3 == 1024 %}1GB{% endif %}
+    {% if line.3 == 2048 %}2GB{% endif %}
+    
+    {% for disk in disks %}
+  </div>
+  <div><label>Disk:</label> {{ (disk.4)|int }} GB
+    {% endfor %}
+    {% for dev in device %}
+  </div>
+  <div><label>Network:</label> tap{{ dev.1 }} -> bridge{{ dev.3 }}
+      {% if dev.4 == "UP" %}
+    <a href="/stopInterface?id={{ dev.1 }}&vps_id={{ line.0 }}" class="Running"><i class="material-icons">arrow_drop_up</i></a>
+      {% else %}
+    <a href="/startInterface?id={{ dev.1 }}&vps_id={{ line.0 }}" class="Stopped"><i class="material-icons">arrow_drop_down</i></a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  
+  <script>
+    function myFunction() {
+      window.location.href = "/restartConsole?id={{ line.0 }}";
       
-        <div class="trafficGraph">
-          {% for filename in file %}
-          <img src="{{ filename }}.png" class="trafficGraph"">
-          {% endfor %}
-        </div>
-     </div>
+      setTimeout('window.open("{{ rootPath }}:{{ prefport }}{{ line.0 }}/shell", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=800,height=600")', 5);
+    }
+  </script>
+ 
+  </div>
+</div>
 
+  <div class="trafficGraph">
+    {% for filename in file %}
+    <img src="{{ filename }}.png" class="trafficGraph"">
+    {% endfor %}
+  </div>
+</div>
 
 {% endfor %}
-  
-
-
-
-      
 {% endblock %}

@@ -28,6 +28,7 @@ Config = ConfigParser.ConfigParser()
 Config.read("{}/configuration.cfg".format(dir_path))
 PassString = Config.get('Global','PassString')
 ShellInABoxPref = Config.get('Global','shell_in_a_box_pref')
+RootPath = Config.get('Global','RootPath')
 app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
 
 
@@ -244,7 +245,7 @@ def startVPS():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'start')
+        vps.ctrlVPS(id,'startNetwork')
 
         return redirect('/viewVPS?id=' + id)
     else:
@@ -256,12 +257,39 @@ def stopVPS():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'stop')        
+        vps.ctrlVPS(id,'stopNetwork')        
 
         return redirect('/viewVPS?id=' + id)
 
     else:
         return redirect('/Login')
+
+@app.route("/startInterface")
+def startInterface():
+    if session.get('user'):
+        id = request.args.get('id')
+        vps_id = request.args.get('vps_id')
+
+        vps = modules.vps.VPS()
+        vps.ctrlVPS(id,'netStart')
+
+        return redirect('/viewVPS?id=' + vps_id)
+    else:
+        return redirect('/Login')
+
+@app.route("/stopInterface")
+def stopInterface():
+    if session.get('user'):
+        id = request.args.get('id')
+        vps_id = request.args.get('vps_id')
+
+        vps = modules.vps.VPS()
+        vps.ctrlVPS(id,'netStop')
+
+        return redirect('/viewVPS?id=' + vps_id)
+    else:
+        return redirect('/Login')
+
 
 @app.route("/AddVPS")
 def AddVPS():
@@ -371,7 +399,7 @@ def delNetwork():
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
 
-        del_network = ("delete from interface where id=%s")
+        #del_network = ("delete from interface where id=%s")
 
         network = modules.vps.VPS()
         data = network.delNetwork(id,vps_id)
@@ -461,14 +489,16 @@ def viewVPS():
         status  = vps.getStatus(id)
         graph   = modules.graph.GraphTraffic()
         file    = graph.genGraph(device)
+        #devstatus = vps.getNetworkInterfaceStatus(id)
 
         prefport = ShellInABoxPref
+        rootPath = RootPath
 
 
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
+        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file, rootPath=rootPath)
     else:
         return redirect('/Login')
 
