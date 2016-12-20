@@ -6,6 +6,8 @@
 
 {% for line in row %}
 
+  {% if not status == "Installing" %}
+
   <a href="/modifyVPS?id={{ line.0 }}"><i class="material-icons md-18">edit</i></a>
 
   {% if status == "Stopped" %}
@@ -15,6 +17,8 @@
   {% endif %}
   <a href="/snapShot?id={{ line.0 }}"><i class="material-icons">camera_enhance</i></a>
   <button class="console" onclick="myFunction()" alt="Console"><i class="material-icons">video_label</i></button>
+
+  {% endif %}
 </div>
       
 <div class="Details">

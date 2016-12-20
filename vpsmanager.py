@@ -245,7 +245,7 @@ def startVPS():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'startNetwork')
+        vps.ctrlVPS(id,'start')
 
         return redirect('/viewVPS?id=' + id)
     else:
@@ -257,7 +257,7 @@ def stopVPS():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'stopNetwork')        
+        vps.ctrlVPS(id,'stop')        
 
         return redirect('/viewVPS?id=' + id)
 
@@ -698,7 +698,8 @@ def deleteVPS():
 
         row = vps.getVPS()
 
-        return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
+        #return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
+        return redirect('/')
     else:
         return redirect('/Login')        
 

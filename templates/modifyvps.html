@@ -7,8 +7,9 @@
   <p class="success">Machine successfully updated</p>
 {% endif %}
 
+  <div class="controlPanel">
 
-<a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
+  <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
 
 
 <!--<i class="material-icons">navigate_before</i>
@@ -22,100 +23,129 @@
 
       <a href="/viewVPS?id={{ line.0 }}" class="{{ status }}"><i class="material-icons">power_settings_new</i></a>
       <a href="/snapShot?id={{ line.0 }}"><i class="material-icons">camera_enhance</i></a>
+    </div>
 
-      <form class="form-signin">
+    <div>
+      <form>
         <input type="hidden" name="id" value="{{ line.0 }}">
-        
-        <table width-="100%">
-          <tr>
-            <td><label>Status:</label></td>
-            <td colspan="2">{{ status }}</td>
-          </tr>
-          <tr>
-            <td><label>Name:</label></td>
-            <td colspan="2"><input type="text" name="name" value="{{ line.1 }}" required autofocus></td>
-          </tr>
-          <tr>
-            <td><label>Description:</label></td>
-            <td colspan="2"><input type="text" name="description" value="{{ line.2 }}" required></td>
-          </tr>
-          <tr>
-            <td><label>Image:</label></td>
-            <td><select name=image>
-                <option value="1" {% if line.5 == 1%} selected {% endif %}>FreeBSD</option>
-                <option value="2" {% if line.5 == 2%} selected {% endif %}>Ubuntu</option>
-                <option value="3" {% if line.5 == 3%} selected {% endif %}>Centos</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Path:</label></td>
-            <td colspan="2"><input type="text" name="path" value="{{ line.6 }}" required></td>
-          </tr>
-          <tr>
-            <td><label>Start Script:</label></td>
-            <td colspan="2"><input type="text" name="startscript" value="{{ line.7 }}" required></td>
-          </tr>
-          <tr>
-            <td><label>Stop Script:</label></td>
-            <td colspan="2"><input type="text" name="stopscript" value="{{ line.8 }}" required></td>
-          </tr>
-          <tr>
-            <td><label>Memory:</label></td>
-            <td colspan="2"><select name=ram>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Status</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">{{ status }}</p>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <div class="col-sm-10">
+            <input type="text" id="name" class="form-control" name="name" value="{{ line.1 }}" required  placeholder="name">
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="description" class="col-sm-2 col-form-label">Description</label>
+            <div class="col-sm-10">
+              <input type="text" id="description" class="form-control" name="description" value="{{ line.2 }}" required placeholder="Description">
+            </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="image" class="col-sm-2 col-form-label">Image</label>
+          <div class="col-sm-10">
+            <select name="image" id="image" class="form-control-static mb-0">
+              <option value="1" {% if line.5 == 1%} selected {% endif %}>FreeBSD</option>
+              <option value="2" {% if line.5 == 2%} selected {% endif %}>Ubuntu</option>
+              <option value="3" {% if line.5 == 3%} selected {% endif %}>Centos</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="path" class="col-sm-2 col-form-label">Path</label>
+            <div class="col-sm-10">
+              <input type="text" id="path" class="form-control" name="path" value="{{ line.6 }}" required placeholder="Path">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="startscript" class="col-sm-2 col-form-label">Start Script</label>
+            <div class="col-sm-10">
+              <input type="text" id="startscript" class="form-control" name="startscript" value="{{ line.7 }}" placeholder="Start Script">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="stopscript" class="col-sm-2 col-form-label">Stop Script</label>
+            <div class="col-sm-10">
+              <input type="text" id="stopscript" class="form-control" name="stopscript" value="{{ line.8 }}" placeholder="description">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="ram" class="col-sm-2 col-form-label">Memory</label>
+            <div class="col-sm-10">
+              <select name="ram" id="ram" class="form-control-static mb-0">
                 <option {% if line.3 == 512 %} selected {% endif %}>512MB</option>
                 <option {% if line.3 == 1024 %} selected {% endif %}>1GB</option>
                 <option {% if line.3 == 2048 %} selected {% endif %}>2GB</option>
               </select>
-            </td>
-          </tr>
-          
-          {% for disk in disks %}
-          <tr>
-            <td><label>Disk:</label></td>
-            <td>{{ (disk.4)|int }} GB ({{ disk.1 }})</td>
+            </div>
+        </div>
 
-            
-            <td align="right">
-              {% if status == "Stopped" %}
-               <a href="/editDisk?id={{ line.0 }}&disk={{ disk.0 }}"><i class="material-icons md-18">edit</i></a>
-              <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a>
-              {% endif %}
-            </td>
-            
-          </tr>
-          {% endfor %}
-         
-          <tr>
-            <td><label>Disk:</label></td>
-            <td colspan="2" align="right"><a href="/addDisk?id={{ line.0 }}"><i class="material-icons md-18">add</i></a></td>
-          </tr>
+        {% for disk in disks %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Disk</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">
+            {{ (disk.4)|int }} GB ({{ disk.1 }})
+            {% if status == "Stopped" %}
+            <a href="/editDisk?id={{ line.0 }}&disk={{ disk.0 }}"><i class="material-icons md-18">edit</i></a>
+            <a href="/deleteDisk?id={{ disk.0 }}&vps_id={{ line.0 }}&updated=yes"  onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a>
+            {% endif %}          
+            </p>
+          </div>
           
+        </div>
+        {% endfor %}
+       
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Disk</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">
+              <a href="/addDisk?id={{ line.0 }}" class="form-control-static mb-0"><i class="material-icons md-18">add</i></a>
+            </p>
+          </div>
+        </div>
 
-          {% for dev in device %}
-          <tr>
-            <td><label>Network:</label></td>
-            <td>tap{{ dev.1 }} : {{ dev.3 }}</td>
-            <td align="right">
+
+        {% for dev in device %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Network</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">tap{{ dev.1 }} : {{ dev.3 }}
             {% if status == "Stopped" %}
               <a href="/delNetwork?id={{ dev.0 }}&vps_id={{ line.0 }}&updated=yes" onclick="return confirm('Are you sure you want to delete this disk?')"><i class="material-icons md-18">delete</i></a></td>
             {% endif %}
-          </tr>
-          {% endfor %}
-          <tr>
-            <td><label>Network:</label></td>
-            
-            <td colspan="2" align="right"><a href="/addNetwork?id={{ line.0 }}"><i class="material-icons md-18">add</i></a></td>
-          </tr>
-          <tr>
-            <td><label>Console:</label></td>
-            <td colspan="2">{{ line.4 }}</td>
-          </tr>
-          
-        </table>
-        
+            </p>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Network</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">
+              <a href="/addDisk?id={{ line.0 }}"><i class="material-icons md-18">add</i></a>
+            </p>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">Console</label>
+          <div class="col-sm-10">
+            <p class="form-control-static mb-0">{{ line.4 }}</p>
+          </div>
+        </div>
+
         <button id="btnUpdateVPS" class="btn btn-lg btn-primary btn-block" type="button">Update</button>
+
       </form>
+    </div>
 
 {% endfor %}
       
