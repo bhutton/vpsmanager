@@ -2,29 +2,54 @@
 
 {% block content %}
       <h1>{% if error != None %}{{error}}{% endif %}</h1>
-      <div class="jumbotron">
+      <div class="container">
 
-        <form class="form-signin" onsubmit="return checkForm(this);">
-        <input type="hidden" name="id" value="{{ row.0 }}">
-        <label for="inputName" class="sr-only">Name</label>
-        <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" value="{{ row.1 }}" required autofocus>
-        <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" value="{{ row.2 }}" required autofocus>
-        <!--<label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="currPassword" id="CurrPassword" class="form-control" placeholder="Current Password" required>-->
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="newPassword" id="txtNewPassword" class="form-control" placeholder="New Password" required>
-        
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="repPassword" id="txtConfirmPassword" class="form-control" placeholder="New Password Again" required>
-        <div class="registrationFormAlert" id="divCheckPasswordMatch"></div>
+        <form onsubmit="return checkForm(this);" class="form-horizontal">
+          
+          <input type="hidden" name="id" value="{{ row.0 }}">
+          
+          <div class="form-group row">
+            <label for="inputName" class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-7">
+              <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Name" value="{{ row.1 }}" required>
+            </div>
+          </div>
 
-        
-        <button id="btnUpdateUser" class="btn btn-lg btn-primary btn-block" type="button">Update User</button>
-      </form>
+          <div class="form-group row">
+            <label for="inputEmail" class="col-sm-3 control-label">Email address</label>
+            <div class="col-sm-7">
+              <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" value="{{ row.2 }}" required>
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-7">
+              <input type="password" name="newPassword" id="txtNewPassword" class="form-control" placeholder="New Password" required>
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-7">
+              <input type="password" name="repPassword" id="txtConfirmPassword" class="form-control" placeholder="New Password Again" required>
+            </div>
+          </div>
+
+          <div class="registrationFormAlert" id="divCheckPasswordMatch"></div>
+
+          <div class="clearfix visible-xs"></div>
+
+          <div class="form-group row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-7">
+              <button id="btnUpdateUser" type="submit" class="btn btn-primary">Update User</button>
+            </div>
+          </div>
+
+        </form>
       </div>
     
-
       <script type='text/javascript'>
       $(function() {
           $("#txtConfirmPassword").keyup(function() {

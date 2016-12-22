@@ -163,6 +163,7 @@ tr:hover{
 .trafficGraph img {
   width: 100%;
   object-fit: contain;
+  float: right;
 }
 
 .trafficGraph p {
