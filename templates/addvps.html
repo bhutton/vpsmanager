@@ -1,76 +1,99 @@
 {% extends "base.html" %} 
 {% block content %}
 
-      <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
+    <a href="/"><i class="material-icons md-18">keyboard_backspace</i></a>
 
-      <form name="vps" class="form-signin">
-        
-        <table>
-          <tr>
-            <td><label>Name:</label></td>
-            <td><input type="text" name="name" required autofocus onchange="return validateVPSName()">
-          </tr>
-          <tr>
-            <td><label>Description:</label></td>
-            <td><input type="text" name="description" required onchange="return validateVPSDescription()"></td>
-          </tr>
-          <tr>
-            <td><label>Image:</label></td>
-            <td><select name=image>
-                <option value="1">FreeBSD</option>
-                <option value="2">Ubuntu</option>
-                <option value="3">Centos</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Memory:</label></td>
-            <td><select name=ram>
+    <div class="container">
+
+      <form name="vps" class="form-horizontal">
+
+        <div class="form-group row">
+          <label for="name" class="col-sm-4 control-label">Name</label>
+          <div class="col-sm-7">
+            <input type="text" name="name" class="form-control" required autofocus onchange="return validateVPSName()">
+            <p id="valName"></p></td>
+          </div>
+          
+        </div>
+
+        <div class="form-group row">
+          <label for="description" class="col-sm-4 control-label">Description</label>
+          <div class="col-sm-7">
+            <input type="text" name="description" class="form-control" required onchange="return validateVPSDescription()"></td>
+            <p id="valDescription"></p></td>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="image" class="col-sm-4 control-label">Image</label>
+          <div class="col-sm-7">
+            <select name="image" class="form-control">
+              <option value="1">FreeBSD</option>
+              <option value="2">Ubuntu</option>
+              <option value="3">Centos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="ram" class="col-sm-4 control-label">Memory</label>
+          <div class="col-sm-7">
+            <select name="ram" class="form-control">
                 <option>512MB</option>
                 <option>1GB</option>
                 <option>2GB</option>
               </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Disk:</label></td>
-            <td><select name=disk>
-                <option>20GB</option>
-                <option>30GB</option>
-                <option>40GB</option>
-              </select>
-            </td>
-            <!-- <td><input type="text" name="disk" required></td> -->
-          </tr>
-          <tr>
-            <td><label>Bridge:</label></td>
-            <td><select name=bridge>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="disk" class="col-sm-4 control-label">Disk</label>
+          <div class="col-sm-7">
+            <select name="disk" class="form-control">
+              <option>20GB</option>
+              <option>30GB</option>
+              <option>40GB</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="bridge" class="col-sm-4 control-label">Bridge</label>
+          <div class="col-sm-7">
+            <select name="bridge" class="form-control">
             {% for brid in bridge %}
                 <option>{{ brid.1 }}</option>
             {% endfor %}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Create Disk:</label></td>
-            <td>
-              <input type="checkbox" name=createDisk checked>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Create Path:</label></td>
-            <td>
-              <input type="checkbox" name=createPath checked>
-            </td>
-          </tr>
-        </table>
+            </select>
+          </div>
+        </div>
 
-        <p id="valName"></p></td>
-        <p id="valDescription"></p></td>
+        <div class="form-group row">
+          <label for="createDisk" class="col-sm-4 control-label">Create Disk</label>
+          <div class="col-sm-7">
+            <input type="checkbox" name="createDisk" class="form-control" checked>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="createPath" class="col-sm-4 control-label">Create Path</label>
+          <div class="col-sm-7">
+            <input type="checkbox" name="createPath" class="form-control" checked>
+          </div>
+        </div>
+        
         
         <!--<button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button" onclick="loading();">Create</button>-->
-        <button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button">Create</button>
+        <!--<button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button">Create</button>-->
+
+        <div class="form-group row">
+            <div class="col-sm-4"></div>
+          <div class="col-sm-7">
+            <button id="btnCreateVPS" class="btn btn-lg btn-primary btn-block" type="button">Create VPS</button>
+          </div>
+        </div>
       </form>
+    </div>
 
       
 {% endblock %}

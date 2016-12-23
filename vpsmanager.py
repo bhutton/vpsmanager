@@ -21,7 +21,10 @@ app.secret_key = 'why would I tell you my secret key?'
 
 menu = ([['/','Home'],
          ['/UserManagement','User Management'],
-         ['/Logout','Logout']])
+         ['/Logout','Profile']])
+
+menuProfile = ([['/modifyUser?id=','Account'],
+                ['/Logout','Logout']])
 
 # Get VPS configurations from configuration.cfg
 Config = ConfigParser.ConfigParser()
@@ -93,7 +96,7 @@ def main():
 
         active = '/'
 
-        return render_template('index.html', menu=menu, active=active, row=row, vpsadded=vpsadded)
+        return render_template('index.html', menu=menu, user=session.get('user'), menuProfile=menuProfile, active=active, row=row, vpsadded=vpsadded)
     else:
         return redirect('/Login')
 
@@ -136,7 +139,7 @@ def userManagement():
 
         active = '/UserManagement'
 
-        return render_template('usermanagement.html', menu=menu, active=active, row=row, status=status)
+        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, status=status)
     else:
         return redirect('/Login')
 
@@ -149,7 +152,7 @@ def addUser():
     	active = "/UserManagement"
     	title = "Add User"
 
-    	return render_template('createUser.html', menu=menu, title=title, active=active)
+    	return render_template('createUser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active)
     else:
         return redirect('/Login')
 
@@ -190,7 +193,7 @@ def deleteUser():
         active = "/UserManagement"
         title = "Add User"
 
-        return render_template('usermanagement.html', menu=menu, active=active, row=row, userdeleted=userdeleted)
+        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, userdeleted=userdeleted)
 
     else:
         return redirect('/Login')
@@ -209,7 +212,7 @@ def modifyUser():
         active = "/UserManagement"
         title = "Modify User"
 
-        return render_template('modifyuser.html', menu=menu, active=active, row=row, title=title, error=error)
+        return render_template('modifyuser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, title=title, error=error)
     else:
         return redirect('/Login')
 
@@ -299,7 +302,7 @@ def AddVPS():
 
         active 	= '/AddVPS'
         title 	= 'Add VPS'
-        return render_template('addvps.html', menu=menu, title=title, active=active, bridge=bridge)
+        return render_template('addvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, bridge=bridge)
     else:
         return redirect('/Login')
 
@@ -311,7 +314,7 @@ def addDisk():
         active = ""
         title = "Add Disk"
 
-        return render_template('adddisk.html', menu=menu, title=title, active=active, id=id)
+        return render_template('adddisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id)
     else:
         return redirect('/Login')
 
@@ -327,7 +330,7 @@ def editDisk():
         active = ""
         title = "Edit Disk"
 
-        return render_template('editdisk.html', menu=menu, title=title, active=active, id=id, disk=disk)
+        return render_template('editdisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id, disk=disk)
     else:
         return redirect('/Login')
 
@@ -366,7 +369,7 @@ def addNetwork():
         active = ""
         title = "Add Network Interface"
 
-        return render_template('addnetwork.html', menu=menu, title=title, bridge=bridge, id=id)
+        return render_template('addnetwork.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, bridge=bridge, id=id)
     else:
         return redirect('/Login')
 
@@ -473,7 +476,7 @@ def modifyVPS():
         active 	= '/'
         title 	= 'Modify VPS'
 
-        return render_template('modifyvps.html', menu=menu, title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
+        return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
     else:
         return redirect('/Login')
 
@@ -498,7 +501,7 @@ def viewVPS():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file, rootPath=rootPath)
+        return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file, rootPath=rootPath)
     else:
         return redirect('/Login')
 
@@ -519,7 +522,7 @@ def snapShot():
         active  = '/'
         title   = 'Snapshot Manager'
 
-        return render_template('snapshotmanager.html', menu=menu, title=title, active=active, row=row, status=status, snapshots=snapshots)
+        return render_template('snapshotmanager.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, status=status, snapshots=snapshots)
     else:
         return redirect('/Login')
 
@@ -707,7 +710,7 @@ def deleteVPS():
 def Login():
     active 	= '/Login'
     title 	= 'Login'
-    return render_template('login.html', menu=menu, title=title, active=active)
+    return render_template('login.html', menu=menu, menuProfile=menuProfile, title=title, active=active)
 
 
 if __name__ == "__main__":
