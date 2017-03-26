@@ -147,9 +147,10 @@ tr:hover{
   width: 100%;
 }
 .vpsDetails {
-  width: 50% !important;
-  float: left;
-  clear: left;
+  //width: 50% !important;
+  //float: left;
+  //clear: left;
+  margin-top: 20px;
 }
 
 .trafficGraph {

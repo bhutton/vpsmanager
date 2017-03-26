@@ -691,18 +691,18 @@ def createVPS():
 @app.route("/deleteVPS")
 def deleteVPS():
     if session.get('user'):
-        active  = '/'
-        title   = 'VPS Manager'
+        active = '/'
+        title = 'VPS Manager'
 
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        delstatus,message = vps.delVPS(id)
+        delstatus, message = vps.delVPS(id)
 
         row = vps.getVPS()
 
-        #return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
-        return redirect('/')
+        return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
+        #return redirect('/')
     else:
         return redirect('/Login')        
 

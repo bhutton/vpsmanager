@@ -456,7 +456,7 @@ class VPS:
         else:
             return ("error","Error, VPS must be stopped before Deleting it!")
 
-        return "success"
+        #return ("error", "VPS")
 
 
     def restartConsole(self,id):
