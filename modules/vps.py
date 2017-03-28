@@ -22,7 +22,6 @@ class VPS:
         row = self.db.getVPS()
 
         if (len(row) > 0):
-
             row2 = [[]]
 
             count = 0
@@ -44,6 +43,8 @@ class VPS:
                 count+=1
 
             return row2
+
+        return "hello"
         
     def getIndVPS(self,id):
         return self.db.getIndVPS(id)

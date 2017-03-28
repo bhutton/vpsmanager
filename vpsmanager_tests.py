@@ -2,6 +2,11 @@ import os
 import vpsmanager
 import unittest
 import tempfile
+import modules.vps
+import modules.database
+from contextlib import contextmanager
+from flask import appcontext_pushed, g
+from mock import patch
 
 class VpsmanagerTestCase(unittest.TestCase):
 
@@ -20,15 +25,48 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/', follow_redirects=True)
         assert 'Login' in rv.data
 
-    def test_homepage_authenticated(self):
+    @contextmanager
+    def user_set(app, user):
+        def handler(sender, **kwargs):
+            g.user = user
+
+        with appcontext_pushed.connected_to(handler, app):
+            yield
+
+
+    @patch('modules.database.DB_VPS')
+    def test_list_vm(self, exec_function_db_mock):
+        modules.database.DB_VPS.mysql.connector.connect.return_value = None
+        #modules.database.DB_VPS.getVPS().return_value = ('abc','def')
+
+
+        self.db = modules.database.DB_VPS()
+        self.db.getVPS().return_value = ('on', 'def', 'ghi', 'jkl')
+
+        vps = modules.vps.VPS()
+
+        row = vps.getVPS()
+
+
+
+        #rv = self.app.get("/", follow_redirects=True)
+        #assert 'User Successfully Deleted' in rv.data
+
+        print(row)
+
+
+
+
+    '''def test_homepage_authenticated(self):
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
         rv = self.app.get('/', follow_redirects=True)
-        assert 'VPS Manager' in rv.data
+        assert 'VPS Manager' in rv.data'''
 
-    def test_login_page(self):
+    '''def test_login_page(self):
         rv = self.app.get('/Login', follow_redirects=False)
-        assert 'Login' in rv.data
+        assert 'Login' in rv.data'''
 
+    @patch('modules.xyz')
     def add_vps(self, name, description, ram, disk, bridge, image):
         return self.app.post('/createVPS', data=dict(
             name=name,
@@ -39,6 +77,7 @@ class VpsmanagerTestCase(unittest.TestCase):
             image=1
         ), follow_redirects=True)
 
+    '''
     def login(self, username, password):
         return self.app.post('/validateLogin', data=dict(
             username=username,
@@ -69,6 +108,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.logout()
         assert 'Login' in rv.data
 
+    @mock.patch('vpsmanager')
     def test_add_delete_vps(self):
 
         # Create VPS and return ID
@@ -102,7 +142,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
         assert 'Stopped' in rv.data
 
-
+'''
 
 if __name__ == '__main__':
     unittest.main()
