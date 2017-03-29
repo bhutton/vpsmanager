@@ -4,9 +4,10 @@ import unittest
 import tempfile
 import modules.vps
 import modules.database
+import modules.user
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
-import mock
+from mock import patch
 
 class VpsmanagerTestCase(unittest.TestCase):
 
@@ -33,9 +34,19 @@ class VpsmanagerTestCase(unittest.TestCase):
         with appcontext_pushed.connected_to(handler, app):
             yield
 
+    @patch('modules.user.User')
+    def login(self, exec_function_get_user):
+        username = 'bhutton'
+        password = 'my password'
+        exec_function_get_user().checkUsername().return_value = "abc"
 
-    @mock.patch('modules.vps.VPS')
-    @mock.patch('modules.database.DB_VPS')
+        return self.app.post('/validateLogin', data=dict(
+            username=username,
+            password=password
+        ), follow_redirects=True)
+
+    @patch('modules.vps.VPS')
+    @patch('modules.database.DB_VPS')
     def test_list_vm(self, exec_function_get_status, exec_function_db_mock):
         exec_function_db_mock().getVPS.return_value = ('on', 'def', 'ghi', 'jkl')
         exec_function_get_status().getStatus.return_value = "Running"
@@ -45,7 +56,25 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         assert (len(row) > 0)
 
+    def test_add_vps(self):
+        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+        rv = self.app.get('/', follow_redirects=True)
+        assert 'VPS Manager' in rv.data
 
+
+        rv = self.app.post('/createVPS', data=dict(
+            name="test",
+            description="this is a test",
+            ram=1,
+            disk=10,
+            bridge=1,
+            image=1
+        ), follow_redirects=True)
+
+        print (rv.data)
+
+        #assert b'<Response streamed [200 OK]>' in rv
+        #self.assertEqual(rv.code, 200)
 
 
     '''def test_homepage_authenticated(self):
@@ -57,16 +86,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data'''
 
-    @mock.patch('modules.xyz')
-    def add_vps(self, name, description, ram, disk, bridge, image):
-        return self.app.post('/createVPS', data=dict(
-            name=name,
-            description=description,
-            ram=ram,
-            disk=disk,
-            bridge=bridge,
-            image=1
-        ), follow_redirects=True)
 
     '''
     def login(self, username, password):
