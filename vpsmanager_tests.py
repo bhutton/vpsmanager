@@ -6,7 +6,7 @@ import modules.vps
 import modules.database
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
-from mock import patch
+import mock
 
 class VpsmanagerTestCase(unittest.TestCase):
 
@@ -34,25 +34,16 @@ class VpsmanagerTestCase(unittest.TestCase):
             yield
 
 
-    @patch('modules.database.DB_VPS')
-    def test_list_vm(self, exec_function_db_mock):
-        modules.database.DB_VPS.mysql.connector.connect.return_value = None
-        #modules.database.DB_VPS.getVPS().return_value = ('abc','def')
-
-
-        self.db = modules.database.DB_VPS()
-        self.db.getVPS().return_value = ('on', 'def', 'ghi', 'jkl')
+    @mock.patch('modules.vps.VPS')
+    @mock.patch('modules.database.DB_VPS')
+    def test_list_vm(self, exec_function_get_status, exec_function_db_mock):
+        exec_function_db_mock().getVPS.return_value = ('on', 'def', 'ghi', 'jkl')
+        exec_function_get_status().getStatus.return_value = "Running"
 
         vps = modules.vps.VPS()
-
         row = vps.getVPS()
 
-
-
-        #rv = self.app.get("/", follow_redirects=True)
-        #assert 'User Successfully Deleted' in rv.data
-
-        print(row)
+        assert (len(row) > 0)
 
 
 
@@ -66,7 +57,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data'''
 
-    @patch('modules.xyz')
+    @mock.patch('modules.xyz')
     def add_vps(self, name, description, ram, disk, bridge, image):
         return self.app.post('/createVPS', data=dict(
             name=name,

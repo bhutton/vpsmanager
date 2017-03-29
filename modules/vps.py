@@ -43,8 +43,6 @@ class VPS:
                 count+=1
 
             return row2
-
-        return "hello"
         
     def getIndVPS(self,id):
         return self.db.getIndVPS(id)
