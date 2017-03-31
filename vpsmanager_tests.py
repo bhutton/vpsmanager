@@ -8,6 +8,9 @@ import modules.user
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch
+import mock
+from werkzeug import generate_password_hash, check_password_hash
+import werkzeug
 
 class VpsmanagerTestCase(unittest.TestCase):
 
@@ -34,16 +37,30 @@ class VpsmanagerTestCase(unittest.TestCase):
         with appcontext_pushed.connected_to(handler, app):
             yield
 
+    @patch('modules.database.DB_VPS')
+    @patch('werkzeug.check_password_hash')
     @patch('modules.user.User')
-    def login(self, exec_function_get_user):
+    def login(self, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
         username = 'bhutton'
-        password = 'my password'
-        exec_function_get_user().checkUsername().return_value = "abc"
+        password = 'mypassword'
+        self.hashed_password = generate_password_hash(password)
+
+        werkzeug.check_password_hash().check_password_hash.return_value = True
+        exec_function_get_user().checkUsername.return_value = self.getUserAccount()
 
         return self.app.post('/validateLogin', data=dict(
             username=username,
             password=password
         ), follow_redirects=True)
+
+    def getUserAccount(self):
+        self.userdata = [[]]
+        self.userdata[0].append("bhutton")
+        self.userdata[0].append("def")
+        self.userdata[0].append("ghi")
+        self.userdata[0].append(self.hashed_password)
+
+        return self.userdata
 
     @patch('modules.vps.VPS')
     @patch('modules.database.DB_VPS')
@@ -51,15 +68,21 @@ class VpsmanagerTestCase(unittest.TestCase):
         exec_function_db_mock().getVPS.return_value = ('on', 'def', 'ghi', 'jkl')
         exec_function_get_status().getStatus.return_value = "Running"
 
+        modules.database.DB_VPS.getVPS.return_value = None
         vps = modules.vps.VPS()
         row = vps.getVPS()
 
         assert (len(row) > 0)
 
-    def test_add_vps(self):
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+    @patch('modules.vps.VPS')
+    def test_add_vps(self, exec_function_vps):
+        rv = self.login()
         rv = self.app.get('/', follow_redirects=True)
         assert 'VPS Manager' in rv.data
+
+        # add database mock
+
+        exec_function_vps().getVPS.return_value = {"fname": "/foo/bar"}
 
 
         rv = self.app.post('/createVPS', data=dict(
@@ -71,7 +94,7 @@ class VpsmanagerTestCase(unittest.TestCase):
             image=1
         ), follow_redirects=True)
 
-        print (rv.data)
+        #print (rv.data)
 
         #assert b'<Response streamed [200 OK]>' in rv
         #self.assertEqual(rv.code, 200)
