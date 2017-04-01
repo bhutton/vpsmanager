@@ -40,9 +40,9 @@ class VpsmanagerTestCase(unittest.TestCase):
     @patch('modules.database.DB_VPS')
     @patch('werkzeug.check_password_hash')
     @patch('modules.user.User')
-    def login(self, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
-        username = 'bhutton'
-        password = 'mypassword'
+    def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
+        #username = 'bhutton'
+        #password = 'mypassword'
         self.hashed_password = generate_password_hash(password)
 
         werkzeug.check_password_hash().check_password_hash.return_value = True
@@ -64,7 +64,7 @@ class VpsmanagerTestCase(unittest.TestCase):
 
     @patch('modules.vps.VPS')
     @patch('modules.database.DB_VPS')
-    def test_list_vm(self, exec_function_get_status, exec_function_db_mock):
+    def testListVM(self, exec_function_get_status, exec_function_db_mock):
         exec_function_db_mock().getVPS.return_value = ('on', 'def', 'ghi', 'jkl')
         exec_function_get_status().getStatus.return_value = "Running"
 
@@ -75,8 +75,8 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert (len(row) > 0)
 
     @patch('modules.vps.VPS')
-    def test_add_vps(self, exec_function_vps):
-        rv = self.login()
+    def addVPS(self, name, description, ram, disk, bridge, password, exec_function_vps):
+        rv = self.login('bhutton@abc.com','mypassword')
         rv = self.app.get('/', follow_redirects=True)
         assert 'VPS Manager' in rv.data
 
@@ -86,7 +86,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         exec_function_vps().createVPS.return_value = 123
 
 
-        rv = self.app.post('/createVPS', data=dict(
+        return self.app.post('/createVPS', data=dict(
             name="test",
             description="this is a test",
             ram=1,
@@ -95,38 +95,47 @@ class VpsmanagerTestCase(unittest.TestCase):
             image=1
         ), follow_redirects=True)
 
+        #return rv
+
         #print (rv.data)
 
         #assert b'<Response streamed [200 OK]>' in rv
         #self.assertEqual(rv.code, 200)
 
 
-    '''def test_homepage_authenticated(self):
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+    @mock.patch('modules.database.DB_VPS')
+    def testHomepageAuthenticated(self, exec_func_db):
+        modules.database.DB_VPS.getVPS.return_value = None
+
+        rv = self.login("myusername","mypassword")
         rv = self.app.get('/', follow_redirects=True)
-        assert 'VPS Manager' in rv.data'''
+        assert 'VPS Manager' in rv.data
 
-    '''def test_login_page(self):
+    def testLoginPage(self):
         rv = self.app.get('/Login', follow_redirects=False)
-        assert 'Login' in rv.data'''
+        assert 'Login' in rv.data
 
-
-    '''
-    def login(self, username, password):
+    @mock.patch('modules.database.DB_Users')
+    def testLogin(self, exec_func_db):
+        modules.database.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
-            username=username,
-            password=password
+            username='ben@benhutton.com.au',
+            password='my password'
         ), follow_redirects=True)
 
-    def add_user(self, username, email, password):
+
+
+    def testAddUser(self):
         return self.app.post('/createUser', data=dict(
-            inputName=username,
-            inputEmail=email,
-            inputPassword=password
+            inputName="Fred Bloggs",
+            inputEmail="fred@bloggs.com",
+            inputPassword="myawesomepassword"
         ), follow_redirects=True)
+
 
     def logout(self):
         return self.app.get('/Logout', follow_redirects=True)
+
 
     def test_login_logout(self):
 
@@ -135,26 +144,34 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert 'VPS Manager' in rv.data
 
         # Invalid Login
-        rv = self.login('adminx@test.com', 'default')
-        assert 'Wrong Email address or Password.' in rv.data
+        #rv = self.login('adminx@test.com', 'default')
+        #assert 'Wrong Email address or Password.' in rv.data
         
         # Logout
         rv = self.logout()
         assert 'Login' in rv.data
 
-    @mock.patch('vpsmanager')
-    def test_add_delete_vps(self):
+
+    #@mock.patch('vpsmanager')
+    def testAddVPS(self):
 
         # Create VPS and return ID
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-        rv = self.add_vps("UnitTest2","Unit Test","512MB","20GB","0","1")
+        self.login("ben@benhutton.com.au", "Lijnfe0912")
+        rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
+
         assert rv.data >= 0, 'VPS Successfully Created'
 
-        # Delete VPS created above
-        delete_cmd = "/deleteVPS?id=" + str(rv.data)
-        rv = self.app.get(delete_cmd, follow_redirects=True)
-        assert 'VPS Successfully Deleted' in rv.data
+    def testDeleteVPS(self):
 
+        # Create VPS and return ID
+        self.login("ben@benhutton.com.au", "Lijnfe0912")
+        # Delete VPS created above
+        #delete_cmd = "/deleteVPS?id=" + str(rv.data)
+        #rv = self.app.get(delete_cmd, follow_redirects=True)
+        #assert 'VPS Successfully Deleted' in rv.data
+
+
+    '''
     def test_add_delete_user(self):
         rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
         rv = self.add_user("Fred Bloggs","fred@bloggs.com","abc123")
