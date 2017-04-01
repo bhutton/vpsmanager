@@ -82,7 +82,8 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         # add database mock
 
-        exec_function_vps().getVPS.return_value = {"fname": "/foo/bar"}
+        exec_function_vps.getVPS.return_value = 123
+        exec_function_vps().createVPS.return_value = 123
 
 
         rv = self.app.post('/createVPS', data=dict(
