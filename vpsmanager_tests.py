@@ -166,8 +166,10 @@ class VpsmanagerTestCase(unittest.TestCase):
         # Create VPS and return ID
         self.login("ben@benhutton.com.au", "Lijnfe0912")
         # Delete VPS created above
-        #delete_cmd = "/deleteVPS?id=" + str(rv.data)
-        #rv = self.app.get(delete_cmd, follow_redirects=True)
+        rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
+
+        delete_cmd = "/deleteVPS?id=" + str(rv.data)
+        rv = self.app.get(delete_cmd, follow_redirects=True)
         #assert 'VPS Successfully Deleted' in rv.data
 
 
