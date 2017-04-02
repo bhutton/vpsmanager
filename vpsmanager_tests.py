@@ -95,14 +95,6 @@ class VpsmanagerTestCase(unittest.TestCase):
             image=1
         ), follow_redirects=True)
 
-        #return rv
-
-        #print (rv.data)
-
-        #assert b'<Response streamed [200 OK]>' in rv
-        #self.assertEqual(rv.code, 200)
-
-
     @mock.patch('modules.database.DB_VPS')
     def testHomepageAuthenticated(self, exec_func_db):
         modules.database.DB_VPS.getVPS.return_value = None
@@ -115,21 +107,21 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data
 
-    @mock.patch('modules.database.DB_Users')
+    '''@mock.patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
         modules.database.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
-            username='ben@benhutton.com.au',
-            password='my password'
+            username='usernmae',
+            password='password'
         ), follow_redirects=True)
+    '''
 
 
-
-    def testAddUser(self):
+    def addUser(self, username, email, password):
         return self.app.post('/createUser', data=dict(
-            inputName="Fred Bloggs",
-            inputEmail="fred@bloggs.com",
-            inputPassword="myawesomepassword"
+            inputName=username,
+            inputEmail=email,
+            inputPassword=password
         ), follow_redirects=True)
 
 
@@ -140,7 +132,7 @@ class VpsmanagerTestCase(unittest.TestCase):
     def test_login_logout(self):
 
         # Successful Login
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+        rv = self.login("username", "password")
         assert 'VPS Manager' in rv.data
 
         # Invalid Login
@@ -156,46 +148,67 @@ class VpsmanagerTestCase(unittest.TestCase):
     def testAddVPS(self):
 
         # Create VPS and return ID
-        self.login("ben@benhutton.com.au", "Lijnfe0912")
+        self.login("username", "password")
         rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
 
         assert rv.data >= 0, 'VPS Successfully Created'
 
-    def testDeleteVPS(self):
+    @patch('modules.vps.VPS')
+    def testDeleteVPS(self, exec_function_vps):
+
+        exec_function_vps().delVPS.return_value = "success","VPS Successfully Deleted"
 
         # Create VPS and return ID
-        self.login("ben@benhutton.com.au", "Lijnfe0912")
-        # Delete VPS created above
+        self.login("username", "password")
         rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
 
         delete_cmd = "/deleteVPS?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
-        #assert 'VPS Successfully Deleted' in rv.data
+        assert 'VPS Successfully Deleted' in rv.data
 
 
-    '''
+
     def test_add_delete_user(self):
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
-        rv = self.add_user("Fred Bloggs","fred@bloggs.com","abc123")
+        rv = self.login("username", "password")
+        rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
         assert rv.data >= 0, 'User Added Successfully'
 
+    def testDeleteUser(self):
+        rv = self.login("username", "password")
+        rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
         delete_cmd = "/deleteUser?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'User Successfully Deleted' in rv.data
 
-    def test_start_vps(self):
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+    @patch('modules.vps.VPS')
+    def test_start_vps(self, exec_func_vps):
+        rv = self.login("username", "password")
+        modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
+        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
         start_vps_cmd = "/startVPS?id=654"
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
-        assert 'Running' in rv.data
+        assert '/stopVPS' in rv.data
 
-    def test_stop_vps(self):
-        rv = self.login("ben@benhutton.com.au", "Lijnfe0912")
+    @patch('modules.vps.VPS')
+    def test_stop_vps(self, exec_func_vps):
+        rv = self.login("username", "password")
+        modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
+        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
+        modules.vps.VPS().getStatus.return_value = "Stopped"
+
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        assert 'Stopped' in rv.data
+        assert '/startVPS' in rv.data
+        
+    def getVPSData(self):
+        self.vpsdata = [[]]
+        self.vpsdata[0].append(123)
+        self.vpsdata[0].append("test")
+        self.vpsdata[0].append("this is a test")
+        self.vpsdata[0].append("FreeBSD")
+        self.vpsdata[0].append(512)
 
-'''
+        return self.vpsdata
 
 if __name__ == '__main__':
     unittest.main()

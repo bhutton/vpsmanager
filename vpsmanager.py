@@ -497,7 +497,6 @@ def viewVPS():
         prefport = ShellInABoxPref
         rootPath = RootPath
 
-
         active  = '/'
         title   = 'View VPS'
 
