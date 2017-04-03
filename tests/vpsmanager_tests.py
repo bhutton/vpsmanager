@@ -42,8 +42,6 @@ class VpsmanagerTestCase(unittest.TestCase):
     @patch('werkzeug.check_password_hash')
     @patch('modules.user.User')
     def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
-        #username = 'bhutton'
-        #password = 'mypassword'
         self.hashed_password = generate_password_hash(password)
 
         werkzeug.check_password_hash().check_password_hash.return_value = True
@@ -108,15 +106,13 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data
 
-    '''@mock.patch('modules.database.DB_Users')
+    @mock.patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
         modules.database.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
             username='usernmae',
             password='password'
         ), follow_redirects=True)
-    '''
-
 
     @mock.patch('modules.database.DB_Users')
     def addUser(self, username, email, password, exec_func_user):
