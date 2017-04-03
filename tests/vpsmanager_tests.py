@@ -5,6 +5,7 @@ import tempfile
 import modules.vps
 import modules.database
 import modules.user
+import modules.graph
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch
@@ -41,8 +42,6 @@ class VpsmanagerTestCase(unittest.TestCase):
     @patch('werkzeug.check_password_hash')
     @patch('modules.user.User')
     def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
-        #username = 'bhutton'
-        #password = 'mypassword'
         self.hashed_password = generate_password_hash(password)
 
         werkzeug.check_password_hash().check_password_hash.return_value = True
@@ -107,17 +106,18 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data
 
-    '''@mock.patch('modules.database.DB_Users')
+    @mock.patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
         modules.database.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
             username='usernmae',
             password='password'
         ), follow_redirects=True)
-    '''
 
+    @mock.patch('modules.database.DB_Users')
+    def addUser(self, username, email, password, exec_func_user):
 
-    def addUser(self, username, email, password):
+        modules.database.DB_Users().createUser.return_value = 1
         return self.app.post('/createUser', data=dict(
             inputName=username,
             inputEmail=email,
@@ -173,15 +173,21 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
         assert rv.data >= 0, 'User Added Successfully'
 
-    def testDeleteUser(self):
+    @mock.patch('modules.database.DB_Users')
+    def testDeleteUser(self, exec_func_db):
+        modules.database.DB_Users().deleteUser.return_value = ""
+
         rv = self.login("username", "password")
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
         delete_cmd = "/deleteUser?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'User Successfully Deleted' in rv.data
 
+    @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
-    def test_start_vps(self, exec_func_vps):
+    def test_start_vps(self, exec_func_vps, exec_func_graph):
+        modules.graph.GraphTraffic().return_value = "abc.txt"
+
         rv = self.login("username", "password")
         modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
@@ -189,8 +195,10 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
         assert '/stopVPS' in rv.data
 
+    @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
-    def test_stop_vps(self, exec_func_vps):
+    def test_stop_vps(self, exec_func_vps, exec_func_graph):
+        modules.graph.GraphTraffic().return_value = "abc.txt"
         rv = self.login("username", "password")
         modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
