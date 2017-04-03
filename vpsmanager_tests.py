@@ -202,7 +202,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         
     def getVPSData(self):
         self.vpsdata = [[]]
-        self.vpsdata[0].append(123)
+        self.vpsdata[0].append(1)
         self.vpsdata[0].append("test")
         self.vpsdata[0].append("this is a test")
         self.vpsdata[0].append("FreeBSD")
