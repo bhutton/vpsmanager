@@ -44,8 +44,12 @@ class VpsmanagerTestCase(unittest.TestCase):
     def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
         self.hashed_password = generate_password_hash(password)
 
-        werkzeug.check_password_hash().check_password_hash.return_value = True
-        exec_function_get_user().checkUsername.return_value = self.getUserAccount()
+        print("username = " + username)
+        print("password = " + password)
+
+        if (username == "username" and password == "password"):
+            exec_function_get_user().checkUsername.return_value \
+                = self.getUserAccount()
 
         return self.app.post('/validateLogin', data=dict(
             username=username,
@@ -136,8 +140,8 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert 'VPS Manager' in rv.data
 
         # Invalid Login
-        #rv = self.login('adminx@test.com', 'default')
-        #assert 'Wrong Email address or Password.' in rv.data
+        rv = self.login('adminx@test.com', 'default')
+        assert 'Wrong Email address or Password.' in rv.data
         
         # Logout
         rv = self.logout()
