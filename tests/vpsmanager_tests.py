@@ -44,9 +44,6 @@ class VpsmanagerTestCase(unittest.TestCase):
     def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
         self.hashed_password = generate_password_hash(password)
 
-        print("username = " + username)
-        print("password = " + password)
-
         if (username == "username" and password == "password"):
             exec_function_get_user().checkUsername.return_value \
                 = self.getUserAccount()
