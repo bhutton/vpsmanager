@@ -9,9 +9,7 @@ import modules.graph
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch
-import mock
-from werkzeug import generate_password_hash, check_password_hash
-import werkzeug
+from werkzeug import generate_password_hash
 
 class VpsmanagerTestCase(unittest.TestCase):
 
@@ -95,7 +93,7 @@ class VpsmanagerTestCase(unittest.TestCase):
             image=1
         ), follow_redirects=True)
 
-    @mock.patch('modules.database.DB_VPS')
+    @patch('modules.database.DB_VPS')
     def testHomepageAuthenticated(self, exec_func_db):
         modules.database.DB_VPS.getVPS.return_value = None
 
@@ -107,7 +105,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert 'Login' in rv.data
 
-    @mock.patch('modules.database.DB_Users')
+    @patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
         modules.database.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
@@ -115,7 +113,7 @@ class VpsmanagerTestCase(unittest.TestCase):
             password='password'
         ), follow_redirects=True)
 
-    @mock.patch('modules.database.DB_Users')
+    @patch('modules.database.DB_Users')
     def addUser(self, username, email, password, exec_func_user):
 
         modules.database.DB_Users().createUser.return_value = 1
@@ -145,7 +143,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert 'Login' in rv.data
 
 
-    #@mock.patch('vpsmanager')
+    #@patch('vpsmanager')
     def testAddVPS(self):
 
         # Create VPS and return ID
@@ -174,7 +172,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
         assert rv.data >= 0, 'User Added Successfully'
 
-    @mock.patch('modules.database.DB_Users')
+    @patch('modules.database.DB_Users')
     def testDeleteUser(self, exec_func_db):
         modules.database.DB_Users().deleteUser.return_value = ""
 
