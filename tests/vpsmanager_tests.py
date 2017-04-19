@@ -143,7 +143,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         assert 'Login' in rv.data
 
 
-    #@patch('vpsmanager')
     def testAddVPS(self):
 
         # Create VPS and return ID
@@ -165,8 +164,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'VPS Successfully Deleted' in rv.data
 
-
-
     def test_add_delete_user(self):
         rv = self.login("username", "password")
         rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
@@ -186,22 +183,24 @@ class VpsmanagerTestCase(unittest.TestCase):
     @patch('modules.vps.VPS')
     def test_start_vps(self, exec_func_vps, exec_func_graph):
         modules.graph.GraphTraffic().return_value = "abc.txt"
-
-        rv = self.login("username", "password")
         modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
+
         start_vps_cmd = "/startVPS?id=654"
+        rv = self.login("username", "password")
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
+
         assert '/stopVPS' in rv.data
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
     def test_stop_vps(self, exec_func_vps, exec_func_graph):
         modules.graph.GraphTraffic().return_value = "abc.txt"
-        rv = self.login("username", "password")
         modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
         modules.vps.VPS().getStatus.return_value = "Stopped"
+
+        rv = self.login("username", "password")
 
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
