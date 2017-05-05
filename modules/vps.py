@@ -449,11 +449,11 @@ class VPS:
 
                 # Create a socket (SOCK_STREAM means a TCP socket)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            
+
                 # Connect to server and send data
                 sock.connect((HOST, PORT))
                 sock.sendall(PassString + "," + data + ",delete\n")
-        
+
                 # Receive data from the server and shut down
                 received = sock.recv(1024)
             except:
@@ -461,10 +461,8 @@ class VPS:
             finally:
                 sock.close()
                 return ("success","VPS Successfully Deleted")
-        else:
-            return ("error","Error, VPS must be stopped before Deleting it!")
 
-        #return ("error", "VPS")
+        return ("error","Error, VPS must be stopped before Deleting it!")
 
 
     def restartConsole(self,id):
