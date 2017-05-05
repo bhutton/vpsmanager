@@ -2,7 +2,7 @@ import os
 import vpsmanager
 import unittest
 import tempfile
-import modules.vps
+import modules.vps as vps
 import modules.database
 import modules.user
 import modules.graph
@@ -213,11 +213,13 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         return self.vpsdata
 
-    @patch('flaskext.mysql.MySQL.connect')
-    def test_make_call_to_vpssvr(self, db_connect):
-        db_connect.return_value.connect.return_value = None
-        v = modules.vps.VPS()
-        assert v.make_call_to_vpssvr().status_code == 200
+    @patch('modules.database.DB_VPS')
+    def test_get_vps_status(self, exec_func_db):
+        exec_func_db.return_value = None
+        v = vps.VPS()
+        assert v.getStatus(1).status_code == 200
+        #rv = self.app.get('/status?id=1', follow_redirects=True)
+        #print(rv)
 
 if __name__ == '__main__':
     unittest.main()

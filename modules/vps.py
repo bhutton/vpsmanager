@@ -1,6 +1,8 @@
 import socket, modules.database, time, ConfigParser
 import os 
-import re 
+import re
+import base64
+import requests
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -12,6 +14,11 @@ min_device = Config.get('VPS','mindevice')
 HOST = str(Config.get('VPS','host'))
 PORT = int(Config.get('VPS','port'))
 PassString = Config.get('Global','PassString')
+vps_server = Config.get('vps_server','address')
+vps_username = Config.get('vps_server','username')
+vps_password = Config.get('vps_server','password')
+vps_get_status = Config.get('rest_calls','status')
+
 
 class VPS:
 
@@ -19,30 +26,30 @@ class VPS:
         self.db = modules.database.DB_VPS()
 
     def getVPS(self):
-        row = self.db.getVPS()
+        vpsList = self.db.getVPS()
 
-        if (len(row) > 0):
-            row2 = [[]]
+        if (len(vpsList) > 0):
+            vpsListWithStatus = [[]]
 
             count = 0
-            num_items = len(row)
+            num_items = len(vpsList)
 
-            for line in row:
+            for line in vpsList:
 
                 # Get running status of machine
                 status = self.getStatus(line[0])
 
-                row2[count].append(line[0])
-                row2[count].append(line[1])
-                row2[count].append(line[2])
-                row2[count].append(status)
-                row2[count].append(line[3])
+                vpsListWithStatus[count].append(line[0])
+                vpsListWithStatus[count].append(line[1])
+                vpsListWithStatus[count].append(line[2])
+                vpsListWithStatus[count].append(status)
+                vpsListWithStatus[count].append(line[3])
 
-                if (count < num_items-1): row2.append([])
+                if (count < num_items-1): vpsListWithStatus.append([])
 
                 count+=1
 
-            return row2
+            return vpsListWithStatus
         
     def getIndVPS(self,id):
         return self.db.getIndVPS(id)
@@ -146,7 +153,9 @@ class VPS:
             return received
 
     def getStatus(self,vps_id):
-        try:
+        return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
+
+        '''try:
             self.data = str(vps_id)
 
             # Create a socket (SOCK_STREAM means a TCP socket)
@@ -161,7 +170,7 @@ class VPS:
 
         finally:
             sock.close()
-            return received
+            return received'''
 
 
     def connectServer(self,cmd):
@@ -513,5 +522,20 @@ class VPS:
 
         return disk
 
+    def rest_api_call(self):
+        pass
 
-    
+    def open_with_auth(self, url, method, username, password):
+        headers = {
+            'Authorization': 'Basic %s' % base64.b64encode(b"miguel:python").decode("ascii")
+        }
+        return requests.get(url, headers=headers)
+
+    def make_call_to_vpssvr(self, path):
+        connection_string = vps_server + path
+        print(connection_string)
+        try:
+            return self.open_with_auth(connection_string,
+                              'GET', vps_username, vps_password)
+        except:
+            return "Error: was not able to connect"
