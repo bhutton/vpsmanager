@@ -142,8 +142,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.logout()
         assert 'Login' in rv.data
 
-
-    #@patch('vpsmanager')
     def testAddVPS(self):
 
         # Create VPS and return ID
@@ -164,8 +162,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         delete_cmd = "/deleteVPS?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert 'VPS Successfully Deleted' in rv.data
-
-
 
     def test_add_delete_user(self):
         rv = self.login("username", "password")
@@ -216,6 +212,12 @@ class VpsmanagerTestCase(unittest.TestCase):
         self.vpsdata[0].append(512)
 
         return self.vpsdata
+
+    @patch('flaskext.mysql.MySQL.connect')
+    def test_make_call_to_vpssvr(self, db_connect):
+        db_connect.return_value.connect.return_value = None
+        v = modules.vps.VPS()
+        assert v.make_call_to_vpssvr().status_code == 200
 
 if __name__ == '__main__':
     unittest.main()
