@@ -217,9 +217,7 @@ class VpsmanagerTestCase(unittest.TestCase):
     def test_get_vps_status(self, exec_func_db):
         exec_func_db.return_value = None
         v = vps.VPS()
-        assert v.getStatus(1).status_code == 200
-        #rv = self.app.get('/status?id=1', follow_redirects=True)
-        #print(rv)
+        assert v.getStatus(878).status_code == 200
 
 if __name__ == '__main__':
     unittest.main()

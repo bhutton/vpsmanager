@@ -155,24 +155,6 @@ class VPS:
     def getStatus(self,vps_id):
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
 
-        '''try:
-            self.data = str(vps_id)
-
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",status\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-
-        finally:
-            sock.close()
-            return received'''
-
-
     def connectServer(self,cmd):
         try:
             self.data = cmd
