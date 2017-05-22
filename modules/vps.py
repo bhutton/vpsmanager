@@ -1,4 +1,4 @@
-import socket, modules.database, time, ConfigParser
+import socket, modules.database, time, configparser
 import os 
 import re
 import base64
@@ -7,7 +7,7 @@ import requests
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Get VPS configurations from configuration.cfg
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
 min_console = Config.get('VPS','minconsole')
 min_device = Config.get('VPS','mindevice')

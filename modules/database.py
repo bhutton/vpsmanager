@@ -1,6 +1,6 @@
 from flask import Flask
 from flaskext.mysql import MySQL
-import ConfigParser
+import configparser
 import os
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 mysql = MySQL()
 
 # Get MySQL configurations from configuration.cfg
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
 app.config['MYSQL_DATABASE_USER']       = Config.get('Database','mysql_username')
 app.config['MYSQL_DATABASE_PASSWORD']   = Config.get('Database','mysql_password')

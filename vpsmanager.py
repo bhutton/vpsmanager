@@ -3,13 +3,20 @@ from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
 import modules.user
 import modules.graph
-import ConfigParser
+import configparser
 import os 
 
 from sqlite3 import dbapi2 as sqlite3
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+vps_configuration = configparser.ConfigParser()
+vps_configuration.read("{}/configuration.cfg".format(dir_path))
+
+host_address = vps_configuration.get('Global', 'host')
+debug_status = vps_configuration.get('Global', 'debug')
+server_port = int(vps_configuration.get('Global', 'port'))
+
 
 
 app = Flask(__name__)
@@ -27,7 +34,7 @@ menuProfile = ([['/modifyUser?id=','Account'],
                 ['/Logout','Logout']])
 
 # Get VPS configurations from configuration.cfg
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 Config.read("{}/configuration.cfg".format(dir_path))
 PassString = Config.get('Global','PassString')
 ShellInABoxPref = Config.get('Global','shell_in_a_box_pref')
@@ -178,7 +185,7 @@ def createUser():
 
 @app.route("/deleteUser")
 def deleteUser():
-    if session.get('user'):	
+    if session.get('user'):
         id = int(request.args.get('id'))
 
         users 	= modules.user.User()
@@ -713,4 +720,4 @@ def Login():
 
 
 if __name__ == "__main__":
-    app.run(host='localhost')
+    app.run(host=host_address, port=server_port)

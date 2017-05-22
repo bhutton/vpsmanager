@@ -24,9 +24,15 @@ class VpsmanagerTestCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(vpsmanager.app.config['DATABASE'])
 
+    def open_with_auth(self, url, method, username, password):
+        headers = {
+            'Authorization': 'Basic %s' % base64.b64encode(b"ben@benhutton.com.au:Lijnfe0912").decode("ascii")
+        }
+        return self.app.get(url, headers=headers)
+
     def test_homepage_unauthenticated(self):
         rv = self.app.get('/', follow_redirects=True)
-        assert 'Login' in rv.data
+        assert b'Login' in rv.data
 
     @contextmanager
     def user_set(app, user):
@@ -76,7 +82,7 @@ class VpsmanagerTestCase(unittest.TestCase):
     def addVPS(self, name, description, ram, disk, bridge, password, exec_function_vps):
         rv = self.login('bhutton@abc.com','mypassword')
         rv = self.app.get('/', follow_redirects=True)
-        assert 'VPS Manager' in rv.data
+        assert b'VPS Manager' in rv.data
 
         # add database mock
 
@@ -99,11 +105,11 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         rv = self.login("myusername","mypassword")
         rv = self.app.get('/', follow_redirects=True)
-        assert 'VPS Manager' in rv.data
+        assert b'VPS Manager' in rv.data
 
     def testLoginPage(self):
         rv = self.app.get('/Login', follow_redirects=False)
-        assert 'Login' in rv.data
+        assert b'Login' in rv.data
 
     @patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
@@ -132,15 +138,15 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         # Successful Login
         rv = self.login("username", "password")
-        assert 'VPS Manager' in rv.data
+        assert b'VPS Manager' in rv.data
 
         # Invalid Login
         rv = self.login('adminx@test.com', 'default')
-        assert 'Wrong Email address or Password.' in rv.data
+        assert b'Wrong Email address or Password.' in rv.data
         
         # Logout
         rv = self.logout()
-        assert 'Login' in rv.data
+        assert b'Login' in rv.data
 
     def testAddVPS(self):
 
@@ -148,7 +154,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         self.login("username", "password")
         rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
 
-        assert rv.data >= 0, 'VPS Successfully Created'
+        assert len(rv.data) > 0, 'VPS Successfully Created'
 
     @patch('modules.vps.VPS')
     def testDeleteVPS(self, exec_function_vps):
@@ -161,12 +167,12 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         delete_cmd = "/deleteVPS?id=" + str(rv.data)
         rv = self.app.get(delete_cmd, follow_redirects=True)
-        assert 'VPS Successfully Deleted' in rv.data
+        assert b'VPS Successfully Deleted' in rv.data
 
     def test_add_delete_user(self):
         rv = self.login("username", "password")
         rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
-        assert rv.data >= 0, 'User Added Successfully'
+        assert len(rv.data) > 0, 'User Added Successfully'
 
     @patch('modules.database.DB_Users')
     def testDeleteUser(self, exec_func_db):
@@ -174,9 +180,9 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         rv = self.login("username", "password")
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
-        delete_cmd = "/deleteUser?id=" + str(rv.data)
+        delete_cmd = "/deleteUser?id=" + str(int(rv.data))
         rv = self.app.get(delete_cmd, follow_redirects=True)
-        assert 'User Successfully Deleted' in rv.data
+        assert b'User Successfully Deleted' in rv.data
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
@@ -188,7 +194,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
         start_vps_cmd = "/startVPS?id=654"
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
-        assert '/stopVPS' in rv.data
+        assert b'/stopVPS' in rv.data
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
@@ -201,7 +207,7 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        assert '/startVPS' in rv.data
+        assert b'/startVPS' in rv.data
         
     def getVPSData(self):
         self.vpsdata = [[]]

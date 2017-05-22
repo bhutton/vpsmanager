@@ -25,5 +25,6 @@ class TestConnectivityToVPSServer(unittest.TestCase):
     def test_make_invalid_call(self):
         assert self.v.make_call_to_vpssvr('/vpssvr/api/v1.0/tasks/statu/1').status_code == 404
 
+
 if __name__ == '__main__':
     unittest.main()
