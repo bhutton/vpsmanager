@@ -24,12 +24,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(vpsmanager.app.config['DATABASE'])
 
-    def open_with_auth(self, url, method, username, password):
-        headers = {
-            'Authorization': 'Basic %s' % base64.b64encode(b"ben@benhutton.com.au:Lijnfe0912").decode("ascii")
-        }
-        return self.app.get(url, headers=headers)
-
     def test_homepage_unauthenticated(self):
         rv = self.app.get('/', follow_redirects=True)
         assert b'Login' in rv.data
