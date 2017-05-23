@@ -213,11 +213,15 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         return self.vpsdata
 
-    @patch('modules.database.DB_VPS')
-    def test_get_vps_status(self, exec_func_db):
-        exec_func_db.return_value = None
+    def test_get_vps_status(self):
         v = vps.VPS()
         assert v.getStatus(878).status_code == 200
+
+    @patch('modules.vps.VPS.make_call_to_vpssvr')
+    def test_delete_network_interface(self, mock_vps):
+        mock_vps.return_value = 'VPS 878 Updated\n'
+        v = vps.VPS()
+        assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
 
 if __name__ == '__main__':
     unittest.main()

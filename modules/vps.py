@@ -18,6 +18,8 @@ vps_server = Config.get('vps_server','address')
 vps_username = Config.get('vps_server','username')
 vps_password = Config.get('vps_server','password')
 vps_get_status = Config.get('rest_calls','status')
+vps_update_vps = Config.get('rest_calls','update_vps')
+vps_take_snapshot = Config.get('rest_calls','take_snapshot')
 
 
 class VPS:
@@ -35,14 +37,10 @@ class VPS:
             num_items = len(vpsList)
 
             for line in vpsList:
-
-                # Get running status of machine
-                status = self.getStatus(line[0])
-
                 vpsListWithStatus[count].append(line[0])
                 vpsListWithStatus[count].append(line[1])
                 vpsListWithStatus[count].append(line[2])
-                vpsListWithStatus[count].append(status)
+                vpsListWithStatus[count].append(self.getStatus(line[0]))
                 vpsListWithStatus[count].append(line[3])
 
                 if (count < num_items-1): vpsListWithStatus.append([])
@@ -132,30 +130,15 @@ class VPS:
             sock.close()
             return received
 
-    def delNetwork(self,id,vps_id):
+    def delete_network_interface(self, id, vps_id):
         self.db.delNetwork(id)
 
-        try:
-            
-            self.data = str(vps_id)
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",updatevps\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-
-        finally:
-            sock.close()
-            return received
+        return self.make_call_to_vpssvr(vps_update_vps + str(vps_id))
 
     def getStatus(self,vps_id):
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
 
-    def connectServer(self,cmd):
+    '''def connectServer(self,cmd):
         try:
             self.data = cmd
 
@@ -171,7 +154,7 @@ class VPS:
 
         finally:
             sock.close()
-            return received
+            return received'''
 
 
 
@@ -179,24 +162,9 @@ class VPS:
         return self.connectServer(PassString + "," + str(vps_id) + ",netStatus\n")
 
     def takeSnapShot(self,vps_id,snapshotName):
-
-        try:
-            self.data = str(vps_id)
-            self.snapshot = str(snapshotName)
-
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",takeSnapshot," + self.snapshot + "\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-
-        finally:
-            sock.close()
-            return received
+        return self.make_call_to_vpssvr(
+            vps_take_snapshot + str(vps_id) + '/' + snapshotName
+        )
 
     def restoreSnapShot(self,vps_id,snapshot):
         try:
