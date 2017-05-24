@@ -20,6 +20,7 @@ vps_password = Config.get('vps_server','password')
 vps_get_status = Config.get('rest_calls','status')
 vps_update_vps = Config.get('rest_calls','update_vps')
 vps_take_snapshot = Config.get('rest_calls','take_snapshot')
+vps_restore_snapshot = Config.get('rest_calls','restore_snapshot')
 
 
 class VPS:
@@ -159,31 +160,19 @@ class VPS:
 
 
     def getNetworkInterfaceStatus(self,vps_id):
-        return self.connectServer(PassString + "," + str(vps_id) + ",netStatus\n")
+        return self.connectServer(
+            PassString + "," + str(vps_id) + ",netStatus\n"
+        )
 
     def takeSnapShot(self,vps_id,snapshotName):
         return self.make_call_to_vpssvr(
             vps_take_snapshot + str(vps_id) + '/' + snapshotName
         )
 
-    def restoreSnapShot(self,vps_id,snapshot):
-        try:
-            self.data = str(vps_id)
-            self.snapshot = str(snapshot)
-
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",restoreSnapshot," + self.snapshot + "\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-
-        finally:
-            sock.close()
-            return received
+    def restoreSnapShot(self,vps_id,snapshotName):
+        return self.make_call_to_vpssvr(
+            vps_restore_snapshot + str(vps_id) + '/' + snapshotName
+        )
 
     def removeSnapShot(self,vps_id,snapshot):
         try:
