@@ -39,7 +39,7 @@ Config.read("{}/configuration.cfg".format(dir_path))
 PassString = Config.get('Global','PassString')
 ShellInABoxPref = Config.get('Global','shell_in_a_box_pref')
 RootPath = Config.get('Global','RootPath')
-app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
+app.config['MYSQL_DATABASE_USER'] = Config.get('Database','database_username')
 
 
 os.environ['LD_LIBRARY_PATH'] = Config.get('Global','gccpath')
