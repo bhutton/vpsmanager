@@ -36,10 +36,11 @@ class VpsmanagerTestCase(unittest.TestCase):
         with appcontext_pushed.connected_to(handler, app):
             yield
 
-    @patch('modules.database.DB_VPS')
-    @patch('werkzeug.check_password_hash')
     @patch('modules.user.User')
-    def login(self, username, password, exec_function_get_user, exec_function_check_password_hash, exec_function_db):
+    def login(self,
+              username,
+              password,
+              exec_function_get_user):
         self.hashed_password = generate_password_hash(password)
 
         if (username == "username" and password == "password"):
@@ -60,20 +61,31 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         return self.userdata
 
-    @patch('modules.vps.VPS')
-    @patch('modules.database.DB_VPS')
-    def testListVM(self, exec_function_get_status, exec_function_db_mock):
-        exec_function_db_mock().getVPS.return_value = ('on', 'def', 'ghi', 'jkl')
-        exec_function_get_status().getStatus.return_value = "Running"
+    #@patch('modules.vps.VPS')
+    #@patch('modules.database.DB_VPS')
+    def testListVM(self,
+                   #exec_function_get_status,
+                   #exec_function_db_mock
+                   ):
+        #exec_function_db_mock().getVPS.return_value = (
+        #    'on', 'def', 'ghi', 'jkl')
+        #exec_function_get_status().getStatus.return_value = "Running"
 
-        modules.database.DB_VPS.getVPS.return_value = None
+        #modules.database.DB_VPS.getVPS.return_value = None
         vps = modules.vps.VPS()
         row = vps.getVPS()
 
         assert (len(row) > 0)
 
     @patch('modules.vps.VPS')
-    def addVPS(self, name, description, ram, disk, bridge, password, exec_function_vps):
+    def addVPS(self,
+               name,
+               description,
+               ram,
+               disk,
+               bridge,
+               password,
+               exec_function_vps):
         rv = self.login('bhutton@abc.com','mypassword')
         rv = self.app.get('/', follow_redirects=True)
         assert b'VPS Manager' in rv.data

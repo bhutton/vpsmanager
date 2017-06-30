@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 import configparser
 import sqlite3 as sqlite
 import os
-from werkzeug import generate_password_hash, check_password_hash
+import sqlite3 as sqlite
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -15,10 +15,11 @@ mysql = MySQL()
 # Get MySQL configurations from configuration.cfg
 Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
-app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
-app.config['MYSQL_DATABASE_PASSWORD'] = Config.get('Database','mysql_password')
-app.config['MYSQL_DATABASE_DB'] = Config.get('Database','mysql_dbname')
-app.config['MYSQL_DATABASE_HOST'] = Config.get('Database','mysql_dbhost')
+app.config['MYSQL_DATABASE_USER']       = Config.get('Database','database_username')
+app.config['MYSQL_DATABASE_PASSWORD']   = Config.get('Database','database_password')
+app.config['MYSQL_DATABASE_DB']         = Config.get('Database','database_name')
+app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','database_host')
+app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','database_driver')
 mysql.init_app(app)
 
 class DatabaseConnectivity:
@@ -55,42 +56,33 @@ class DatabaseConnectivity:
             return 'an error occured'
 
     def initialise_sqlite_database(self):
-        self.hashed_password = generate_password_hash('abc123')
 
         self.cursor.execute(
-            "CREATE TABLE disk"
-            "(id int, name text, ord int, "
-            "size int, vps_id int)")
+                    "CREATE TABLE disk"
+                    "(id int, name text, ord int, "
+                    "size int, vps_id int)")
         self.cursor.execute(
-            "CREATE TABLE vps "
-            "(id int,name text,description text,"
-            "ram int,console int,image int,path text,"
-            "startscript text,stopscript text)")
+                    "CREATE TABLE vps "
+                    "(id int,name text,description text,"
+                    "ram int,console int,image int,path text,"
+                    "startscript text,stopscript text)")
         self.cursor.execute(
-            "CREATE TABLE interface"
-            "(bridge_id int,device int,id int,vps_id int)")
+                    "CREATE TABLE interface"
+                    "(bridge_id int,device int,id int,vps_id int)")
         self.cursor.execute(
-            "CREATE TABLE bridge(device int,id int)")
+                    "CREATE TABLE bridge(device int,id int)")
         self.cursor.execute(
-            "CREATE TABLE console(device int, id int)")
-        self.cursor.execute(
-            "CREATE TABLE users("
-            "id int,"
-            "name char(20),"
-            "email char(50), "
-            "password char(50))"
-        )
+                    "CREATE TABLE console(device int, id int)")
 
         self.cursor.execute(
                     "INSERT INTO vps VALUES(878,'test','mytest'"
                     ",512,1,1,'/tmp/','start','stop')")
         self.cursor.execute(
                     "INSERT INTO disk VALUES(878,'test',1,20,878)")
-        self.cursor.execute(
-            "INSERT INTO users VALUES ("
-            "1,'fred','fred@bloggs.com',' + self.hashed_password + '"
-        )
 
+        self.cursor.execute(
+                    "INSERT INTO interface VALUES(0,0,0,878)"
+        )
 
     def db_connect_mysql(self):
         try:
@@ -129,185 +121,199 @@ class DatabaseConnectivity:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+
 class DB_Users(DatabaseConnectivity):
+    def __init__(self):
+        super().__init__()
+        self.conn = mysql.connect()
+        self.cursor = self.conn.cursor()
 
-	def __init__(self):
-		super().__init__()
-		#self.conn = mysql.connect()
-		#self.cursor = self.conn.cursor()
+    def __exit__(self):
+        try:
+            self.cnx.close()
+        except:
+            print("Error closing database")
 
-	def getUsers(self):
-		self.cursor.execute("select id,name,email,password from users")
-		return self.cursor.fetchall()
+    def getUsers(self):
+        self.cursor.execute("select id,name,email,password from users")
+        return self.cursor.fetchall()
 
-	def getUser(self,id):
-		self.cursor.execute("select id,name,email,password from users where id = %s",(id,))
-		return self.cursor.fetchone()
+    def getUser(self, id):
+        self.cursor.execute("select id,name,email,password from users where id = %s", (id,))
+        return self.cursor.fetchone()
 
-	def createUser(self,name,email,password):
-		self.cursor.callproc('sp_createUser',(name,email,password))
-		self.conn.commit()
+    def createUser(self, name, email, password):
+        self.cursor.callproc('sp_createUser', (name, email, password))
+        self.conn.commit()
 
-		self.cursor.execute('SELECT last_insert_id()')
-		self.vps_id = self.cursor.fetchone()
-		return self.vps_id[0]
+        self.cursor.execute('SELECT last_insert_id()')
+        self.vps_id = self.cursor.fetchone()
+        return self.vps_id[0]
 
-	def deleteUser(self,id):
-		self.cursor.execute("delete from users where id = %s",(id,))
-		self.data = self.cursor.fetchall()
-		self.conn.commit()
-		return self.data
+    def deleteUser(self, id):
+        self.cursor.execute("delete from users where id = %s", (id,))
+        self.data = self.cursor.fetchall()
+        self.conn.commit()
+        return self.data
 
-	def checkUser(email):
-		get_user = "select password from users where email=%s"
-		self.cursor.execute(get_user,(email,))
-		return self.cursor.fetchone()
+    def checkUser(email):
+        get_user = "select password from users where email=%s"
+        self.cursor.execute(get_user, (email,))
+        return self.cursor.fetchone()
 
-	def checkUsername(self,name):
-		self.cursor.callproc('sp_validateLogin',(name,))
-		return self.cursor.fetchall()
+    def checkUsername(self, name):
+        self.cursor.callproc('sp_validateLogin', (name,))
+        return self.cursor.fetchall()
 
-	def updateUserandPassword(self,name,email,password,id):
-		update_user = "update users set name=%s,email=%s,password=%s where id=%s"
-		self.cursor.execute(update_user,(name,email,password,id))
-		self.data = self.cursor.fetchall()
-		self.conn.commit()
-		return self.data
+    def updateUserandPassword(self, name, email, password, id):
+        update_user = "update users set name=%s,email=%s,password=%s where id=%s"
+        self.cursor.execute(update_user, (name, email, password, id))
+        self.data = self.cursor.fetchall()
+        self.conn.commit()
+        return self.data
 
-	def updateUser(self,name,email,id):
-		update_user = "update users set name=%s,email=%s where id=%s"
-		self.cursor.execute(update_user,(name,email,id))
-		self.data = self.cursor.fetchall()
-		self.conn.commit()
-		return self.data
+    def updateUser(self, name, email, id):
+        update_user = "update users set name=%s,email=%s where id=%s"
+        self.cursor.execute(update_user, (name, email, id))
+        self.data = self.cursor.fetchall()
+        self.conn.commit()
+        return self.data
 
 
 class DB_VPS(DatabaseConnectivity):
+    def __init__(self):
+        super().__init__()
+        #self.conn = mysql.connect()
+        #self.cursor = self.conn.cursor()
 
-	def __init__(self):
-		super().__init__()
-		#self.conn = mysql.connect()
-		#self.cursor = self.conn.cursor()
+    def __exit__(self):
+        try:
+            self.cnx.close()
+        except:
+            print("Error closing database")
 
-	def getVPS(self):
-		self.cursor.execute("select id,name,description,image from vps")
-		return self.cursor.fetchall();
+    def getVPS(self):
+        #self.cursor.execute("select id,name,description,image from vps")
+        #return self.cursor.fetchall();
+        return self.db_get_all("select id,name,description,image from vps")
 
-	def getIndVPS(self,id):
-		get_ind_vps = ("select * from vps where id=%s")
-		self.cursor.execute(get_ind_vps,(id,))
-		return self.cursor.fetchall();
+    def getIndVPS(self, id):
+        get_ind_vps = ("select * from vps where id=%s")
+        self.cursor.execute(get_ind_vps, (id,))
+        return self.cursor.fetchall();
 
-	def getBridge(self):
-		self.cursor.execute("select id,device from bridge")
-		return self.cursor.fetchall()
+    def getBridge(self):
+        self.cursor.execute("select id,device from bridge")
+        return self.cursor.fetchall()
 
-	def getBridgeID(self,device):
-		self.cursor.execute("select id from bridge where device=%s",(device,))
-		self.data =  self.cursor.fetchone()
-		return self.data[0]
+    def getBridgeID(self, device):
+        self.cursor.execute("select id from bridge where device=%s", (device,))
+        self.data = self.cursor.fetchone()
+        return self.data[0]
 
-	def getMaxConsole(self):
-		self.cursor.execute("select max(console) from vps")
-		self.data = self.cursor.fetchone()
-		return self.data[0]
+    def getMaxConsole(self):
+        self.cursor.execute("select max(console) from vps")
+        self.data = self.cursor.fetchone()
+        return self.data[0]
 
-	def getInt(self):
-		self.cursor.execute("select max(device) from interface")
-		self.int = self.cursor.fetchone()
-		return self.int[0]
+    def getInt(self):
+        self.cursor.execute("select max(device) from interface")
+        self.int = self.cursor.fetchone()
+        return self.int[0]
 
-	def addDevice(self,device,vps_id,bridge_id):
-		add_device  = ("insert into interface (device,vps_id,bridge_id) values (%s,%s,%s)")
-		self.cursor.execute(add_device,(device,vps_id,bridge_id))
-		self.data = self.cursor.fetchone()
-		self.conn.commit()
-		return self.data
+    def addDevice(self, device, vps_id, bridge_id):
+        add_device = ("insert into interface (device,vps_id,bridge_id) values (%s,%s,%s)")
+        self.cursor.execute(add_device, (device, vps_id, bridge_id))
+        self.data = self.cursor.fetchone()
+        self.conn.commit()
+        return self.data
 
-	def delNetwork(self,id):
-		#self.cursor.execute("delete from interface where id=%s",(id,))
+    def delNetwork(self, id):
+        #self.cursor.execute("delete from interface where id=" + str(id))
+        self.db_execute_query("delete from interface where id=" + str(id))
+        # self.data = self.cursor.fetchone()
+        #self.conn.commit()
+        return "deleted"
 
-		#self.data = self.cursor.fetchone()
+    def addDisk(self, name, size, order, vps_id):
+        add_disk = ("insert into disk (name,size,ord,vps_id) values (%s,%s,%s,%s)")
 
-		#self.conn.commit()
-		self.db_execute_query("delete from interface where id=" + str(id))
-		return "deleted"
+        self.cursor.callproc('sp_createDisks', (name, order, size, vps_id))
 
-	def addDisk(self,name,size,order,vps_id):
-		add_disk = ("insert into disk (name,size,ord,vps_id) values (%s,%s,%s,%s)")
+        self.conn.commit()
 
-		self.cursor.callproc('sp_createDisks',(name,order,size,vps_id))
+        self.cursor.execute('SELECT last_insert_id()')
+        self.vps_id = self.cursor.fetchone()
 
-		self.conn.commit()
+        return self.vps_id[0]
 
-		
-		self.cursor.execute('SELECT last_insert_id()')
-		self.vps_id = self.cursor.fetchone()
+    def delDisk(self, id):
+        self.id = int(id)
 
-		return self.vps_id[0]
+        self.cursor.execute("delete from disk where id=%s", (self.id,))
+        self.data = self.cursor.fetchone()
+        self.conn.commit()
 
-	def delDisk(self,id):
-		self.id = int(id)
+        return self.data
 
-		self.cursor.execute("delete from disk where id=%s",(self.id,))
-		self.data = self.cursor.fetchone()
-		self.conn.commit()
+    def getDisks(self, id):
+        self.cursor.execute("select * from disk where vps_id=%s", (id,))
+        return self.cursor.fetchall()
 
-		return self.data
+    def getDisk(self, id):
+        self.cursor.execute("select * from disk where id=%s", (id,))
+        return self.cursor.fetchone()
 
-	def getDisks(self,id):
-		self.cursor.execute("select * from disk where vps_id=%s",(id,))
-		return self.cursor.fetchall()
+    def updateDisk(self, id, name):
+        self.cursor.execute("update disk set name=%s where id=%s", (name, id))
 
-	def getDisk(self,id):
-		self.cursor.execute("select * from disk where id=%s", (id, ))
-		return self.cursor.fetchone()
+        self.data = self.cursor.fetchone()
+        self.conn.commit()
 
-	def updateDisk(self,id,name):
-		self.cursor.execute("update disk set name=%s where id=%s", (name,id))
+        return self.data
 
-		self.data = self.cursor.fetchone()
-		self.conn.commit()
+    def getIntVPS(self, id):
+        get_int_vps = (
+        "select interface.id,interface.device,interface.vps_id,bridge.device from interface,bridge where vps_id=%s and interface.bridge_id = bridge.id")
+        self.cursor.execute(get_int_vps, (id,))
+        return self.cursor.fetchall()
 
-		return self.data
+    def updateVPS(self, name, description, ram, id, path, start_script, stop_script, image):
+        self.cursor.execute(
+            "update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s,image=%s where id=%s",
+            (name, description, ram, path, start_script, stop_script, image, id))
+        self.row = self.cursor.fetchall()
 
-	def getIntVPS(self,id):
-		get_int_vps = ("select interface.id,interface.device,interface.vps_id,bridge.device from interface,bridge where vps_id=%s and interface.bridge_id = bridge.id")
-		self.cursor.execute(get_int_vps,(id,))
-		return self.cursor.fetchall()
+        self.conn.commit()
 
-	def updateVPS(self,name,description,ram,id,path,start_script,stop_script,image):
-		self.cursor.execute("update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s,image=%s where id=%s",(name,description,ram,path,start_script,stop_script,image,id))
-		self.row = self.cursor.fetchall()
+        return self.row
 
-		self.conn.commit()
+    def createVPS(self, name, description, ram, con, image):
+        self.cursor.execute("insert into vps (name,description,ram,console,image) values (%s,%s,%s,%s,%s)",
+                            (name, description, ram, con, image))
+        self.conn.commit()
 
-		return self.row
+        self.cursor.execute('SELECT last_insert_id()')
+        self.vps_id = self.cursor.fetchone()
 
-	def createVPS(self,name,description,ram,con,image):
-		self.cursor.execute("insert into vps (name,description,ram,console,image) values (%s,%s,%s,%s,%s)",(name,description,ram,con,image))
-		self.conn.commit()
+        return self.vps_id[0]
 
-		self.cursor.execute('SELECT last_insert_id()')
-		self.vps_id = self.cursor.fetchone()
+    def createDisk(self, name, order, disk, vps_id):
+        self.cursor.callproc('sp_createDisks', (name, order, disk, vps_id))
 
-		return self.vps_id[0]
+        self.conn.commit()
 
-	def createDisk(self,name,order,disk,vps_id):
-		self.cursor.callproc('sp_createDisks',(name,order,disk,vps_id))
+        return str(self.vps_id[0])
 
-		self.conn.commit()
+    def delVPS(self, id):
+        self.cursor.execute("delete from vps where id=%s", (id,))
+        self.data = self.cursor.fetchone()
+        self.conn.commit()
 
-		return str(self.vps_id[0])
+        return self.data
 
-	def delVPS(self,id):
-		self.cursor.execute("delete from vps where id=%s",(id,))
-		self.data = self.cursor.fetchone()
-		self.conn.commit()
-
-		return self.data
-
-	def getTrafficData(self,interface):
-		self.cursor.execute("(SELECT `LastIpkts`,`LastOpkts`,`timestamp`,`index` FROM `traffic` where `interface`=%s ORDER BY `index` DESC LIMIT 289) ORDER BY `index` ASC", (interface,))
-		return self.cursor.fetchall()
-
+    def getTrafficData(self, interface):
+        self.cursor.execute(
+            "(SELECT `LastIpkts`,`LastOpkts`,`timestamp`,`index` FROM `traffic` where `interface`=%s ORDER BY `index` DESC LIMIT 289) ORDER BY `index` ASC",
+            (interface,))
+        return self.cursor.fetchall()
