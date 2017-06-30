@@ -1,7 +1,9 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 import configparser
+import sqlite3 as sqlite
 import os
+from werkzeug import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -13,18 +15,126 @@ mysql = MySQL()
 # Get MySQL configurations from configuration.cfg
 Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
-app.config['MYSQL_DATABASE_USER']       = Config.get('Database','mysql_username')
-app.config['MYSQL_DATABASE_PASSWORD']   = Config.get('Database','mysql_password')
-app.config['MYSQL_DATABASE_DB']         = Config.get('Database','mysql_dbname')
-app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','mysql_dbhost')
+app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
+app.config['MYSQL_DATABASE_PASSWORD'] = Config.get('Database','mysql_password')
+app.config['MYSQL_DATABASE_DB'] = Config.get('Database','mysql_dbname')
+app.config['MYSQL_DATABASE_HOST'] = Config.get('Database','mysql_dbhost')
 mysql.init_app(app)
 
+class DatabaseConnectivity:
 
-class DB_Users:
+    def __init__(self):
+        self.configuration = configparser.ConfigParser()
+        self.configuration.read(
+            "{}/../configuration.cfg".format(dir_path)
+        )
+        self.database_driver = self.configuration.get(
+            'Database', 'database_driver'
+        )
+        self.db_connection()
+
+    def __exit__(self):
+        try:
+            self.cnx.close()
+        except:
+            print('failed to close database')
+
+    def db_connection(self):
+        if self.database_driver == 'mysql':
+            return self.db_connect_mysql()
+        elif self.database_driver == 'sqlite':
+            return self.db_connect_sqlite()
+
+    def db_connect_sqlite(self):
+        try:
+            self.cnx = sqlite.connect(":memory:")
+            self.cursor = self.cnx.cursor()
+            self.initialise_sqlite_database()
+            return 'connection successful'
+        except:
+            return 'an error occured'
+
+    def initialise_sqlite_database(self):
+        self.hashed_password = generate_password_hash('abc123')
+
+        self.cursor.execute(
+            "CREATE TABLE disk"
+            "(id int, name text, ord int, "
+            "size int, vps_id int)")
+        self.cursor.execute(
+            "CREATE TABLE vps "
+            "(id int,name text,description text,"
+            "ram int,console int,image int,path text,"
+            "startscript text,stopscript text)")
+        self.cursor.execute(
+            "CREATE TABLE interface"
+            "(bridge_id int,device int,id int,vps_id int)")
+        self.cursor.execute(
+            "CREATE TABLE bridge(device int,id int)")
+        self.cursor.execute(
+            "CREATE TABLE console(device int, id int)")
+        self.cursor.execute(
+            "CREATE TABLE users("
+            "id int,"
+            "name char(20),"
+            "email char(50), "
+            "password char(50))"
+        )
+
+        self.cursor.execute(
+                    "INSERT INTO vps VALUES(878,'test','mytest'"
+                    ",512,1,1,'/tmp/','start','stop')")
+        self.cursor.execute(
+                    "INSERT INTO disk VALUES(878,'test',1,20,878)")
+        self.cursor.execute(
+            "INSERT INTO users VALUES ("
+            "1,'fred','fred@bloggs.com',' + self.hashed_password + '"
+        )
+
+
+    def db_connect_mysql(self):
+        try:
+            self.database_user = self.configuration.get('Database', 'database_user')
+            self.database_password = self.configuration.get('Database', 'database_password')
+            self.database_host = self.configuration.get('Database', 'database_host')
+            self.database_name = self.configuration.get('Database', 'database_name')
+            self.raise_on_warnings = self.configuration.get('Database', 'raise_on_warnings')
+
+            app.config['MYSQL_DATABASE_USER'] = self.database_user
+            app.config['MYSQL_DATABASE_PASSWORD'] = self.database_password
+            app.config['MYSQL_DATABASE_DB'] = self.database_name
+            app.config['MYSQL_DATABASE_HOST'] = self.database_host
+
+            db_connector = MySQL()
+            db_connector.init_app(app)
+            self.cnx = db_connector.connect()
+            self.cursor = self.cnx.cursor()
+            self.database_connected = True
+        except:
+            self.database_connected = False
+            return "error connecting to database"
+
+    def db_return_cursor(self):
+        return self.cursor
+
+    def db_execute_query(self, query):
+        self.cursor.execute(query)
+        return self.cnx.commit()
+
+    def db_get_row(self, query):
+        self.cursor.execute(query)
+        return self.cursor.fetchone()
+
+    def db_get_all(self, query):
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+class DB_Users(DatabaseConnectivity):
 
 	def __init__(self):
-		self.conn = mysql.connect()
-		self.cursor = self.conn.cursor()
+		super().__init__()
+		#self.conn = mysql.connect()
+		#self.cursor = self.conn.cursor()
 
 	def getUsers(self):
 		self.cursor.execute("select id,name,email,password from users")
@@ -72,11 +182,12 @@ class DB_Users:
 		return self.data
 
 
-class DB_VPS:
+class DB_VPS(DatabaseConnectivity):
 
 	def __init__(self):
-		self.conn = mysql.connect()
-		self.cursor = self.conn.cursor()
+		super().__init__()
+		#self.conn = mysql.connect()
+		#self.cursor = self.conn.cursor()
 
 	def getVPS(self):
 		self.cursor.execute("select id,name,description,image from vps")
@@ -114,9 +225,12 @@ class DB_VPS:
 		return self.data
 
 	def delNetwork(self,id):
-		self.cursor.execute("delete from interface where id=%s",(id,))
+		#self.cursor.execute("delete from interface where id=%s",(id,))
+
 		#self.data = self.cursor.fetchone()
-		self.conn.commit()
+
+		#self.conn.commit()
+		self.db_execute_query("delete from interface where id=" + str(id))
 		return "deleted"
 
 	def addDisk(self,name,size,order,vps_id):

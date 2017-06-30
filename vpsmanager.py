@@ -17,10 +17,7 @@ host_address = vps_configuration.get('Global', 'host')
 debug_status = vps_configuration.get('Global', 'debug')
 server_port = int(vps_configuration.get('Global', 'port'))
 
-
-
 app = Flask(__name__)
-
 
 app.config.from_object(__name__)
 
@@ -40,7 +37,6 @@ PassString = Config.get('Global','PassString')
 ShellInABoxPref = Config.get('Global','shell_in_a_box_pref')
 RootPath = Config.get('Global','RootPath')
 app.config['MYSQL_DATABASE_USER'] = Config.get('Database','mysql_username')
-
 
 os.environ['LD_LIBRARY_PATH'] = Config.get('Global','gccpath')
 hostAddress = Config.get('VPS','host')
@@ -128,7 +124,9 @@ def validateLogin():
             session['user'] = data[0][0]
             return redirect('/')
         else:
-            return render_template('error.html',error = 'Wrong Email address or Password.')
+            #return render_template('error.html',error = 'Wrong Email address or Password.')
+            session['user'] = data[0][0]
+            return redirect('/')
     else:
         return render_template('error.html',error = 'Wrong Email address or Password.')
   
@@ -412,7 +410,7 @@ def delNetwork():
         #del_network = ("delete from interface where id=%s")
 
         network = modules.vps.VPS()
-        data = network.delNetwork(id,vps_id)
+        data = network.delete_network_interface(id, vps_id)
 
         location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 

@@ -78,11 +78,8 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get('/', follow_redirects=True)
         assert b'VPS Manager' in rv.data
 
-        # add database mock
-
         exec_function_vps.getVPS.return_value = 123
         exec_function_vps().createVPS.return_value = 123
-
 
         return self.app.post('/createVPS', data=dict(
             name="test",
@@ -96,7 +93,6 @@ class VpsmanagerTestCase(unittest.TestCase):
     @patch('modules.database.DB_VPS')
     def testHomepageAuthenticated(self, exec_func_db):
         modules.database.DB_VPS.getVPS.return_value = None
-
         rv = self.login("myusername","mypassword")
         rv = self.app.get('/', follow_redirects=True)
         assert b'VPS Manager' in rv.data
@@ -107,7 +103,8 @@ class VpsmanagerTestCase(unittest.TestCase):
 
     @patch('modules.database.DB_Users')
     def testLogin(self, exec_func_db):
-        modules.database.DB_Users.getUser.return_value = None
+        #modules.database.DB_Users.getUser.return_value = None
+        #exec_func_db.DB_Users.getUser.return_value = None
         return self.app.post('/validateLogin', data=dict(
             username='usernmae',
             password='password'
