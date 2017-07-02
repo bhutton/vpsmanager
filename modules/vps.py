@@ -170,9 +170,13 @@ class VPS:
         )
 
     def restoreSnapShot(self,vps_id,snapshotName):
-        return self.make_call_to_vpssvr(
-            vps_restore_snapshot + str(vps_id) + '/' + snapshotName
-        )
+        try:
+            self.make_call_to_vpssvr(
+                vps_restore_snapshot + str(vps_id) + '/' + snapshotName
+            )
+            return "Restored"
+        except:
+            return "An error occured"
 
     def removeSnapShot(self,vps_id,snapshot):
         try:
