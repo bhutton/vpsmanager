@@ -3,7 +3,6 @@ from flaskext.mysql import MySQL
 import configparser
 import sqlite3 as sqlite
 import os
-import sqlite3 as sqlite
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -15,11 +14,11 @@ mysql = MySQL()
 # Get MySQL configurations from configuration.cfg
 Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
-app.config['MYSQL_DATABASE_USER']       = Config.get('Database','database_username')
-app.config['MYSQL_DATABASE_PASSWORD']   = Config.get('Database','database_password')
-app.config['MYSQL_DATABASE_DB']         = Config.get('Database','database_name')
-app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','database_host')
-app.config['MYSQL_DATABASE_HOST']       = Config.get('Database','database_driver')
+app.config['MYSQL_DATABASE_USER'] = Config.get('Database','database_username')
+app.config['MYSQL_DATABASE_PASSWORD'] = Config.get('Database','database_password')
+app.config['MYSQL_DATABASE_DB'] = Config.get('Database','database_name')
+app.config['MYSQL_DATABASE_HOST'] = Config.get('Database','database_host')
+app.config['MYSQL_DATABASE_HOST'] = Config.get('Database','database_driver')
 mysql.init_app(app)
 
 class DatabaseConnectivity:

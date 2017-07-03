@@ -556,15 +556,10 @@ def restoreSnapShot():
         id = request.args.get('id')
         snapshot = request.args.get('snapshot')
 
-        vps     = modules.vps.VPS()
-        #vps.restoreSnapShot(id, snapshot)
-        
-        active  = '/'
-        title   = 'Snapshot Manager'
+        vps = modules.vps.VPS()
         status = 'Snapshot \"' + snapshot + '\"' \
                  + vps.restoreSnapShot(id, snapshot)
 
-        #return render_template('snapshotmanager.html', menu=menu, title=title, active=active, row=row)
         return redirect('/snapShot?id=' + id + '&status=' + status)
     else:
         return redirect('/Login')
