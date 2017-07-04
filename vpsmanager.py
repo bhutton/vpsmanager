@@ -42,6 +42,8 @@ os.environ['LD_LIBRARY_PATH'] = Config.get('Global','gccpath')
 hostAddress = Config.get('VPS','host')
 
 
+
+
 ## Unit Test Functions
 ##########################################################
 
@@ -536,16 +538,10 @@ def takeSnapShot():
         id = request.args.get('id')
         snapshotName = request.args.get('snapshotName')
 
-        vps     = modules.vps.VPS()
+        vps = modules.vps.VPS()
         vps.takeSnapShot(id,snapshotName)
         
-        prefport = ShellInABoxPref
-
-        active  = '/'
-        title   = 'Snapshot Manager'
         status = 'Snapshot Taken'
-
-        #return render_template('snapshotmanager.html', menu=menu, title=title, active=active, row=row)
         return redirect('/snapShot?id=' + id + '&status=' + status)
     else:
         return redirect('/Login')

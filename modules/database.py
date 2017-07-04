@@ -28,9 +28,13 @@ class DatabaseConnectivity:
         self.configuration.read(
             "{}/../configuration.cfg".format(dir_path)
         )
-        self.database_driver = self.configuration.get(
-            'Database', 'database_driver'
-        )
+        try:
+            self.database_driver = os.environ['DB_DRIVER']
+        except:
+            self.database_driver = self.configuration.get(
+                'Database', 'database_driver'
+            )
+
         self.db_connection()
 
     def __exit__(self):
