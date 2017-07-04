@@ -35,7 +35,7 @@ class DatabaseConnectivity:
                 'Database', 'database_driver'
             )
 
-        self.db_connection()
+        self.db_connection
 
     def __exit__(self):
         try:
@@ -43,12 +43,14 @@ class DatabaseConnectivity:
         except:
             print('failed to close database')
 
+    @property
     def db_connection(self):
         if self.database_driver == 'mysql':
             return self.db_connect_mysql()
         elif self.database_driver == 'sqlite':
-            return self.db_connect_sqlite()
+            return self.db_connect_sqlite
 
+    @property
     def db_connect_sqlite(self):
         try:
             self.cnx = sqlite.connect(":memory:")
