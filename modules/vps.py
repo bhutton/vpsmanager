@@ -139,7 +139,7 @@ class VPS:
     def getStatus(self,vps_id):
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
 
-    '''def connectServer(self,cmd):
+    def connectServer(self,cmd):
         try:
             self.data = cmd
 
@@ -155,7 +155,7 @@ class VPS:
 
         finally:
             sock.close()
-            return received'''
+            return received
 
 
 
