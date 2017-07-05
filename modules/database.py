@@ -116,7 +116,7 @@ class DatabaseConnectivity:
 
     def db_execute_query(self, query):
         self.cursor.execute(query)
-        return self.cnx.commit()
+        return self.conn.commit()
 
     def db_get_row(self, query):
         self.cursor.execute(query)
@@ -193,7 +193,7 @@ class DB_VPS(DatabaseConnectivity):
 
     def __exit__(self):
         try:
-            self.cnx.close()
+            self.conn.close()
         except:
             print("Error closing database")
 

@@ -140,6 +140,8 @@ class VPS:
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
 
     def connectServer(self,cmd):
+        # Receive data from the server and shut down
+
         try:
             self.data = cmd
 
@@ -149,13 +151,10 @@ class VPS:
             # Connect to server and send data
             sock.connect((HOST, PORT))
             sock.sendall(self.data)
-    
-            # Receive data from the server and shut down
             received = sock.recv(1024)
-
-        finally:
-            sock.close()
             return received
+        except:
+            return 'something went wrong'
 
 
 
