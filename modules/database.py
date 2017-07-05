@@ -46,7 +46,7 @@ class DatabaseConnectivity:
     @property
     def db_connection(self):
         if self.database_driver == 'mysql':
-            return self.db_connect_mysql()
+            return self.db_connect_mysql
         elif self.database_driver == 'sqlite':
             return self.db_connect_sqlite
 
@@ -188,8 +188,8 @@ class DB_Users(DatabaseConnectivity):
 class DB_VPS(DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        #self.conn = mysql.connect()
-        #self.cursor = self.conn.cursor()
+        self.conn = mysql.connect()
+        self.cursor = self.conn.cursor()
 
     def __exit__(self):
         try:
