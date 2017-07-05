@@ -73,7 +73,11 @@ class GraphTraffic:
 				plt.grid(True)
 				plt.xlabel(self.interface, fontsize=14, color='red')
 				plt.legend(['In', 'Out'], loc='best')
-				plt.savefig(self.filename)
+
+				try:
+					plt.savefig(self.filename)
+				except:
+					print('something went wrong')
 				plt.gcf().clear()
 
 
