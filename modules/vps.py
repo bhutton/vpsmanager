@@ -211,33 +211,40 @@ class VPS:
     
             # Receive data from the server and shut down
             received = sock.recv(1024)
-
+        except:
+            return None
         finally:
             sock.close()
-
-            received = received.split('\n')
-
             item = [[]]
-            count = 0
 
-            num_items = len(received)
-
-            for line in received:
-
-                #item[count].append(re.split('\@ | \s',line))
-
-                items = line.split()
+            try:
+                received = received.split('\n')
 
 
-                if (len(items) > 0):
-                    item[count].append(items)
+                count = 0
 
-                #if (count < num_items-1): item.append([])
+                num_items = len(received)
 
-                item.append([])
+                for line in received:
 
-                count += 1
+                    #item[count].append(re.split('\@ | \s',line))
 
+                    items = line.split()
+
+
+                    if (len(items) > 0):
+                        item[count].append(items)
+
+                    #if (count < num_items-1): item.append([])
+
+                    item.append([])
+
+                    count += 1
+
+
+
+            except:
+                print('an error occured')
 
             return item
 
