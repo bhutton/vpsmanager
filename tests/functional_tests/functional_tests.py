@@ -19,9 +19,12 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.browser.find_element_by_id("password").send_keys("Lijnfe0912")
         self.browser.find_element_by_id("btnSignIn").click()
 
+    def get_page(self, url):
+        self.browser.get(url)
+        return self.browser.title
+
     def test_login_page(self):
-        self.browser.get('http://localhost:3000')
-        assert 'Login - VPS Manager' in self.browser.title
+        assert 'Login - VPS Manager' in self.get_page('http://localhost:3000')
 
     def test_login(self):
         self.login()
@@ -29,8 +32,11 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def test_view_vps(self):
         self.login()
-        self.browser.get('http://localhost:3000/viewVPS?id=878')
-        assert 'View VPS' in self.browser.title
+        assert 'View VPS' in self.get_page('http://localhost:3000/viewVPS?id=878')
+
+    def test_create_vps(self):
+        self.login()
+        assert 'Add VPS' in self.get_page('http://localhost:3000/AddVPS')
 
 if __name__ == '__main__':
     unittest.main()
