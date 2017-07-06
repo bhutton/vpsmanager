@@ -198,18 +198,11 @@ class VPS:
 
 
     def listSnapShot(self,vps_id):
-
         try:
-            self.data = str(vps_id)
-
-            # Create a socket (SOCK_STREAM means a TCP socket)
+            # Connect to server
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
             sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",listSnapshot\n")
-    
-            # Receive data from the server and shut down
+            sock.sendall(PassString + "," + str(vps_id) + ",listSnapshot\n")
             received = sock.recv(1024)
         except:
             return None
@@ -219,37 +212,21 @@ class VPS:
 
             try:
                 received = received.split('\n')
-
-
                 count = 0
-
-                num_items = len(received)
+                #num_items = len(received)
 
                 for line in received:
-
-                    #item[count].append(re.split('\@ | \s',line))
-
                     items = line.split()
-
 
                     if (len(items) > 0):
                         item[count].append(items)
 
-                    #if (count < num_items-1): item.append([])
-
                     item.append([])
-
                     count += 1
-
-
-
             except:
                 print('an error occured')
 
             return item
-
-
-        
 
     def addDisk(self,name,size,order,vps_id,createDisk):
         
