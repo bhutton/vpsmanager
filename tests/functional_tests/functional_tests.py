@@ -60,6 +60,21 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.browser.find_element_by_link_text('User Management').click()
         assert 'User Management' in self.browser.title
 
+    def test_modify_user(self):
+        self.login()
+        self.get_page('http://localhost:3000/UserManagement')
+        self.browser.find_element_by_link_text('edit').click()
+        assert 'Modify User' in self.browser.title
+
+    def test_modify_update_user(self):
+        self.login()
+        self.get_page('http://localhost:3000/UserManagement')
+        self.browser.find_element_by_link_text('edit').click()
+        assert 'Modify User' in self.browser.title
+        self.browser.find_element_by_id('btnUpdateUser').click()
+        success_message = self.browser.find_element_by_class_name("success").text
+        assert 'User Updated Successfully' in success_message
+
 
 if __name__ == '__main__':
     unittest.main()
