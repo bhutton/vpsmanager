@@ -75,6 +75,12 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 
+    def test_create_user(self):
+        self.login()
+        self.get_page('http://localhost:3000/UserManagement')
+        self.browser.find_element_by_id('lnkAddUser').click()
+        assert 'Add User' in self.browser.title
+
 
 if __name__ == '__main__':
     unittest.main()
