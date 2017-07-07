@@ -38,5 +38,16 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.login()
         assert 'Add VPS' in self.get_page('http://localhost:3000/AddVPS')
 
+    def test_modify_vps(self):
+        self.login()
+        assert 'Modify VPS' in self.get_page('http://localhost:3000/modifyVPS?id=878')
+
+    def test_click_view_vps(self):
+        self.login()
+        self.get_page('http://localhost:3000')
+        self.browser.find_element_by_id('878').click()
+        assert 'View VPS' in self.browser.title
+
+
 if __name__ == '__main__':
     unittest.main()
