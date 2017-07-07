@@ -81,6 +81,5 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.browser.find_element_by_id('lnkAddUser').click()
         assert 'Add User' in self.browser.title
 
-
 if __name__ == '__main__':
     unittest.main()
