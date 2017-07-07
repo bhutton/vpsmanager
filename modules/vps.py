@@ -1,6 +1,6 @@
 import socket, modules.database, time, configparser
 import os 
-import re
+#import re
 import base64
 import requests
 
@@ -213,7 +213,6 @@ class VPS:
             try:
                 received = received.split('\n')
                 count = 0
-                #num_items = len(received)
 
                 for line in received:
                     items = line.split()
@@ -229,7 +228,6 @@ class VPS:
             return item
 
     def addDisk(self,name,size,order,vps_id,createDisk):
-        
         try:
             self.data = self.db.addDisk(name,size,order,vps_id)
 

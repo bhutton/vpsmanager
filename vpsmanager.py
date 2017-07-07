@@ -145,8 +145,9 @@ def userManagement():
         row = users.getUsers()
 
         active = '/UserManagement'
+        title = 'User Management'
 
-        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, status=status)
+        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, status=status, title=title)
     else:
         return redirect('/Login')
 
