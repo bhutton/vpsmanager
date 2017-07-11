@@ -232,5 +232,13 @@ class VpsmanagerTestCase(unittest.TestCase):
         v = vps.VPS()
         assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
 
+    def test_restart_console(self):
+        v = vps.VPS()
+        v.restartConsole(878)
+
+    def test_add_device(self):
+        v = vps.VPS()
+        assert v.addDevice(1,878,0) is 'Device Added\n'
+
 if __name__ == '__main__':
     unittest.main()
