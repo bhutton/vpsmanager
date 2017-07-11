@@ -367,9 +367,9 @@ def add_network():
         id = request.args.get('id')
         updated = request.args.get('updated')
 
-        network     = modules.vps.VPS()
-        max_device  = network.getInt()
-        bridge      = network.getBridge()
+        network = modules.vps.VPS()
+        max_device = network.getInt()
+        bridge = network.getBridge()
 
         active = ""
         title = "Add Network Interface"
@@ -381,11 +381,11 @@ def add_network():
 @app.route("/createNetwork",methods=['POST'])
 def create_network():
     if session.get('user'):
-        id 		= request.form['id']
-        bridge 	= request.form['bridge']
+        id = request.form['id']
+        bridge = request.form['bridge']
 
-        network     = modules.vps.VPS()
-        new_device  = network.getInt()
+        network = modules.vps.VPS()
+        new_device = network.getInt()
 
         bridge_id = network.getBridgeID(bridge)
         
@@ -421,9 +421,9 @@ def del_network():
 @app.route("/createDisk",methods=['POST','GET'])
 def create_disk():
     if session.get('user'):
-        id 		= request.form['id']
-        name 	= request.form['name']
-        disk	= request.form['disk']
+        id = request.form['id']
+        name = request.form['name']
+        disk = request.form['disk']
 
         try:
             createDisk  = request.form['createDisk']
@@ -470,16 +470,16 @@ def modify_instance():
 
         updated = request.args.get('updated')
        
-        vps     = modules.vps.VPS()
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
-        graph   = modules.graph.GraphTraffic()
-        file    = graph.genGraph(device)
+        vps = modules.vps.VPS()
+        row = vps.getIndVPS(id)
+        disks = vps.getDisks(id)
+        device = vps.getIntVPS(id)
+        status = vps.getStatus(id)
+        graph = modules.graph.GraphTraffic()
+        file = graph.genGraph(device)
        
-        active 	= '/'
-        title 	= 'Modify VPS'
+        active = '/'
+        title = 'Modify VPS'
 
         return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
     else:
