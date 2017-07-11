@@ -513,16 +513,16 @@ def snapshot():
         id = request.args.get('id')
         status = request.args.get('status')
 
-        vps         = modules.vps.VPS()
-        row         = vps.getIndVPS(id)
-        snapshots   = vps.listSnapShot(id)
+        vps = modules.vps.VPS()
+        row = vps.getIndVPS(id)
+        snapshots = vps.listSnapShot(id)
         
         #snapshots   = snapshots.split('\n')
 
-        prefport    = ShellInABoxPref
+        #prefport    = ShellInABoxPref
 
-        active  = '/'
-        title   = 'Snapshot Manager'
+        active = '/'
+        title = 'Snapshot Manager'
 
         return render_template('snapshotmanager.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, status=status, snapshots=snapshots)
     else:
@@ -562,14 +562,10 @@ def remove_snapshot():
         id = request.args.get('id')
         snapshot = request.args.get('snapshot')
 
-        vps     = modules.vps.VPS()
+        vps = modules.vps.VPS()
         vps.removeSnapShot(id, snapshot)
-        
-        active  = '/'
-        title   = 'Snapshot Manager'
         status = 'Snapshot \"' + snapshot + '\" Removed'
 
-        #return render_template('snapshotmanager.html', menu=menu, title=title, active=active, row=row)
         return redirect('/snapShot?id=' + id + '&status=' + status)
     else:
         return redirect('/Login')
@@ -580,15 +576,16 @@ def restart_console():
     if session.get('user'):
         id = request.args.get('id')
 
-        vps     = modules.vps.VPS()
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
-        graph   = modules.graph.GraphTraffic()
-        file    = graph.genGraph(device)
+        vps = modules.vps.VPS()
+        #row = vps.getIndVPS(id)
+        #disks = vps.getDisks(id)
+        #device = vps.getIntVPS(id)
+        #status = vps.getStatus(id)
+        #graph = modules.graph.GraphTraffic()
+        #file = graph.genGraph(device)
         
-        console = vps.restartConsole(id)
+        #console =
+        vps.restartConsole(id)
 
         active  = '/'
         title   = 'View VPS'
