@@ -111,7 +111,7 @@ def logout():
     return redirect('/Login')
 
 @app.route('/validateLogin',methods=['POST','GET'])
-def validateLogin():
+def validate_login():
     _username = request.form['username']
     _password = request.form['password']
 
@@ -134,7 +134,7 @@ def validateLogin():
   
 
 @app.route("/UserManagement")
-def userManagement():
+def user_management():
     if session.get('user'):
         if (request.args.get('useradded')): status = "added"
         elif (request.args.get('userupdated')): status = "updated"
@@ -151,11 +151,8 @@ def userManagement():
     else:
         return redirect('/Login')
 
-
-    
-
 @app.route("/addUser")
-def addUser():
+def add_user():
     if session.get('user'):
     	active = "/UserManagement"
     	title = "Add User"
@@ -165,7 +162,7 @@ def addUser():
         return redirect('/Login')
 
 @app.route("/createUser",methods=['POST'])
-def createUser():
+def create_user():
     if session.get('user'):
         _name 		= request.form['inputName']
         _email 		= request.form['inputEmail']
@@ -185,7 +182,7 @@ def createUser():
         return redirect('/Login')
 
 @app.route("/deleteUser")
-def deleteUser():
+def delete_user():
     if session.get('user'):
         id = int(request.args.get('id'))
 
@@ -208,7 +205,7 @@ def deleteUser():
 
 
 @app.route("/modifyUser")
-def modifyUser():
+def modify_user():
     if session.get('user'):
         id = int(request.args.get('id'))
         error = request.args.get('error')
@@ -225,7 +222,7 @@ def modifyUser():
         return redirect('/Login')
 
 @app.route("/updateUser",methods=['POST','GET'])
-def updateUser():
+def update_user():
     if session.get('user'):
         id 				= int(request.form['id'])
         email 			= request.form['inputEmail']
@@ -251,7 +248,7 @@ def updateUser():
 
 
 @app.route("/startVPS")
-def startVPS():
+def start_instance():
     if session.get('user'):
         id = request.args.get('id')
 
@@ -263,7 +260,7 @@ def startVPS():
         return redirect('/Login')
 
 @app.route("/stopVPS")
-def stopVPS():
+def stop_instance():
     if session.get('user'):
         id = request.args.get('id')
 
@@ -276,7 +273,7 @@ def stopVPS():
         return redirect('/Login')
 
 @app.route("/startInterface")
-def startInterface():
+def start_interface():
     if session.get('user'):
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
@@ -289,7 +286,7 @@ def startInterface():
         return redirect('/Login')
 
 @app.route("/stopInterface")
-def stopInterface():
+def stop_interface():
     if session.get('user'):
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
@@ -303,7 +300,7 @@ def stopInterface():
 
 
 @app.route("/AddVPS")
-def AddVPS():
+def add_instance():
     if session.get('user'):
         vps = modules.vps.VPS()
         bridge = vps.getBridge()
@@ -315,7 +312,7 @@ def AddVPS():
         return redirect('/Login')
 
 @app.route("/addDisk")
-def addDisk():
+def add_disk():
     if session.get('user'):
         id = request.args.get('id')
 
@@ -327,7 +324,7 @@ def addDisk():
         return redirect('/Login')
 
 @app.route("/editDisk")
-def editDisk():
+def edit_disk():
     if session.get('user'):
         id = request.args.get('id')
         disk_id = request.args.get('disk')
@@ -344,7 +341,7 @@ def editDisk():
 
 
 @app.route("/updateDisk",methods=['POST','GET'])
-def updateDisk():
+def update_disk():
     if session.get('user'):
         id = request.form['id']
         name = request.form['name']
@@ -365,14 +362,14 @@ def updateDisk():
         return redirect('/Login')
 
 @app.route("/addNetwork")
-def addNetwork():
+def add_network():
     if session.get('user'):
         id = request.args.get('id')
         updated = request.args.get('updated')
 
-        network     = modules.vps.VPS()
-        max_device  = network.getInt()
-        bridge      = network.getBridge()
+        network = modules.vps.VPS()
+        max_device = network.getInt()
+        bridge = network.getBridge()
 
         active = ""
         title = "Add Network Interface"
@@ -382,13 +379,13 @@ def addNetwork():
         return redirect('/Login')
 
 @app.route("/createNetwork",methods=['POST'])
-def createNetwork():
+def create_network():
     if session.get('user'):
-        id 		= request.form['id']
-        bridge 	= request.form['bridge']
+        id = request.form['id']
+        bridge = request.form['bridge']
 
-        network     = modules.vps.VPS()
-        new_device  = network.getInt()
+        network = modules.vps.VPS()
+        new_device = network.getInt()
 
         bridge_id = network.getBridgeID(bridge)
         
@@ -405,7 +402,7 @@ def createNetwork():
 # Delete interface from Database and redirect to modifyVPS page
 #
 @app.route("/delNetwork")
-def delNetwork():
+def del_network():
     if session.get('user'):
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
@@ -422,11 +419,11 @@ def delNetwork():
         return redirect('/Login')
 
 @app.route("/createDisk",methods=['POST','GET'])
-def createDisk():
+def create_disk():
     if session.get('user'):
-        id 		= request.form['id']
-        name 	= request.form['name']
-        disk	= request.form['disk']
+        id = request.form['id']
+        name = request.form['name']
+        disk = request.form['disk']
 
         try:
             createDisk  = request.form['createDisk']
@@ -450,7 +447,7 @@ def createDisk():
         return redirect('/Login')
 
 @app.route("/deleteDisk")
-def deleteDisk():
+def delete_disk():
     if session.get('user'):
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
@@ -467,42 +464,40 @@ def deleteDisk():
 
 
 @app.route("/modifyVPS")
-def modifyVPS():
+def modify_instance():
     if session.get('user'):
         id = request.args.get('id')
 
         updated = request.args.get('updated')
        
-        vps     = modules.vps.VPS()
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
-        graph   = modules.graph.GraphTraffic()
-        file    = graph.genGraph(device)
+        vps = modules.vps.VPS()
+        row = vps.getIndVPS(id)
+        disks = vps.getDisks(id)
+        device = vps.getIntVPS(id)
+        status = vps.getStatus(id)
+        graph = modules.graph.GraphTraffic()
+        file = graph.genGraph(device)
        
-        active 	= '/'
-        title 	= 'Modify VPS'
+        active = '/'
+        title = 'Modify VPS'
 
         return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
     else:
         return redirect('/Login')
 
 @app.route("/viewVPS")
-def viewVPS():
+def view_instance():
     if session.get('user'):
         id = request.args.get('id')
 
-        vps     = modules.vps.VPS()
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
-        graph   = modules.graph.GraphTraffic()
-        file    = graph.genGraph(device)
-        #devstatus = vps.getNetworkInterfaceStatus(id)
+        vps = modules.vps.VPS()
+        row = vps.getIndVPS(id)
+        disks = vps.getDisks(id)
+        device = vps.getIntVPS(id)
+        status = vps.getStatus(id)
+        graph = modules.graph.GraphTraffic()
+        file = graph.genGraph(device)
 
-        prefport = ShellInABoxPref
         rootPath = RootPath
 
         active  = '/'
@@ -513,28 +508,28 @@ def viewVPS():
         return redirect('/Login')
 
 @app.route("/snapShot")
-def snapShot():
+def snapshot():
     if session.get('user'):
         id = request.args.get('id')
         status = request.args.get('status')
 
-        vps         = modules.vps.VPS()
-        row         = vps.getIndVPS(id)
-        snapshots   = vps.listSnapShot(id)
+        vps = modules.vps.VPS()
+        row = vps.getIndVPS(id)
+        snapshots = vps.listSnapShot(id)
         
         #snapshots   = snapshots.split('\n')
 
-        prefport    = ShellInABoxPref
+        #prefport    = ShellInABoxPref
 
-        active  = '/'
-        title   = 'Snapshot Manager'
+        active = '/'
+        title = 'Snapshot Manager'
 
         return render_template('snapshotmanager.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, status=status, snapshots=snapshots)
     else:
         return redirect('/Login')
 
 @app.route("/takeSnapShot",methods=['POST','GET'])
-def takeSnapShot():
+def take_snapshot():
     if session.get('user'):
         id = request.args.get('id')
         snapshotName = request.args.get('snapshotName')
@@ -548,7 +543,7 @@ def takeSnapShot():
         return redirect('/Login')
 
 @app.route("/restoreSnapShot")
-def restoreSnapShot():
+def restore_snapshot():
     if session.get('user'):
         id = request.args.get('id')
         snapshot = request.args.get('snapshot')
@@ -562,38 +557,35 @@ def restoreSnapShot():
         return redirect('/Login')
 
 @app.route("/removeSnapShot")
-def removeSnapShot():
+def remove_snapshot():
     if session.get('user'):
         id = request.args.get('id')
         snapshot = request.args.get('snapshot')
 
-        vps     = modules.vps.VPS()
+        vps = modules.vps.VPS()
         vps.removeSnapShot(id, snapshot)
-        
-        active  = '/'
-        title   = 'Snapshot Manager'
         status = 'Snapshot \"' + snapshot + '\" Removed'
 
-        #return render_template('snapshotmanager.html', menu=menu, title=title, active=active, row=row)
         return redirect('/snapShot?id=' + id + '&status=' + status)
     else:
         return redirect('/Login')
 
 
 @app.route('/restartConsole')
-def restartConsole():
+def restart_console():
     if session.get('user'):
         id = request.args.get('id')
 
-        vps     = modules.vps.VPS()
-        row     = vps.getIndVPS(id)
-        disks   = vps.getDisks(id)
-        device  = vps.getIntVPS(id)
-        status  = vps.getStatus(id)
-        graph   = modules.graph.GraphTraffic()
-        file    = graph.genGraph(device)
+        vps = modules.vps.VPS()
+        #row = vps.getIndVPS(id)
+        #disks = vps.getDisks(id)
+        #device = vps.getIntVPS(id)
+        #status = vps.getStatus(id)
+        #graph = modules.graph.GraphTraffic()
+        #file = graph.genGraph(device)
         
-        console = vps.restartConsole(id)
+        #console =
+        vps.restartConsole(id)
 
         active  = '/'
         title   = 'View VPS'
@@ -609,7 +601,7 @@ def restartConsole():
 
 
 @app.route("/updateVPS",methods=['POST'])
-def updateVPS():    
+def update_instance():
     if session.get('user'):
         id 				= request.form['id']
         name 			= request.form['name']
@@ -629,7 +621,7 @@ def updateVPS():
         return redirect('/Login')
 
 @app.route('/createVPS',methods=['POST','GET'])
-def createVPS():
+def create_instance():
     if session.get('user'):
         # read the posted values from the UI
         name 		= request.form['name']
@@ -662,16 +654,15 @@ def createVPS():
             # console = is the port the user uses to connect to the terminal console
             # data is the returned payload from the server connector
 
-            vps         = modules.vps.VPS()
-            ram         = vps.convertRAM(ram)
-            disk        = vps.convertDisk(disk)
-            console     = vps.getMaxConsole()
-            vps_id      = vps.createVPS(name,description,ram,console,image)
-            new_device  = vps.getInt()
-            bridge_id   = vps.getBridgeID(bridge)
-            device      = vps.addDevice(new_device,vps_id,bridge_id)
-
-            data = vps.createDisk(disk_name,order,disk,vps_id,createDisk,createPath)
+            vps = modules.vps.VPS()
+            ram = vps.convertRAM(ram)
+            disk = vps.convertDisk(disk)
+            console = vps.getMaxConsole()
+            vps_id = vps.createVPS(name,description,ram,console,image)
+            new_device = vps.getInt()
+            bridge_id = vps.getBridgeID(bridge)
+            vps.addDevice(new_device,vps_id,bridge_id)
+            vps.createDisk(disk_name,order,disk,vps_id,createDisk,createPath)
                         
             # Send ID of create VPS to ajax script which gets picked up by Unit/Function tests 
             # Currently returns to main page but this allows the option of bringing
@@ -686,7 +677,7 @@ def createVPS():
         return redirect('/Login')
 
 @app.route("/deleteVPS")
-def deleteVPS():
+def delete_instance():
     if session.get('user'):
         active = '/'
         title = 'VPS Manager'
@@ -704,7 +695,7 @@ def deleteVPS():
         return redirect('/Login')        
 
 @app.route("/Login",methods=['POST','GET'])
-def Login():
+def login():
     active 	= '/Login'
     title 	= 'Login'
     return render_template('login.html', menu=menu, menuProfile=menuProfile, title=title, active=active)

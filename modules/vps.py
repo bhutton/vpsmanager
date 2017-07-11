@@ -21,6 +21,7 @@ vps_get_status = Config.get('rest_calls','status')
 vps_update_vps = Config.get('rest_calls','update_vps')
 vps_take_snapshot = Config.get('rest_calls','take_snapshot')
 vps_restore_snapshot = Config.get('rest_calls','restore_snapshot')
+vps_add_device = Config.get('rest_calls','add_device')
 
 
 class VPS:
@@ -85,8 +86,9 @@ class VPS:
     def addDevice(self,device,vps_id,bridge_id):
         
         self.db.addDevice(device,vps_id,bridge_id)
+        return self.make_call_to_vpssvr(vps_update_vps + str(vps_id))
 
-        try:
+        '''try:
             self.data = str(vps_id)
             # Create a socket (SOCK_STREAM means a TCP socket)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -105,7 +107,7 @@ class VPS:
 
         finally:
             sock.close()
-            return received
+            return received'''
 
     def addDeviceUpdate(self,device,vps_id,bridge_id):
         self.db.addDevice(device,vps_id,bridge_id)
