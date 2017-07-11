@@ -238,7 +238,7 @@ class VpsmanagerTestCase(unittest.TestCase):
 
     def test_add_device(self):
         v = vps.VPS()
-        assert v.addDevice(1,878,0) is 'Device Added\n'
+        assert v.addDevice(1,878,0) is 'VPS 878 Updated\n'
 
 if __name__ == '__main__':
     unittest.main()
