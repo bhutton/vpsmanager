@@ -6,6 +6,7 @@ import modules.vps as vps
 import modules.database
 import modules.user
 import modules.graph
+import json
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch
@@ -236,11 +237,11 @@ class VpsmanagerTestCase(unittest.TestCase):
         v = vps.VPS()
         v.restartConsole(878)
 
-    @patch('modules.vps.VPS.make_call_to_vpssvr')
-    def test_add_device(self, mock_vps):
-        mock_vps.return_value = 'VPS 878 Updated\n'
+    def test_add_device(self):
         v = vps.VPS()
-        assert v.addDevice(1,878,0) is 'VPS 878 Updated\n'
+        rv = v.addDevice(1,878,0)
+        expect_value = {'status': 'VPS 878 Updated\n'}
+        self.assertDictEqual(rv.json(), expect_value)
 
 if __name__ == '__main__':
     unittest.main()
