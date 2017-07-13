@@ -179,30 +179,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert b'User Successfully Deleted' in rv.data
 
-    @patch('modules.graph.GraphTraffic')
-    @patch('modules.vps.VPS')
-    def test_start_vps(self, exec_func_vps, exec_func_graph):
-        modules.graph.GraphTraffic().return_value = "abc.txt"
 
-        rv = self.login("username", "password")
-        modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
-        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
-        start_vps_cmd = "/startVPS?id=654"
-        rv = self.app.get(start_vps_cmd, follow_redirects=True)
-        assert b'/stopVPS' in rv.data
-
-    @patch('modules.graph.GraphTraffic')
-    @patch('modules.vps.VPS')
-    def test_stop_vps(self, exec_func_vps, exec_func_graph):
-        modules.graph.GraphTraffic().return_value = "abc.txt"
-        rv = self.login("username", "password")
-        modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
-        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
-        modules.vps.VPS().getStatus.return_value = "Stopped"
-
-        stop_vps_cmd = "/stopVPS?id=654"
-        rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        assert b'/startVPS' in rv.data
         
     def getVPSData(self):
         self.vpsdata = [[]]
@@ -223,21 +200,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         mock_vps.return_value = 'VPS 878 Updated\n'
         v = vps.VPS()
         assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
-
-    def test_restart_console(self):
-        v = vps.VPS()
-        v.restartConsole(878)
-
-    def test_add_device(self):
-        v = vps.VPS()
-        rv = v.addDevice(1,878,0)
-        expect_value = {'status': 'VPS 878 Updated\n'}
-        self.assertDictEqual(rv.json(), expect_value)
-
-    def test_update_user(self):
-        u = user.User()
-        rv = u.updateUser(21,'fred bloggs','test@email.com','abc123')
-        assert rv == "update successful"
 
 if __name__ == '__main__':
     unittest.main()
