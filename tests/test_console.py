@@ -17,11 +17,5 @@ class VPSManagerConsoleTests(unittest.TestCase):
         v = vps.VPS()
         v.restartConsole(878)
 
-    def test_add_device(self):
-        v = vps.VPS()
-        rv = v.addDevice(1,878,0)
-        expect_value = {'status': 'VPS 878 Updated\n'}
-        self.assertDictEqual(rv.json(), expect_value)
-
 if __name__ == '__main__':
     unittest.main()
