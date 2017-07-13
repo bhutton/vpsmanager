@@ -4,7 +4,7 @@ import unittest
 import tempfile
 import modules.vps as vps
 import modules.database
-import modules.user
+import modules.user as user
 import modules.graph
 import json
 from contextlib import contextmanager
@@ -62,17 +62,8 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         return self.userdata
 
-    #@patch('modules.vps.VPS')
-    #@patch('modules.database.DB_VPS')
     def testListVM(self,
-                   #exec_function_get_status,
-                   #exec_function_db_mock
                    ):
-        #exec_function_db_mock().getVPS.return_value = (
-        #    'on', 'def', 'ghi', 'jkl')
-        #exec_function_get_status().getStatus.return_value = "Running"
-
-        #modules.database.DB_VPS.getVPS.return_value = None
         vps = modules.vps.VPS()
         row = vps.getVPS()
 
@@ -188,30 +179,7 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert b'User Successfully Deleted' in rv.data
 
-    @patch('modules.graph.GraphTraffic')
-    @patch('modules.vps.VPS')
-    def test_start_vps(self, exec_func_vps, exec_func_graph):
-        modules.graph.GraphTraffic().return_value = "abc.txt"
 
-        rv = self.login("username", "password")
-        modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
-        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
-        start_vps_cmd = "/startVPS?id=654"
-        rv = self.app.get(start_vps_cmd, follow_redirects=True)
-        assert b'/stopVPS' in rv.data
-
-    @patch('modules.graph.GraphTraffic')
-    @patch('modules.vps.VPS')
-    def test_stop_vps(self, exec_func_vps, exec_func_graph):
-        modules.graph.GraphTraffic().return_value = "abc.txt"
-        rv = self.login("username", "password")
-        modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
-        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
-        modules.vps.VPS().getStatus.return_value = "Stopped"
-
-        stop_vps_cmd = "/stopVPS?id=654"
-        rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        assert b'/startVPS' in rv.data
         
     def getVPSData(self):
         self.vpsdata = [[]]
@@ -233,15 +201,12 @@ class VpsmanagerTestCase(unittest.TestCase):
         v = vps.VPS()
         assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
 
-    def test_restart_console(self):
-        v = vps.VPS()
-        v.restartConsole(878)
-
     def test_add_device(self):
         v = vps.VPS()
-        rv = v.addDevice(1,878,0)
+        rv = v.addDevice(1, 878, 0)
         expect_value = {'status': 'VPS 878 Updated\n'}
         self.assertDictEqual(rv.json(), expect_value)
+
 
 if __name__ == '__main__':
     unittest.main()

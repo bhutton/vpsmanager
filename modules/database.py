@@ -172,10 +172,13 @@ class DB_Users(DatabaseConnectivity):
 
     def updateUserandPassword(self, name, email, password, id):
         update_user = "update users set name=%s,email=%s,password=%s where id=%s"
-        self.cursor.execute(update_user, (name, email, password, id))
-        self.data = self.cursor.fetchall()
-        self.conn.commit()
-        return self.data
+        try:
+            self.cursor.execute(update_user, (name, email, password, id))
+            self.data = self.cursor.fetchall()
+            self.conn.commit()
+            return "update successful"
+        except:
+            return "update failed"
 
     def updateUser(self, name, email, id):
         update_user = "update users set name=%s,email=%s where id=%s"

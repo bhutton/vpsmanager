@@ -224,25 +224,24 @@ def modify_user():
 @app.route("/updateUser",methods=['POST','GET'])
 def update_user():
     if session.get('user'):
-        id 				= int(request.form['id'])
-        email 			= request.form['inputEmail']
-        name 			= request.form['inputName']
-        newPassword		= request.form['newPassword']
-        repPassword		= request.form['repPassword']
+        id = int(request.form['id'])
+        email = request.form['inputEmail']
+        name = request.form['inputName']
+        newPassword	= request.form['newPassword']
+        repPassword	= request.form['repPassword']
 
         user = modules.user.User()
 
         validate = user.checkPassword(newPassword,repPassword)
 
         if (validate == "match"):
-        	user.updateUser(id,name,email,newPassword)
-        	return str(id) + ',User Updated'
+            user.updateUser(id,name,email,newPassword)
+            return str(id) + ',User Updated'
         elif (validate == "missmatch"):
             return str(id) + ',Passwords must Match'
         else:
-        	user.updateUser(id,name,email)
-        	return str(id) + ',User Updated'
-
+            user.updateUser(id,name,email)
+            return str(id) + ',User Updated'
     else:
         return redirect('/Login')
 
@@ -305,8 +304,9 @@ def add_instance():
         vps = modules.vps.VPS()
         bridge = vps.getBridge()
 
-        active 	= '/AddVPS'
-        title 	= 'Add VPS'
+        active = '/AddVPS'
+        title = 'Add VPS'
+
         return render_template('addvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, bridge=bridge)
     else:
         return redirect('/Login')
@@ -329,8 +329,8 @@ def edit_disk():
         id = request.args.get('id')
         disk_id = request.args.get('disk')
 
-        vps     = modules.vps.VPS()
-        disk   = vps.getDisk(disk_id)
+        vps = modules.vps.VPS()
+        disk = vps.getDisk(disk_id)
 
         active = ""
         title = "Edit Disk"
@@ -347,15 +347,8 @@ def update_disk():
         name = request.form['name']
         disk_id = request.form['disk_id']
 
-        
         vps = modules.vps.VPS()
-        disk = vps.updateDisk(disk_id,name)
-        #disk = vps.getDisk(disk_id)
-
-
-
-        active = ""
-        title = "Modify Disk"
+        vps.updateDisk(disk_id,name)
 
         return id
     else:
@@ -365,13 +358,12 @@ def update_disk():
 def add_network():
     if session.get('user'):
         id = request.args.get('id')
-        updated = request.args.get('updated')
+        request.args.get('updated')
 
         network = modules.vps.VPS()
-        max_device = network.getInt()
+        network.getInt()
         bridge = network.getBridge()
 
-        active = ""
         title = "Add Network Interface"
 
         return render_template('addnetwork.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, bridge=bridge, id=id)
@@ -386,13 +378,9 @@ def create_network():
 
         network = modules.vps.VPS()
         new_device = network.getInt()
-
         bridge_id = network.getBridgeID(bridge)
         
-        data = network.addDeviceUpdate(new_device,id,bridge_id)
-    
-        active = ""
-        title = "Add Network Interface"
+        network.addDeviceUpdate(new_device,id,bridge_id)
 
         return id
     else:
@@ -407,10 +395,8 @@ def del_network():
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
 
-        #del_network = ("delete from interface where id=%s")
-
         network = modules.vps.VPS()
-        data = network.delete_network_interface(id, vps_id)
+        network.delete_network_interface(id, vps_id)
 
         location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 
@@ -437,10 +423,7 @@ def create_disk():
         order = 0
 
         network = modules.vps.VPS()
-        data = network.addDisk(name,disk,order,id,createDisk)
-    
-        active = ""
-        title = "Add Disk"
+        network.addDisk(name,disk,order,id,createDisk)
 
         return id
     else:
@@ -451,10 +434,10 @@ def delete_disk():
     if session.get('user'):
         id = request.args.get('id')
         vps_id = request.args.get('vps_id')
-        updated = request.args.get('updated')
+        request.args.get('updated')
 
         network = modules.vps.VPS()
-        data = network.delDisk(id)
+        network.delDisk(id)
 
         location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 
@@ -517,10 +500,6 @@ def snapshot():
         row = vps.getIndVPS(id)
         snapshots = vps.listSnapShot(id)
         
-        #snapshots   = snapshots.split('\n')
-
-        #prefport    = ShellInABoxPref
-
         active = '/'
         title = 'Snapshot Manager'
 
@@ -577,23 +556,7 @@ def restart_console():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        #row = vps.getIndVPS(id)
-        #disks = vps.getDisks(id)
-        #device = vps.getIntVPS(id)
-        #status = vps.getStatus(id)
-        #graph = modules.graph.GraphTraffic()
-        #file = graph.genGraph(device)
-        
-        #console =
         vps.restartConsole(id)
-
-        active  = '/'
-        title   = 'View VPS'
-
-        #url :
-
-        #return render_template('viewvps.html', menu=menu, title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file)
-
 
         return redirect('/viewVPS?id=' + id)
     else:
@@ -603,18 +566,18 @@ def restart_console():
 @app.route("/updateVPS",methods=['POST'])
 def update_instance():
     if session.get('user'):
-        id 				= request.form['id']
-        name 			= request.form['name']
-        description 	= request.form['description']
-        ram 			= request.form['ram']
-        path            = request.form['path']
-        startScript     = request.form['startscript']
-        stopScript      = request.form['stopscript']
-        image           = request.form['image']
+        id = request.form['id']
+        name = request.form['name']
+        description = request.form['description']
+        ram = request.form['ram']
+        path = request.form['path']
+        startScript = request.form['startscript']
+        stopScript = request.form['stopscript']
+        image = request.form['image']
 
         vps = modules.vps.VPS()
         ram = vps.convertRAM(ram)
-        row = vps.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
+        vps.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
         
         return id
     else:
@@ -624,21 +587,21 @@ def update_instance():
 def create_instance():
     if session.get('user'):
         # read the posted values from the UI
-        name 		= request.form['name']
+        name = request.form['name']
         description = request.form['description']
-        ram 		= request.form['ram']
-        disk 		= request.form['disk']
-        bridge 		= request.form['bridge']
-        image       = request.form['image']
-        disk_name   = ""
+        ram = request.form['ram']
+        disk = request.form['disk']
+        bridge = request.form['bridge']
+        image = request.form['image']
+        disk_name = ""
 
         try:
-            createDisk  = request.form['createDisk']
+            createDisk = request.form['createDisk']
         except:
             createDisk = "off"
 
         try:
-            createPath  = request.form['createPath']
+            createPath = request.form['createPath']
         except:
             createPath = "off" 
 
