@@ -4,7 +4,7 @@ import unittest
 import tempfile
 import modules.vps as vps
 import modules.database
-import modules.user
+import modules.user as user
 import modules.graph
 import json
 from contextlib import contextmanager
@@ -62,17 +62,8 @@ class VpsmanagerTestCase(unittest.TestCase):
 
         return self.userdata
 
-    #@patch('modules.vps.VPS')
-    #@patch('modules.database.DB_VPS')
     def testListVM(self,
-                   #exec_function_get_status,
-                   #exec_function_db_mock
                    ):
-        #exec_function_db_mock().getVPS.return_value = (
-        #    'on', 'def', 'ghi', 'jkl')
-        #exec_function_get_status().getStatus.return_value = "Running"
-
-        #modules.database.DB_VPS.getVPS.return_value = None
         vps = modules.vps.VPS()
         row = vps.getVPS()
 
@@ -242,6 +233,11 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = v.addDevice(1,878,0)
         expect_value = {'status': 'VPS 878 Updated\n'}
         self.assertDictEqual(rv.json(), expect_value)
+
+    def test_update_user(self):
+        u = user.User()
+        rv = u.updateUser(21,'fred bloggs','test@email.com','abc123')
+        assert rv == "update successful"
 
 if __name__ == '__main__':
     unittest.main()
