@@ -1,9 +1,5 @@
-import os
-import tempfile
 from selenium import webdriver
-import vpsmanager
 import unittest
-#from flask_testing import LiveServerTestCase
 
 class VPSManagerFunctionalTests(unittest.TestCase):
 
