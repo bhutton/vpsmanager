@@ -114,15 +114,7 @@ class VpsmanagerTestCase(unittest.TestCase):
             password='password'
         ), follow_redirects=True)
 
-    @patch('modules.database.DB_Users')
-    def addUser(self, username, email, password, exec_func_user):
 
-        modules.database.DB_Users().createUser.return_value = 1
-        return self.app.post('/createUser', data=dict(
-            inputName=username,
-            inputEmail=email,
-            inputPassword=password
-        ), follow_redirects=True)
 
 
     def logout(self):
@@ -164,21 +156,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert b'VPS Successfully Deleted' in rv.data
 
-    def test_add_delete_user(self):
-        rv = self.login("username", "password")
-        rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
-        assert len(rv.data) > 0, 'User Added Successfully'
-
-    @patch('modules.database.DB_Users')
-    def testDeleteUser(self, exec_func_db):
-        modules.database.DB_Users().deleteUser.return_value = ""
-
-        rv = self.login("username", "password")
-        rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
-        delete_cmd = "/deleteUser?id=" + str(int(rv.data))
-        rv = self.app.get(delete_cmd, follow_redirects=True)
-        assert b'User Successfully Deleted' in rv.data
-
 
         
     def getVPSData(self):
@@ -195,17 +172,6 @@ class VpsmanagerTestCase(unittest.TestCase):
         v = vps.VPS()
         assert v.getStatus(878).status_code == 200
 
-    @patch('modules.vps.VPS.make_call_to_vpssvr')
-    def test_delete_network_interface(self, mock_vps):
-        mock_vps.return_value = 'VPS 878 Updated\n'
-        v = vps.VPS()
-        assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
-
-    def test_add_device(self):
-        v = vps.VPS()
-        rv = v.addDevice(1, 878, 0)
-        expect_value = {'status': 'VPS 878 Updated\n'}
-        self.assertDictEqual(rv.json(), expect_value)
 
 
 if __name__ == '__main__':

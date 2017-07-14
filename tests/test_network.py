@@ -12,7 +12,7 @@ from flask import appcontext_pushed, g
 from mock import patch
 from werkzeug import generate_password_hash
 
-class VPSManagerUserTests(unittest.TestCase):
+class VpsmanagerNetworkTestCase(unittest.TestCase):
     def setUp(self):
         self.db_fd, vpsmanager.app.config['DATABASE'] = tempfile.mkstemp()
         vpsmanager.app.config['TESTING'] = True
@@ -49,36 +49,14 @@ class VPSManagerUserTests(unittest.TestCase):
 
         return self.userdata
 
-    @patch('modules.database.DB_Users')
-    def addUser(self, username, email, password, exec_func_user):
-        modules.database.DB_Users().createUser.return_value = 1
-        return self.app.post('/createUser', data=dict(
-            inputName=username,
-            inputEmail=email,
-            inputPassword=password
-        ), follow_redirects=True)
+    @patch('modules.vps.VPS.make_call_to_vpssvr')
+    def test_delete_network_interface(self, mock_vps):
+        mock_vps.return_value = 'VPS 878 Updated\n'
+        v = vps.VPS()
+        assert v.delete_network_interface(1, 878) is 'VPS 878 Updated\n'
 
-    def test_update_user(self):
-        u = user.User()
-        rv = u.updateUser(21,'fred bloggs1','test1@email.com','abc1234')
-        assert rv == "update successful"
-        rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', 'abc123')
-        assert rv == "update successful"
-
-    def test_add_delete_user(self):
-        rv = self.login("username", "password")
-        rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
-        assert len(rv.data) > 0, 'User Added Successfully'
-
-    @patch('modules.database.DB_Users')
-    def testDeleteUser(self, exec_func_db):
-        modules.database.DB_Users().deleteUser.return_value = ""
-
-        rv = self.login("username", "password")
-        rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
-        delete_cmd = "/deleteUser?id=" + str(int(rv.data))
-        rv = self.app.get(delete_cmd, follow_redirects=True)
-        assert b'User Successfully Deleted' in rv.data
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_add_device(self):
+        v = vps.VPS()
+        rv = v.addDevice(1, 878, 0)
+        expect_value = {'status': 'VPS 878 Updated\n'}
+        self.assertDictEqual(rv.json(), expect_value)
