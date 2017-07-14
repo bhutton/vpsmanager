@@ -13,42 +13,7 @@ from mock import patch
 from werkzeug import generate_password_hash
 from tests.test_vpsmanager import VpsmanagerTestCase
 
-class testControlVPS(unittest.TestCase):
-    def setUp(self):
-        self.db_fd, vpsmanager.app.config['DATABASE'] = tempfile.mkstemp()
-        vpsmanager.app.config['TESTING'] = True
-        self.app = vpsmanager.app.test_client()
-        with vpsmanager.app.app_context():
-            vpsmanager.init_db()
-
-    def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(vpsmanager.app.config['DATABASE'])
-
-    @patch('modules.user.User')
-    def login(self,
-              username,
-              password,
-              exec_function_get_user):
-        self.hashed_password = generate_password_hash(password)
-
-        if (username == "username" and password == "password"):
-            exec_function_get_user().checkUsername.return_value \
-                = self.getUserAccount()
-
-        return self.app.post('/validateLogin', data=dict(
-            username=username,
-            password=password
-        ), follow_redirects=True)
-
-    def getUserAccount(self):
-        self.userdata = [[]]
-        self.userdata[0].append("bhutton")
-        self.userdata[0].append("def")
-        self.userdata[0].append("ghi")
-        self.userdata[0].append(self.hashed_password)
-
-        return self.userdata
+class testControlVPS(VpsmanagerTestCase):
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
@@ -62,15 +27,6 @@ class testControlVPS(unittest.TestCase):
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
         assert b'/stopVPS' in rv.data
 
-    def getVPSData(self):
-        self.vpsdata = [[]]
-        self.vpsdata[0].append(123)
-        self.vpsdata[0].append("test")
-        self.vpsdata[0].append("this is a test")
-        self.vpsdata[0].append("FreeBSD")
-        self.vpsdata[0].append(512)
-
-        return self.vpsdata
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
@@ -84,6 +40,62 @@ class testControlVPS(unittest.TestCase):
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
         assert b'/startVPS' in rv.data
+
+    def testListVM(self):
+        vps = modules.vps.VPS()
+        row = vps.getVPS()
+
+        assert (len(row) > 0)
+
+    def testAddVPS(self):
+
+        # Create VPS and return ID
+        self.login("username", "password")
+        rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
+
+        assert len(rv.data) > 0, 'VPS Successfully Created'
+
+    @patch('modules.vps.VPS')
+    def addVPS(self,
+               name,
+               description,
+               ram,
+               disk,
+               bridge,
+               password,
+               exec_function_vps):
+        rv = self.login('bhutton@abc.com', 'mypassword')
+        rv = self.app.get('/', follow_redirects=True)
+        assert b'VPS Manager' in rv.data
+
+        exec_function_vps.getVPS.return_value = 123
+        exec_function_vps().createVPS.return_value = 123
+
+        return self.app.post('/createVPS', data=dict(
+            name="test",
+            description="this is a test",
+            ram=1,
+            disk=10,
+            bridge=1,
+            image=1
+        ), follow_redirects=True)
+
+    @patch('modules.vps.VPS')
+    def testDeleteVPS(self, exec_function_vps):
+        exec_function_vps().delVPS.return_value = "success", "VPS Successfully Deleted"
+
+        # Create VPS and return ID
+        self.login("username", "password")
+        rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
+
+        delete_cmd = "/deleteVPS?id=" + str(rv.data)
+        rv = self.app.get(delete_cmd, follow_redirects=True)
+        assert b'VPS Successfully Deleted' in rv.data
+
+    def test_get_vps_status(self):
+        v = vps.VPS()
+        assert v.getStatus(878).status_code == 200
+
 
 
 if __name__ == '__main__':

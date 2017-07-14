@@ -1,53 +1,11 @@
-import os
-import vpsmanager
 import unittest
-import tempfile
-import modules.vps as vps
 import modules.database
 import modules.user as user
 import modules.graph
-import json
-from contextlib import contextmanager
-from flask import appcontext_pushed, g
 from mock import patch
-from werkzeug import generate_password_hash
+from tests.test_vpsmanager import VpsmanagerTestCase
 
-class VPSManagerUserTests(unittest.TestCase):
-    def setUp(self):
-        self.db_fd, vpsmanager.app.config['DATABASE'] = tempfile.mkstemp()
-        vpsmanager.app.config['TESTING'] = True
-        self.app = vpsmanager.app.test_client()
-        with vpsmanager.app.app_context():
-            vpsmanager.init_db()
-
-    def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(vpsmanager.app.config['DATABASE'])
-
-    @patch('modules.user.User')
-    def login(self,
-              username,
-              password,
-              exec_function_get_user):
-        self.hashed_password = generate_password_hash(password)
-
-        if (username == "username" and password == "password"):
-            exec_function_get_user().checkUsername.return_value \
-                = self.getUserAccount()
-
-        return self.app.post('/validateLogin', data=dict(
-            username=username,
-            password=password
-        ), follow_redirects=True)
-
-    def getUserAccount(self):
-        self.userdata = [[]]
-        self.userdata[0].append("bhutton")
-        self.userdata[0].append("def")
-        self.userdata[0].append("ghi")
-        self.userdata[0].append(self.hashed_password)
-
-        return self.userdata
+class VPSManagerUserTests(VpsmanagerTestCase):
 
     @patch('modules.database.DB_Users')
     def addUser(self, username, email, password, exec_func_user):
@@ -79,6 +37,42 @@ class VPSManagerUserTests(unittest.TestCase):
         delete_cmd = "/deleteUser?id=" + str(int(rv.data))
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert b'User Successfully Deleted' in rv.data
+
+    def test_login_logout(self):
+        # Successful Login
+        rv = self.login("username", "password")
+        assert b'VPS Manager' in rv.data
+
+        # Invalid Login
+        rv = self.login('adminx@test.com', 'default')
+        assert b'Wrong Email address or Password.' in rv.data
+
+        # Logout
+        rv = self.logout()
+        assert b'Login' in rv.data
+
+    def testLoginPage(self):
+        rv = self.app.get('/Login', follow_redirects=False)
+        assert b'Login' in rv.data
+
+    @patch('modules.database.DB_VPS')
+    def testHomepageAuthenticated(self, exec_func_db):
+        modules.database.DB_VPS.getVPS.return_value = None
+        rv = self.login("myusername", "mypassword")
+        rv = self.app.get('/', follow_redirects=True)
+        assert b'VPS Manager' in rv.data
+
+    def test_homepage_unauthenticated(self):
+        rv = self.app.get('/', follow_redirects=True)
+        assert b'Login' in rv.data
+
+    @patch('modules.database.DB_Users')
+    def testLogin(self, exec_func_db):
+        return self.app.post('/validateLogin', data=dict(
+            username='usernmae',
+            password='password'
+        ), follow_redirects=True)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,18 +1,8 @@
-import os
-import vpsmanager
 import unittest
-import tempfile
 import modules.vps as vps
-import modules.database
-import modules.user as user
-import modules.graph
-import json
-from contextlib import contextmanager
-from flask import appcontext_pushed, g
-from mock import patch
-from werkzeug import generate_password_hash
+from tests.test_vpsmanager import VpsmanagerTestCase
 
-class VPSManagerConsoleTests(unittest.TestCase):
+class VPSManagerConsoleTests(VpsmanagerTestCase):
     def test_restart_console(self):
         v = vps.VPS()
         v.restartConsole(878)
