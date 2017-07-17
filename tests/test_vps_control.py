@@ -9,7 +9,7 @@ import modules.graph
 import json
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
-from mock import patch
+from mock import patch, MagicMock
 from werkzeug import generate_password_hash
 from tests.test_vpsmanager import VpsmanagerTestCase
 
@@ -35,11 +35,16 @@ class testControlVPS(VpsmanagerTestCase):
         rv = self.login("username", "password")
         modules.vps.VPS().ctrlVPS.return_value = "Stopped VPS 123"
         modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
-        modules.vps.VPS().getStatus.return_value = "Stopped"
+        modules.vps.VPS().getStatus.return_value = \
+            MagicMock(
+                status_code=200,
+                response=json.dumps({'Status':'stopped'})
+            )
 
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        assert b'/startVPS' in rv.data
+        print(rv.data)
+        assert b'View VPS' in rv.data
 
     def testListVM(self):
         vps = modules.vps.VPS()
@@ -94,8 +99,9 @@ class testControlVPS(VpsmanagerTestCase):
 
     def test_get_vps_status(self):
         v = vps.VPS()
-        assert v.getStatus(878).status_code == 200
 
+        status = v.getStatus(878).json()
+        assert status['status'] == 'Stopped'
 
 
 if __name__ == '__main__':

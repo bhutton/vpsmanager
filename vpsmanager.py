@@ -4,7 +4,8 @@ import modules.vps
 import modules.user
 import modules.graph
 import configparser
-import os 
+import os
+import json
 
 from sqlite3 import dbapi2 as sqlite3
 
@@ -477,7 +478,8 @@ def view_instance():
         row = vps.getIndVPS(id)
         disks = vps.getDisks(id)
         device = vps.getIntVPS(id)
-        status = vps.getStatus(id)
+        status = vps.getStatus(id).json()
+
         graph = modules.graph.GraphTraffic()
         file = graph.genGraph(device)
 
@@ -486,7 +488,7 @@ def view_instance():
         active  = '/'
         title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status, prefport=ShellInABoxPref, file=file, rootPath=rootPath)
+        return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
     else:
         return redirect('/Login')
 
