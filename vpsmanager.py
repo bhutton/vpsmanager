@@ -458,14 +458,14 @@ def modify_instance():
         row = vps.getIndVPS(id)
         disks = vps.getDisks(id)
         device = vps.getIntVPS(id)
-        status = vps.getStatus(id)
+        status = vps.getStatus(id).json()
         graph = modules.graph.GraphTraffic()
         file = graph.genGraph(device)
        
         active = '/'
         title = 'Modify VPS'
 
-        return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status, file=file)
+        return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status['status'], file=file)
     else:
         return redirect('/Login')
 
