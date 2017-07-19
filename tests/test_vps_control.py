@@ -6,7 +6,8 @@ import modules.vps as vps
 import modules.database
 import modules.user as user
 import modules.graph
-import json
+#import json
+from flask import json
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch, MagicMock
@@ -43,7 +44,6 @@ class testControlVPS(VpsmanagerTestCase):
 
         stop_vps_cmd = "/stopVPS?id=654"
         rv = self.app.get(stop_vps_cmd, follow_redirects=True)
-        print(rv.data)
         assert b'View VPS' in rv.data
 
     def testListVM(self):

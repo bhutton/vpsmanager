@@ -3,12 +3,14 @@ import os
 #import re
 import base64
 import requests
+from flask import jsonify, make_response
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Get VPS configurations from configuration.cfg
 Config = configparser.ConfigParser()
 Config.read("{}/../configuration.cfg".format(dir_path))
+env = Config.get('Global','env')
 min_console = Config.get('VPS','minconsole')
 min_device = Config.get('VPS','mindevice')
 HOST = str(Config.get('VPS','host'))
@@ -22,11 +24,16 @@ vps_update_vps = Config.get('rest_calls','update_vps')
 vps_take_snapshot = Config.get('rest_calls','take_snapshot')
 vps_restore_snapshot = Config.get('rest_calls','restore_snapshot')
 vps_add_device = Config.get('rest_calls','add_device')
+vps_del_device = Config.get('rest_calls','del_device')
+vps_add_disk = Config.get('rest_calls','add_disk')
+vps_del_disk = Config.get('rest_calls','del_disk')
+vps_del_vps = Config.get('rest_calls','del_vps')
 
 
 class VPS:
 
     def __init__(self):
+        self.return_values = {}
         self.db = modules.database.DB_VPS()
 
     def getVPS(self):
@@ -84,30 +91,9 @@ class VPS:
 
 
     def addDevice(self,device,vps_id,bridge_id):
-        
+
         self.db.addDevice(device,vps_id,bridge_id)
         return self.make_call_to_vpssvr(vps_update_vps + str(vps_id))
-
-        '''try:
-            self.data = str(vps_id)
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",updatevps\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-
-            if (len(received) > 0):
-                status = "Running"
-            else:
-                status = "Stopped"
-
-        finally:
-            sock.close()
-            return received'''
 
     def addDeviceUpdate(self,device,vps_id,bridge_id):
         self.db.addDevice(device,vps_id,bridge_id)
@@ -309,7 +295,7 @@ class VPS:
 
         return row2
 
-    def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
+    '''def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
         
         try:
             output = self.db.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
@@ -328,7 +314,7 @@ class VPS:
         finally:
             sock.close()
 
-            return output
+            return output'''
         
         
     def createVPS(self,name,description,ram,con,image):
@@ -365,9 +351,9 @@ class VPS:
 
     def delVPS(self,id):
         status = self.getStatus(id)
+        self.make_call_to_vpssvr(vps_del_vps + id)
 
         if (status == "Stopped"):
-
             try:
                 self.db.delVPS(id)
 
@@ -455,11 +441,30 @@ class VPS:
         }
         return requests.get(url, headers=headers)
 
+    def set_dev_return_values(self):
+        self.return_values = {
+            'status': 'VPS 878 Updated\n'
+        }
+
+    def get_dev_return_value(self, key_name):
+            return self.return_values(key_name)
+
     def make_call_to_vpssvr(self, path):
         connection_string = vps_server + path
         print(connection_string)
-        try:
-            return self.open_with_auth(connection_string,
-                              'GET', vps_username, vps_password)
-        except:
-            return "Error: was not able to connect"
+        if (env == 'prod'):
+            try:
+                  return self.open_with_auth(connection_string,
+                                  'GET', vps_username, vps_password)
+            except:
+                return "Error: was not able to connect"
+        else:
+            self.return_values = {
+                'status': 'VPS 878 Updated\n'
+            }
+
+            return_value = 'VPS 878 Updated\n'
+            #self.set_dev_return_values()
+            #return_value = self.get_dev_return_value('status')
+            #return_value = self.return_values('status')
+            return make_response(jsonify({'status': return_value}), 200)

@@ -2,11 +2,6 @@ import os
 import vpsmanager
 import unittest
 import tempfile
-import modules.vps as vps
-import modules.database
-import modules.user as user
-import modules.graph
-import json
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from mock import patch
