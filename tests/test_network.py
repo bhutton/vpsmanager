@@ -1,8 +1,5 @@
 import modules.vps as vps
-from mock import patch, MagicMock
 from tests.test_vpsmanager import VpsmanagerTestCase
-
-
 
 class VpsmanagerNetworkTestCase(VpsmanagerTestCase):
 
