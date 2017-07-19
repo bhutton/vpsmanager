@@ -457,3 +457,9 @@ class VPS:
                               'GET', vps_username, vps_password)
         except:
             return "Error: was not able to connect"
+
+    def make_rest_call(self):
+        pass
+
+    def mock_rest_call(self):
+        pass
