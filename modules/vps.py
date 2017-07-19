@@ -3,7 +3,7 @@ import os
 #import re
 import base64
 import requests
-from flask import jsonify, make_response
+from flask import jsonify, make_response, json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -452,19 +452,8 @@ class VPS:
     def make_call_to_vpssvr(self, path):
         connection_string = vps_server + path
         print(connection_string)
-        if (env == 'prod'):
-            try:
-                  return self.open_with_auth(connection_string,
-                                  'GET', vps_username, vps_password)
-            except:
-                return "Error: was not able to connect"
-        else:
-            self.return_values = {
-                'status': 'VPS 878 Updated\n'
-            }
-
-            return_value = 'VPS 878 Updated\n'
-            #self.set_dev_return_values()
-            #return_value = self.get_dev_return_value('status')
-            #return_value = self.return_values('status')
-            return make_response(jsonify({'status': return_value}), 200)
+        try:
+              return self.open_with_auth(connection_string,
+                              'GET', vps_username, vps_password)
+        except:
+            return "Error: was not able to connect"
