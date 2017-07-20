@@ -28,6 +28,7 @@ vps_del_device = Config.get('rest_calls','del_device')
 vps_add_disk = Config.get('rest_calls','add_disk')
 vps_del_disk = Config.get('rest_calls','del_disk')
 vps_del_vps = Config.get('rest_calls','del_vps')
+vps_get_net_status = Config.get('rest_calls','net_status')
 
 
 class VPS:
@@ -127,30 +128,9 @@ class VPS:
     def getStatus(self,vps_id):
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
 
-    def connectServer(self,cmd):
-        # Receive data from the server and shut down
-
-        try:
-            self.data = cmd
-
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(self.data)
-            received = sock.recv(1024)
-            return received
-        except:
-            return 'something went wrong'
-
-
-
     def getNetworkInterfaceStatus(self,vps_id):
-        return self.connectServer(
-            PassString + "," + str(vps_id) + ",netStatus\n"
-        )
-
+        self.make_call_to_vpssvr(vps_get_net_status + str(vps_id))
+        
     def takeSnapShot(self,vps_id,snapshotName):
         return self.make_call_to_vpssvr(
             vps_take_snapshot + str(vps_id) + '/' + snapshotName
@@ -458,8 +438,3 @@ class VPS:
         except:
             return "Error: was not able to connect"
 
-    def make_rest_call(self):
-        pass
-
-    def mock_rest_call(self):
-        pass
