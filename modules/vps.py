@@ -23,6 +23,7 @@ vps_get_status = Config.get('rest_calls','status')
 vps_update_vps = Config.get('rest_calls','update_vps')
 vps_take_snapshot = Config.get('rest_calls','take_snapshot')
 vps_restore_snapshot = Config.get('rest_calls','restore_snapshot')
+vps_remove_snapshot = Config.get('rest_calls','remove_snapshot')
 vps_add_device = Config.get('rest_calls','add_device')
 vps_del_device = Config.get('rest_calls','del_device')
 vps_add_disk = Config.get('rest_calls','add_disk')
@@ -130,7 +131,7 @@ class VPS:
 
     def getNetworkInterfaceStatus(self,vps_id):
         self.make_call_to_vpssvr(vps_get_net_status + str(vps_id))
-        
+
     def takeSnapShot(self,vps_id,snapshotName):
         return self.make_call_to_vpssvr(
             vps_take_snapshot + str(vps_id) + '/' + snapshotName
@@ -146,7 +147,8 @@ class VPS:
             return "An error occured"
 
     def removeSnapShot(self,vps_id,snapshot):
-        try:
+        self.make_call_to_vpssvr(vps_remove_snapshot + str(vps_id))
+        '''try:
             self.data = str(vps_id)
             self.snapshot = str(snapshot)
 
@@ -162,7 +164,7 @@ class VPS:
 
         finally:
             sock.close()
-            return received
+            return received'''
 
 
     def listSnapShot(self,vps_id):

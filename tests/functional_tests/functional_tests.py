@@ -1,10 +1,13 @@
+import time
 from selenium import webdriver
 import unittest
 
 class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        #self.browser = webdriver.Firefox()
+        self.browser = webdriver.PhantomJS()
+        self.browser.set_window_size(1120, 550)
 
     def tearDown(self):
         self.browser.quit()
@@ -67,7 +70,10 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page('http://localhost:3000/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
-        self.browser.find_element_by_id('btnUpdateUser').click()
+        #self.browser.find_element_by_id('btnUpdateUser').click()
+        self.browser.execute_script("$('button#btnUpdateUser').click()")
+        #time.sleep(10)
+        self.browser.save_screenshot('/Users/bhutton/repo/vpsmanager/screenshot.png')
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 
