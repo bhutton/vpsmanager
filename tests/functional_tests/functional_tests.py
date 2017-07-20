@@ -2,11 +2,19 @@ import time
 from selenium import webdriver
 import unittest
 
+from selenium.webdriver import DesiredCapabilities
+
+
 class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
         #self.browser = webdriver.Firefox()
+        DesiredCapabilities.PHANTOMJS[
+            'phantomjs.page.settings.userAgent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0'
+
         self.browser = webdriver.PhantomJS()
+        #self.browser = webdriver.PhantomJS(executable_path='/Users/ben/repos/vpsmanager/flask/lib/python3.6/site-packages/selenium/webdriver/phantomjs')
+
         self.browser.set_window_size(1120, 550)
 
     def tearDown(self):
@@ -70,10 +78,17 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page('http://localhost:3000/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
-        #self.browser.find_element_by_id('btnUpdateUser').click()
-        self.browser.execute_script("$('button#btnUpdateUser').click()")
+        self.browser.find_element_by_id("btnUpdateUser").click()
+        #self.browser.execute_script("$('button').click()")
+        #self.browser.execute_script("$('modifyUser').submit()")
+        #self.browser.find_element_by_link_text('Update User').click()
+        #self.browser.find_element_by_name('modifyUser').submit()
         #time.sleep(10)
-        self.browser.save_screenshot('/Users/bhutton/repo/vpsmanager/screenshot.png')
+        self.browser.find_element_by_name("UpdateUser").click()
+
+        #self.browser.find_element_by_xpath('//*[@id="btnUpdateUser"]').click()
+        #self.browser.execute_script("$('UpdateUser').click()")
+        self.browser.save_screenshot('/Users/ben/repos/vpsmanager/screenshot.png')
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 
