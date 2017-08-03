@@ -9,11 +9,13 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
         #self.browser = webdriver.Firefox()
+        self.browser = webdriver.PhantomJS('/usr/local/bin/phantomjs')
         DesiredCapabilities.PHANTOMJS[
-            'phantomjs.page.settings.userAgent'] = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/54.0'
+            'phantomjs.page.settings.userAgent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
 
-        self.browser = webdriver.PhantomJS()
+
         #self.browser = webdriver.PhantomJS(executable_path='/Users/ben/repos/vpsmanager/flask/lib/python3.6/site-packages/selenium/webdriver/phantomjs')
+        #driver = webdriver.PhantomJS(executable_path='/Users/devin.mancuso/node_modules/phantomjs/bin/phantomjs')
 
         self.browser.set_window_size(1120, 550)
 
@@ -78,12 +80,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page('http://localhost:3000/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
-        #self.browser.find_element_by_id("btnUpdateUser").click()
-        self.browser.find_elements_by_xpath('//*[@id="btnUpdateUser"]')
-        #self.browser.find_element_by_name('submitButton').click()
-        #self.browser.find_element_by_class_name('btn-primary').click()
-        self.browser.find_element('btnUpdateUser').click()
-        #self.browser.save_screenshot('/Users/bhutton/repo/vpsmanager/screenshot.png')
+        self.browser.find_element_by_id('btnUpdateUser').click()
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 
