@@ -3,21 +3,19 @@ from selenium import webdriver
 import unittest
 
 from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options
 
 
 class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
-        #self.browser = webdriver.Firefox()
-        self.browser = webdriver.PhantomJS('/usr/local/bin/phantomjs')
-        DesiredCapabilities.PHANTOMJS[
-            'phantomjs.page.settings.userAgent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
-
-
-        #self.browser = webdriver.PhantomJS(executable_path='/Users/ben/repos/vpsmanager/flask/lib/python3.6/site-packages/selenium/webdriver/phantomjs')
-        #driver = webdriver.PhantomJS(executable_path='/Users/devin.mancuso/node_modules/phantomjs/bin/phantomjs')
-
-        self.browser.set_window_size(1120, 550)
+        options = webdriver.ChromeOptions()
+        options.binary_location = '/usr/local/bin/chromedriver'
+        options.add_argument('headless')
+        options.add_argument('window-size=1200x600')
+        self.browser = webdriver.Chrome(chrome_options=options)
+        self.browser.set_window_size(1200, 800)
+        self.browser.implicitly_wait(10)
 
     def tearDown(self):
         self.browser.quit()
@@ -30,6 +28,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def get_page(self, url):
         self.browser.get(url)
+        time.sleep(1)
         return self.browser.title
 
     def test_login_page(self):
@@ -80,7 +79,11 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page('http://localhost:3000/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
-        self.browser.find_element_by_id('btnUpdateUser').click()
+        #self.browser.find_element_by_id('btnUpdateUser').click()
+        self.browser.execute_script("$('#btnUpdateUser').click()")
+        self.browser.execute_script("$('#btnUpdateUser').click()")
+        self.browser.execute_script("$('#btnUpdateUser').click()")
+        #time.sleep(5)
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 

@@ -4,7 +4,7 @@
       <h1>{% if error != None %}{{error}}{% endif %}</h1>
       <div class="container">
 
-        <form onsubmit="return checkForm(this);" class="form-horizontal">
+        <form name="modifyUser" onsubmit="return checkForm(this);" class="form-horizontal">
           
           <input type="hidden" name="id" value="{{ row.0 }}">
           
@@ -21,14 +21,14 @@
               <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" value="{{ row.2 }}" required>
             </div>
           </div>
-          
+
           <div class="form-group row">
             <label for="inputPassword" class="col-sm-3 control-label">Password</label>
             <div class="col-sm-7">
               <input type="password" name="newPassword" id="txtNewPassword" class="form-control" placeholder="New Password" required>
             </div>
           </div>
-          
+
           <div class="form-group row">
             <label for="inputPassword" class="col-sm-3 control-label">Password</label>
             <div class="col-sm-7">
@@ -49,7 +49,7 @@
 
         </form>
       </div>
-    
+
       <script type='text/javascript'>
       $(function() {
           $("#txtConfirmPassword").keyup(function() {
