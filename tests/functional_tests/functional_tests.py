@@ -2,15 +2,11 @@ import time
 from selenium import webdriver
 import unittest
 
-from selenium.webdriver import DesiredCapabilities
-from selenium.webdriver.chrome.options import Options
-
-
 class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
         options = webdriver.ChromeOptions()
-        options.binary_location = '/usr/local/bin/chromedriver'
+        options.binary_location = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
         options.add_argument('headless')
         options.add_argument('window-size=1200x600')
         self.browser = webdriver.Chrome(chrome_options=options)
