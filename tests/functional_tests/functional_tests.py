@@ -1,17 +1,23 @@
 import time
+import warnings
+
 from selenium import webdriver
 import unittest
 
 class VPSManagerFunctionalTests(unittest.TestCase):
 
     def setUp(self):
+        # Supress - ResourceWarning: unclosed <socket.socket [closed]
+        warnings.filterwarnings("ignore", category=ResourceWarning)
+
         options = webdriver.ChromeOptions()
         options.binary_location = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
         options.add_argument('headless')
-        options.add_argument('window-size=1200x600')
+        options.add_argument('window-size=1200x600, chrome.verbose=false')
         self.browser = webdriver.Chrome(chrome_options=options)
         self.browser.set_window_size(1200, 800)
         self.browser.implicitly_wait(10)
+
 
     def tearDown(self):
         self.browser.quit()
@@ -33,6 +39,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
     def test_login(self):
         self.login()
         assert 'VPS Manager' in self.browser.title
+        self.browser.close()
 
     def test_view_vps(self):
         self.login()
