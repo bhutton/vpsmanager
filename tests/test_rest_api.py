@@ -11,7 +11,5 @@ class MyTestCase(unittest.TestCase):
         v = vps.VPS()
         v.rest_api_call()
 
-
-
 if __name__ == '__main__':
     unittest.main()

@@ -101,7 +101,7 @@ class testControlVPS(VpsmanagerTestCase):
         v = vps.VPS()
 
         status = v.getStatus(878).json()
-        assert status['status'] == 'Stopped'
+        assert 'Stopped' in status['status']
 
 
 if __name__ == '__main__':

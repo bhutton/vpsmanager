@@ -13,9 +13,8 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         options = webdriver.ChromeOptions()
         options.binary_location = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
         options.add_argument('headless')
-        options.add_argument('window-size=1200x600, chrome.verbose=false')
+        options.add_argument('window-size=1200x600, chrome.verbose=true')
         self.browser = webdriver.Chrome(chrome_options=options)
-        self.browser.set_window_size(1200, 800)
         self.browser.implicitly_wait(10)
 
 
@@ -30,7 +29,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def get_page(self, url):
         self.browser.get(url)
-        time.sleep(1)
+        #time.sleep(1)
         return self.browser.title
 
     def test_login_page(self):
@@ -82,11 +81,8 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page('http://localhost:3000/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
-        #self.browser.find_element_by_id('btnUpdateUser').click()
-        self.browser.execute_script("$('#btnUpdateUser').click()")
-        self.browser.execute_script("$('#btnUpdateUser').click()")
-        self.browser.execute_script("$('#btnUpdateUser').click()")
-        #time.sleep(5)
+
+        self.browser.find_element_by_id('btnUpdateUser').click()
         success_message = self.browser.find_element_by_class_name("success").text
         assert 'User Updated Successfully' in success_message
 

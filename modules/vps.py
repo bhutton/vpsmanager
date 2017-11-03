@@ -30,6 +30,8 @@ vps_add_disk = Config.get('rest_calls','add_disk')
 vps_del_disk = Config.get('rest_calls','del_disk')
 vps_del_vps = Config.get('rest_calls','del_vps')
 vps_get_net_status = Config.get('rest_calls','net_status')
+vps_start_vps = Config.get('rest_calls','start_vps')
+vps_stop_vps = Config.get('rest_calls','stop_vps')
 
 
 class VPS:
@@ -48,10 +50,12 @@ class VPS:
             num_items = len(vpsList)
 
             for line in vpsList:
+                status = self.getStatus(line[0]).json()
+
                 vpsListWithStatus[count].append(line[0])
                 vpsListWithStatus[count].append(line[1])
                 vpsListWithStatus[count].append(line[2])
-                vpsListWithStatus[count].append(self.getStatus(line[0]))
+                vpsListWithStatus[count].append(status['status'])
                 vpsListWithStatus[count].append(line[3])
 
                 if (count < num_items-1): vpsListWithStatus.append([])
@@ -128,6 +132,12 @@ class VPS:
 
     def getStatus(self,vps_id):
         return self.make_call_to_vpssvr(vps_get_status + str(vps_id))
+
+    def startVPS(self,vps_id):
+        return self.make_call_to_vpssvr(vps_start_vps + str(vps_id))
+
+    def stopVPS(self,vps_id):
+        return self.make_call_to_vpssvr(vps_stop_vps + str(vps_id))
 
     def getNetworkInterfaceStatus(self,vps_id):
         self.make_call_to_vpssvr(vps_get_net_status + str(vps_id))

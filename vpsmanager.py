@@ -253,7 +253,7 @@ def start_instance():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'start')
+        vps.startVPS(id)
 
         return redirect('/viewVPS?id=' + id)
     else:
@@ -265,7 +265,7 @@ def stop_instance():
         id = request.args.get('id')
 
         vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'stop')        
+        vps.stopVPS(id)
 
         return redirect('/viewVPS?id=' + id)
 
@@ -447,6 +447,8 @@ def delete_disk():
         return redirect('/Login')
 
 
+
+
 @app.route("/modifyVPS")
 def modify_instance():
     if session.get('user'):
@@ -490,7 +492,7 @@ def view_instance():
 
         return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
     else:
-        return redirect('/Login')
+         return redirect('/Login')
 
 @app.route("/snapShot")
 def snapshot():
@@ -641,6 +643,17 @@ def create_instance():
     else:
         return redirect('/Login')
 
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+
+
 @app.route("/deleteVPS")
 def delete_instance():
     if session.get('user'):
@@ -657,9 +670,9 @@ def delete_instance():
         return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
         #return redirect('/')
     else:
-        return redirect('/Login')        
+        return redirect('/Login')
 
-@app.route("/Login",methods=['POST','GET'])
+@app.route("/Login", methods=['POST','GET'])
 def login():
     active 	= '/Login'
     title 	= 'Login'
