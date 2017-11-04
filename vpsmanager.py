@@ -128,23 +128,15 @@ def validate_login():
     _username = request.form['username']
     _password = request.form['password']
 
-    # connect to mysql
-
     users = modules.user.User()
-
     data = users.checkUsername(_username)
 
     if len(data) > 0:
         if check_password_hash(str(data[0][3]),_password):
             session['user'] = data[0][0]
             return redirect('/')
-        else:
-            return render_template('error.html',error = 'Wrong Email address or Password.')
-            # session['user'] = data[0][0]
-            # return redirect('/')
-    else:
-        return render_template('error.html',error = 'Wrong Email address or Password.')
-  
+    return render_template('error.html',error = 'Wrong Email address or Password.')
+
 
 @app.route("/UserManagement")
 @check_auth
