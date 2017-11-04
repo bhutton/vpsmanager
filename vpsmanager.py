@@ -102,27 +102,26 @@ def check_auth(f):
             return redirect('/Login')
     return decorated_function
 
-  
 
 @app.route("/",methods=['POST','GET'])
+@check_auth
 def main():
-    if session.get('user'):
-        if (request.args.get('vpsadded')): vpsadded = request.args.get('vpsadded')
-        else: vpsadded = "no"
+    if (request.args.get('vpsadded')): vpsadded = request.args.get('vpsadded')
+    else: vpsadded = "no"
 
-        vps = modules.vps.VPS()
-        row = vps.getVPS()
+    vps = modules.vps.VPS()
+    row = vps.getVPS()
 
-        active = '/'
+    active = '/'
 
-        return render_template('index.html', menu=menu, user=session.get('user'), menuProfile=menuProfile, active=active, row=row, vpsadded=vpsadded)
-    else:
-        return redirect('/Login')
+    return render_template('index.html', menu=menu, user=session.get('user'), menuProfile=menuProfile, active=active, row=row, vpsadded=vpsadded)
+
 
 @app.route('/Logout')
 def logout():
     session.pop('user',None)
     return redirect('/Login')
+
 
 @app.route('/validateLogin',methods=['POST','GET'])
 def validate_login():
@@ -140,518 +139,477 @@ def validate_login():
             session['user'] = data[0][0]
             return redirect('/')
         else:
-            #return render_template('error.html',error = 'Wrong Email address or Password.')
-            session['user'] = data[0][0]
-            return redirect('/')
+            return render_template('error.html',error = 'Wrong Email address or Password.')
+            # session['user'] = data[0][0]
+            # return redirect('/')
     else:
         return render_template('error.html',error = 'Wrong Email address or Password.')
   
 
 @app.route("/UserManagement")
+@check_auth
 def user_management():
-    if session.get('user'):
-        if (request.args.get('useradded')): status = "added"
-        elif (request.args.get('userupdated')): status = "updated"
-        else: status = "no"
+    if (request.args.get('useradded')): status = "added"
+    elif (request.args.get('userupdated')): status = "updated"
+    else: status = "no"
 
-        users = modules.user.User()
+    users = modules.user.User()
 
-        row = users.getUsers()
+    row = users.getUsers()
 
-        active = '/UserManagement'
-        title = 'User Management'
+    active = '/UserManagement'
+    title = 'User Management'
 
-        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, status=status, title=title)
-    else:
-        return redirect('/Login')
+    return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, status=status, title=title)
+
 
 @app.route("/addUser")
+@check_auth
 def add_user():
-    if session.get('user'):
-    	active = "/UserManagement"
-    	title = "Add User"
+    active = "/UserManagement"
+    title = "Add User"
 
-    	return render_template('createUser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active)
-    else:
-        return redirect('/Login')
+    return render_template('createUser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active)
+
 
 @app.route("/createUser",methods=['POST'])
+@check_auth
 def create_user():
-    if session.get('user'):
-        _name 		= request.form['inputName']
-        _email 		= request.form['inputEmail']
-        _password 	= request.form['inputPassword']
+    _name = request.form['inputName']
+    _email = request.form['inputEmail']
+    _password = request.form['inputPassword']
 
-        # validate the received values
-        if _name and _email and _password:
-        
-            users = modules.user.User()
-            data = users.createUser(_name,_email,_password)
+    # validate the received values
+    if _name and _email and _password:
 
-            return json.dumps(data)
-        else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
+        users = modules.user.User()
+        data = users.createUser(_name,_email,_password)
 
+        return json.dumps(data)
     else:
-        return redirect('/Login')
+        return json.dumps({'html':'<span>Enter the required fields</span>'})
+
 
 @app.route("/deleteUser")
+@check_auth
 def delete_user():
-    if session.get('user'):
-        id = int(request.args.get('id'))
+    id = int(request.args.get('id'))
 
-        users 	= modules.user.User()
-        data 	= users.deleteUser(id)
-        row 	= users.getUsers()
+    users 	= modules.user.User()
+    data 	= users.deleteUser(id)
+    row 	= users.getUsers()
 
-        if len(data) is 0:
-        	userdeleted = "yes"
-        else:
-        	userdeleted = "no"
-
-        active = "/UserManagement"
-        title = "Add User"
-
-        return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, userdeleted=userdeleted)
-
+    if len(data) is 0:
+        userdeleted = "yes"
     else:
-        return redirect('/Login')
+        userdeleted = "no"
+
+    active = "/UserManagement"
+    title = "Add User"
+
+    return render_template('usermanagement.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, userdeleted=userdeleted)
 
 
 @app.route("/modifyUser")
+@check_auth
 def modify_user():
-    if session.get('user'):
-        id = int(request.args.get('id'))
-        error = request.args.get('error')
-        
-        user = modules.user.User()
+    id = int(request.args.get('id'))
+    error = request.args.get('error')
 
-        row = user.getUser(id)
+    user = modules.user.User()
 
-        active = "/UserManagement"
-        title = "Modify User"
+    row = user.getUser(id)
 
-        return render_template('modifyuser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, title=title, error=error)
-    else:
-        return redirect('/Login')
+    active = "/UserManagement"
+    title = "Modify User"
+
+    return render_template('modifyuser.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), active=active, row=row, title=title, error=error)
+
 
 @app.route("/updateUser",methods=['POST','GET'])
+@check_auth
 def update_user():
-    if session.get('user'):
-        id = int(request.form['id'])
-        email = request.form['inputEmail']
-        name = request.form['inputName']
-        newPassword	= request.form['newPassword']
-        repPassword	= request.form['repPassword']
+    id = int(request.form['id'])
+    email = request.form['inputEmail']
+    name = request.form['inputName']
+    newPassword	= request.form['newPassword']
+    repPassword	= request.form['repPassword']
 
-        user = modules.user.User()
+    user = modules.user.User()
 
-        validate = user.checkPassword(newPassword,repPassword)
+    validate = user.checkPassword(newPassword,repPassword)
 
-        if (validate == "match"):
-            user.updateUser(id,name,email,newPassword)
-            return str(id) + ',User Updated'
-        elif (validate == "missmatch"):
-            return str(id) + ',Passwords must Match'
-        else:
-            user.updateUser(id,name,email)
-            return str(id) + ',User Updated'
+    if (validate == "match"):
+        user.updateUser(id,name,email,newPassword)
+        return str(id) + ',User Updated'
+    elif (validate == "missmatch"):
+        return str(id) + ',Passwords must Match'
     else:
-        return redirect('/Login')
+        user.updateUser(id,name,email)
+        return str(id) + ',User Updated'
 
 
 @app.route("/startVPS")
+@check_auth
 def start_instance():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        vps = modules.vps.VPS()
-        vps.startVPS(id)
+    vps = modules.vps.VPS()
+    vps.startVPS(id)
 
-        return redirect('/viewVPS?id=' + id)
-    else:
-        return redirect('/Login')
+    return redirect('/viewVPS?id=' + id)
+
 
 @app.route("/stopVPS")
+@check_auth
 def stop_instance():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        vps = modules.vps.VPS()
-        vps.stopVPS(id)
+    vps = modules.vps.VPS()
+    vps.stopVPS(id)
 
-        return redirect('/viewVPS?id=' + id)
+    return redirect('/viewVPS?id=' + id)
 
-    else:
-        return redirect('/Login')
 
 @app.route("/startInterface")
+@check_auth
 def start_interface():
-    if session.get('user'):
-        id = request.args.get('id')
-        vps_id = request.args.get('vps_id')
+    id = request.args.get('id')
+    vps_id = request.args.get('vps_id')
 
-        vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'netStart')
+    vps = modules.vps.VPS()
+    vps.ctrlVPS(id,'netStart')
 
-        return redirect('/viewVPS?id=' + vps_id)
-    else:
-        return redirect('/Login')
+    return redirect('/viewVPS?id=' + vps_id)
+
 
 @app.route("/stopInterface")
+@check_auth
 def stop_interface():
-    if session.get('user'):
-        id = request.args.get('id')
-        vps_id = request.args.get('vps_id')
+    id = request.args.get('id')
+    vps_id = request.args.get('vps_id')
 
-        vps = modules.vps.VPS()
-        vps.ctrlVPS(id,'netStop')
+    vps = modules.vps.VPS()
+    vps.ctrlVPS(id,'netStop')
 
-        return redirect('/viewVPS?id=' + vps_id)
-    else:
-        return redirect('/Login')
+    return redirect('/viewVPS?id=' + vps_id)
 
 
 @app.route("/AddVPS")
+@check_auth
 def add_instance():
-    if session.get('user'):
-        vps = modules.vps.VPS()
-        bridge = vps.getBridge()
+    vps = modules.vps.VPS()
+    bridge = vps.getBridge()
 
-        active = '/AddVPS'
-        title = 'Add VPS'
+    active = '/AddVPS'
+    title = 'Add VPS'
 
-        return render_template('addvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, bridge=bridge)
-    else:
-        return redirect('/Login')
+    return render_template('addvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, bridge=bridge)
+
 
 @app.route("/addDisk")
+@check_auth
 def add_disk():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        active = ""
-        title = "Add Disk"
+    active = ""
+    title = "Add Disk"
 
-        return render_template('adddisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id)
-    else:
-        return redirect('/Login')
+    return render_template('adddisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id)
+
 
 @app.route("/editDisk")
+@check_auth
 def edit_disk():
-    if session.get('user'):
-        id = request.args.get('id')
-        disk_id = request.args.get('disk')
+    id = request.args.get('id')
+    disk_id = request.args.get('disk')
 
-        vps = modules.vps.VPS()
-        disk = vps.getDisk(disk_id)
+    vps = modules.vps.VPS()
+    disk = vps.getDisk(disk_id)
 
-        active = ""
-        title = "Edit Disk"
+    active = ""
+    title = "Edit Disk"
 
-        return render_template('editdisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id, disk=disk)
-    else:
-        return redirect('/Login')
+    return render_template('editdisk.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, id=id, disk=disk)
 
 
 @app.route("/updateDisk",methods=['POST','GET'])
+@check_auth
 def update_disk():
-    if session.get('user'):
-        id = request.form['id']
-        name = request.form['name']
-        disk_id = request.form['disk_id']
+    id = request.form['id']
+    name = request.form['name']
+    disk_id = request.form['disk_id']
 
-        vps = modules.vps.VPS()
-        vps.updateDisk(disk_id,name)
+    vps = modules.vps.VPS()
+    vps.updateDisk(disk_id,name)
 
-        return id
-    else:
-        return redirect('/Login')
+    return id
+
 
 @app.route("/addNetwork")
+@check_auth
 def add_network():
-    if session.get('user'):
-        id = request.args.get('id')
-        request.args.get('updated')
+    id = request.args.get('id')
+    request.args.get('updated')
 
-        network = modules.vps.VPS()
-        network.getInt()
-        bridge = network.getBridge()
+    network = modules.vps.VPS()
+    network.getInt()
+    bridge = network.getBridge()
 
-        title = "Add Network Interface"
+    title = "Add Network Interface"
 
-        return render_template('addnetwork.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, bridge=bridge, id=id)
-    else:
-        return redirect('/Login')
+    return render_template('addnetwork.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, bridge=bridge, id=id)
+
 
 @app.route("/createNetwork",methods=['POST'])
+@check_auth
 def create_network():
-    if session.get('user'):
-        id = request.form['id']
-        bridge = request.form['bridge']
+    id = request.form['id']
+    bridge = request.form['bridge']
 
-        network = modules.vps.VPS()
-        new_device = network.getInt()
-        bridge_id = network.getBridgeID(bridge)
-        
-        network.addDeviceUpdate(new_device,id,bridge_id)
+    network = modules.vps.VPS()
+    new_device = network.getInt()
+    bridge_id = network.getBridgeID(bridge)
 
-        return id
-    else:
-        return redirect('/Login')
+    network.addDeviceUpdate(new_device,id,bridge_id)
+
+    return id
+
 
 #
 # Delete interface from Database and redirect to modifyVPS page
 #
 @app.route("/delNetwork")
+@check_auth
 def del_network():
-    if session.get('user'):
-        id = request.args.get('id')
-        vps_id = request.args.get('vps_id')
+    id = request.args.get('id')
+    vps_id = request.args.get('vps_id')
 
-        network = modules.vps.VPS()
-        network.delete_network_interface(id, vps_id)
+    network = modules.vps.VPS()
+    network.delete_network_interface(id, vps_id)
 
-        location = "/modifyVPS?id=" + vps_id + "&updated=yes"
+    location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 
-        return redirect(location, code=302)
-    else:
-        return redirect('/Login')
+    return redirect(location, code=302)
+
 
 @app.route("/createDisk",methods=['POST','GET'])
+@check_auth
 def create_disk():
-    if session.get('user'):
-        id = request.form['id']
-        name = request.form['name']
-        disk = request.form['disk']
+    id = request.form['id']
+    name = request.form['name']
+    disk = request.form['disk']
 
-        try:
-            createDisk  = request.form['createDisk']
-        except:
-            createDisk = "off"
+    try:
+        createDisk  = request.form['createDisk']
+    except:
+        createDisk = "off"
 
-        if (disk == "20GB"): disk = 20
-        elif (disk == "30GB"): disk = 30
-        elif (disk == "40GB"): disk = 40
+    if (disk == "20GB"): disk = 20
+    elif (disk == "30GB"): disk = 30
+    elif (disk == "40GB"): disk = 40
 
-        order = 0
+    order = 0
 
-        network = modules.vps.VPS()
-        network.addDisk(name,disk,order,id,createDisk)
+    network = modules.vps.VPS()
+    network.addDisk(name,disk,order,id,createDisk)
 
-        return id
-    else:
-        return redirect('/Login')
+    return id
+
 
 @app.route("/deleteDisk")
+@check_auth
 def delete_disk():
-    if session.get('user'):
-        id = request.args.get('id')
-        vps_id = request.args.get('vps_id')
-        request.args.get('updated')
+    id = request.args.get('id')
+    vps_id = request.args.get('vps_id')
+    request.args.get('updated')
 
-        network = modules.vps.VPS()
-        network.delDisk(id)
+    network = modules.vps.VPS()
+    network.delDisk(id)
 
-        location = "/modifyVPS?id=" + vps_id + "&updated=yes"
+    location = "/modifyVPS?id=" + vps_id + "&updated=yes"
 
-        return redirect(location, code=302)
-    else:
-        return redirect('/Login')
-
-
+    return redirect(location, code=302)
 
 
 @app.route("/modifyVPS")
+@check_auth
 def modify_instance():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        updated = request.args.get('updated')
-       
-        vps = modules.vps.VPS()
-        row = vps.getIndVPS(id)
-        disks = vps.getDisks(id)
-        device = vps.getIntVPS(id)
-        status = vps.getStatus(id).json()
-        graph = modules.graph.GraphTraffic()
-        file = graph.genGraph(device)
-       
-        active = '/'
-        title = 'Modify VPS'
+    updated = request.args.get('updated')
 
-        return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status['status'], file=file)
-    else:
-        return redirect('/Login')
+    vps = modules.vps.VPS()
+    row = vps.getIndVPS(id)
+    disks = vps.getDisks(id)
+    device = vps.getIntVPS(id)
+    status = vps.getStatus(id).json()
+    graph = modules.graph.GraphTraffic()
+    file = graph.genGraph(device)
+
+    active = '/'
+    title = 'Modify VPS'
+
+    return render_template('modifyvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, updated=updated, device=device, status=status['status'], file=file)
+
 
 @app.route("/viewVPS")
+@check_auth
 def view_instance():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        vps = modules.vps.VPS()
-        row = vps.getIndVPS(id)
-        disks = vps.getDisks(id)
-        device = vps.getIntVPS(id)
-        status = vps.getStatus(id).json()
+    vps = modules.vps.VPS()
+    row = vps.getIndVPS(id)
+    disks = vps.getDisks(id)
+    device = vps.getIntVPS(id)
+    status = vps.getStatus(id).json()
 
-        graph = modules.graph.GraphTraffic()
-        file = graph.genGraph(device)
+    graph = modules.graph.GraphTraffic()
+    file = graph.genGraph(device)
 
-        rootPath = RootPath
+    rootPath = RootPath
 
-        active  = '/'
-        title   = 'View VPS'
+    active  = '/'
+    title   = 'View VPS'
 
-        return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
-    else:
-         return redirect('/Login')
+    return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
+
 
 @app.route("/snapShot")
+@check_auth
 def snapshot():
-    if session.get('user'):
-        id = request.args.get('id')
-        status = request.args.get('status')
+    id = request.args.get('id')
+    status = request.args.get('status')
 
-        vps = modules.vps.VPS()
-        row = vps.getIndVPS(id)
-        snapshots = vps.listSnapShot(id)
-        
-        active = '/'
-        title = 'Snapshot Manager'
+    vps = modules.vps.VPS()
+    row = vps.getIndVPS(id)
+    snapshots = vps.listSnapShot(id)
 
-        return render_template('snapshotmanager.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, status=status, snapshots=snapshots)
-    else:
-        return redirect('/Login')
+    active = '/'
+    title = 'Snapshot Manager'
+
+    return render_template('snapshotmanager.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, status=status, snapshots=snapshots)
+
 
 @app.route("/takeSnapShot",methods=['POST','GET'])
+@check_auth
 def take_snapshot():
-    if session.get('user'):
-        id = request.args.get('id')
-        snapshotName = request.args.get('snapshotName')
+    id = request.args.get('id')
+    snapshotName = request.args.get('snapshotName')
 
-        vps = modules.vps.VPS()
-        vps.takeSnapShot(id,snapshotName)
-        
-        status = 'Snapshot Taken'
-        return redirect('/snapShot?id=' + id + '&status=' + status)
-    else:
-        return redirect('/Login')
+    vps = modules.vps.VPS()
+    vps.takeSnapShot(id,snapshotName)
+
+    status = 'Snapshot Taken'
+    return redirect('/snapShot?id=' + id + '&status=' + status)
+
 
 @app.route("/restoreSnapShot")
+@check_auth
 def restore_snapshot():
-    if session.get('user'):
-        id = request.args.get('id')
-        snapshot = request.args.get('snapshot')
+    id = request.args.get('id')
+    snapshot = request.args.get('snapshot')
 
-        vps = modules.vps.VPS()
-        status = 'Snapshot \"' + snapshot + '\"' \
-                 + vps.restoreSnapShot(id, snapshot)
+    vps = modules.vps.VPS()
+    status = 'Snapshot \"' + snapshot + '\"' \
+             + vps.restoreSnapShot(id, snapshot)
 
-        return redirect('/snapShot?id=' + id + '&status=' + status)
-    else:
-        return redirect('/Login')
+    return redirect('/snapShot?id=' + id + '&status=' + status)
+
 
 @app.route("/removeSnapShot")
+@check_auth
 def remove_snapshot():
-    if session.get('user'):
-        id = request.args.get('id')
-        snapshot = request.args.get('snapshot')
+    id = request.args.get('id')
+    snapshot = request.args.get('snapshot')
 
-        vps = modules.vps.VPS()
-        vps.removeSnapShot(id, snapshot)
-        status = 'Snapshot \"' + snapshot + '\" Removed'
+    vps = modules.vps.VPS()
+    vps.removeSnapShot(id, snapshot)
+    status = 'Snapshot \"' + snapshot + '\" Removed'
 
-        return redirect('/snapShot?id=' + id + '&status=' + status)
-    else:
-        return redirect('/Login')
+    return redirect('/snapShot?id=' + id + '&status=' + status)
 
 
 @app.route('/restartConsole')
+@check_auth
 def restart_console():
-    if session.get('user'):
-        id = request.args.get('id')
+    id = request.args.get('id')
 
-        vps = modules.vps.VPS()
-        vps.restartConsole(id)
+    vps = modules.vps.VPS()
+    vps.restartConsole(id)
 
-        return redirect('/viewVPS?id=' + id)
-    else:
-        return redirect('/Login')
+    return redirect('/viewVPS?id=' + id)
 
 
 @app.route("/updateVPS",methods=['POST'])
+@check_auth
 def update_instance():
-    if session.get('user'):
-        id = request.form['id']
-        name = request.form['name']
-        description = request.form['description']
-        ram = request.form['ram']
-        path = request.form['path']
-        startScript = request.form['startscript']
-        stopScript = request.form['stopscript']
-        image = request.form['image']
+    id = request.form['id']
+    name = request.form['name']
+    description = request.form['description']
+    ram = request.form['ram']
+    path = request.form['path']
+    startScript = request.form['startscript']
+    stopScript = request.form['stopscript']
+    image = request.form['image']
+
+    vps = modules.vps.VPS()
+    ram = vps.convertRAM(ram)
+    vps.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
+
+    return id
+
+
+@app.route('/createVPS',methods=['POST','GET'])
+@check_auth
+def create_instance():
+    # read the posted values from the UI
+    name = request.form['name']
+    description = request.form['description']
+    ram = request.form['ram']
+    disk = request.form['disk']
+    bridge = request.form['bridge']
+    image = request.form['image']
+    disk_name = ""
+
+    try:
+        createDisk = request.form['createDisk']
+    except:
+        createDisk = "off"
+
+    try:
+        createPath = request.form['createPath']
+    except:
+        createPath = "off"
+
+    if (name and description and ram):
+
+        order = 0
+
+        # Create a VPS using options selected by user
+        #
+        # Note:
+        # new_device = is the Tunnel Interface device on the server i.e. tun2
+        # device = the actual device returned after the server is created
+        # console = is the port the user uses to connect to the terminal console
+        # data is the returned payload from the server connector
 
         vps = modules.vps.VPS()
         ram = vps.convertRAM(ram)
-        vps.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
-        
-        return id
+        disk = vps.convertDisk(disk)
+        console = vps.getMaxConsole()
+        vps_id = vps.createVPS(name,description,ram,console,image)
+        new_device = vps.getInt()
+        bridge_id = vps.getBridgeID(bridge)
+        vps.addDevice(new_device,vps_id,bridge_id)
+        vps.createDisk(disk_name,order,disk,vps_id,createDisk,createPath)
+
+        # Send ID of create VPS to ajax script which gets picked up by Unit/Function tests
+        # Currently returns to main page but this allows the option of bringing
+        # up the newly created server
+        return json.dumps(vps_id)
     else:
-        return redirect('/Login')
-
-@app.route('/createVPS',methods=['POST','GET'])
-def create_instance():
-    if session.get('user'):
-        # read the posted values from the UI
-        name = request.form['name']
-        description = request.form['description']
-        ram = request.form['ram']
-        disk = request.form['disk']
-        bridge = request.form['bridge']
-        image = request.form['image']
-        disk_name = ""
-
-        try:
-            createDisk = request.form['createDisk']
-        except:
-            createDisk = "off"
-
-        try:
-            createPath = request.form['createPath']
-        except:
-            createPath = "off" 
-
-        if (name and description and ram):
-
-            order = 0
-
-            # Create a VPS using options selected by user
-            #
-            # Note:
-            # new_device = is the Tunnel Interface device on the server i.e. tun2
-            # device = the actual device returned after the server is created
-            # console = is the port the user uses to connect to the terminal console
-            # data is the returned payload from the server connector
-
-            vps = modules.vps.VPS()
-            ram = vps.convertRAM(ram)
-            disk = vps.convertDisk(disk)
-            console = vps.getMaxConsole()
-            vps_id = vps.createVPS(name,description,ram,console,image)
-            new_device = vps.getInt()
-            bridge_id = vps.getBridgeID(bridge)
-            vps.addDevice(new_device,vps_id,bridge_id)
-            vps.createDisk(disk_name,order,disk,vps_id,createDisk,createPath)
-                        
-            # Send ID of create VPS to ajax script which gets picked up by Unit/Function tests 
-            # Currently returns to main page but this allows the option of bringing
-            # up the newly created server
-            return json.dumps(vps_id)
-        else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
-    else:
-        return redirect('/Login')
+        return json.dumps({'html':'<span>Enter the required fields</span>'})
 
 
 @app.route("/deleteVPS")
