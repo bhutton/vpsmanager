@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Flask, render_template, json, request, redirect, session, g
 from werkzeug import generate_password_hash, check_password_hash
 import modules.vps
@@ -87,8 +89,19 @@ def close_db(error):
 ## End of Unit Test Functions
 ##########################################################
 
-    
-        
+
+##
+## Authentication Decorator
+##
+def check_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('user'):
+            return f(*args, **kwargs)
+        else:
+            return redirect('/Login')
+    return decorated_function
+
   
 
 @app.route("/",methods=['POST','GET'])
@@ -655,22 +668,17 @@ def requires_auth(f):
 
 
 @app.route("/deleteVPS")
+@check_auth
 def delete_instance():
-    if session.get('user'):
-        active = '/'
-        title = 'VPS Manager'
+    active = '/'
+    title = 'VPS Manager'
 
-        id = request.args.get('id')
+    id = request.args.get('id')
+    vps = modules.vps.VPS()
+    delstatus, message = vps.delVPS(id)
+    row = vps.getVPS()
 
-        vps = modules.vps.VPS()
-        delstatus, message = vps.delVPS(id)
-
-        row = vps.getVPS()
-
-        return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
-        #return redirect('/')
-    else:
-        return redirect('/Login')
+    return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)
 
 @app.route("/Login", methods=['POST','GET'])
 def login():
