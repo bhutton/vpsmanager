@@ -647,9 +647,6 @@ def create_instance():
             # Send ID of create VPS to ajax script which gets picked up by Unit/Function tests 
             # Currently returns to main page but this allows the option of bringing
             # up the newly created server
-
-            #return json.dumps(createDisk)
-
             return json.dumps(vps_id)
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
