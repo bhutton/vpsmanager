@@ -443,7 +443,6 @@ class VPS:
 
     def make_call_to_vpssvr(self, path):
         connection_string = vps_server + path
-        print(connection_string)
         try:
               return self.open_with_auth(connection_string,
                               'GET', vps_username, vps_password)
