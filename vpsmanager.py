@@ -656,16 +656,6 @@ def create_instance():
     else:
         return redirect('/Login')
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-
-
 
 @app.route("/deleteVPS")
 @check_auth
