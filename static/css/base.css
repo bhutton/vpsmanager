@@ -6,6 +6,14 @@ body {
 .container {
   padding-bottom: 10px;
 }
+
+.jumbotron {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    color: inherit;
+    background-color: #fff;
+}
  
 .form-signin {
   max-width: 330px;
@@ -92,6 +100,15 @@ body {
   border: 1px solid #D8000C;
   padding: 10px;
   border-radius: 3px;
+}
+
+.login-error {
+  clear: left;
+  width: 100%;
+  border-radius: 3px;
+  font-size: 10px;
+  font-color: #D8000C;
+  color: #D8000C !important;
 }
 
 .success {

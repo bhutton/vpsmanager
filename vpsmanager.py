@@ -135,7 +135,7 @@ def validate_login():
         if check_password_hash(str(data[0][3]),_password):
             session['user'] = data[0][0]
             return redirect('/')
-    return render_template('error.html',error = 'Wrong Email address or Password.')
+    return render_template('login.html', error='Invalid Username or Password')
 
 
 @app.route("/UserManagement")

@@ -45,7 +45,7 @@ class VPSManagerUserTests(VpsmanagerTestCase):
 
         # Invalid Login
         rv = self.login('adminx@test.com', 'default')
-        assert b'Wrong Email address or Password.' in rv.data
+        assert b'Invalid Username or Password' in rv.data
 
         # Logout
         rv = self.logout()
