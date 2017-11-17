@@ -10,6 +10,9 @@ class User:
     def getUsers(self):
         return self.db.getUsers()
 
+    def getUserByEmail(self, email):
+        return self.db.getUserByEmail(email)
+
     def getUser(self,id):
         return self.db.getUser(id)
     

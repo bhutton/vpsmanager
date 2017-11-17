@@ -20,12 +20,12 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         u = user.User()
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
         users = u.getUsers()
-        assert users[0] != None
+        assert users != 'error running query'
 
     def test_get_user(self):
         u = user.User()
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
-        users = u.getUser(1)
+        users = u.getUserByEmail('ben@benhutton.com.au')
         assert users[0] != None
 
     def test_add_delete_user(self):

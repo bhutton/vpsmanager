@@ -1,7 +1,7 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 import configparser
-import sqlite3 as sqlite
+# import sqlite3 as sqlite
 import os
 
 app = Flask(__name__)
@@ -133,10 +133,13 @@ class DB_Users(DatabaseConnectivity):
         super().__exit__()
 
     def getUsers(self):
-        return self.db_execute_query("select id,name,email,password from users")
+        return self.db_get_all("select id,name,email,password from users")
 
     def getUser(self, id):
-        return self.db_execute_query("select id,name,email,password from users where id = {}". format(id))
+        return self.db_get_row("select id,name,email,password from users where id = {}". format(id))
+
+    def getUserByEmail(self, email):
+        return self.db_get_row("select id,name,email,password from users where email='{}'".format(email))
 
     def createUser(self, name, email, password):
         self.cursor.callproc('sp_createUser', (name, email, password))
@@ -165,7 +168,7 @@ class DB_Users(DatabaseConnectivity):
         try:
             self.db_execute_query(
                 'update users set name="{}",email="{}",password="{}" where id={}'
-                    .format(name,email,password,id)
+                .format(name,email,password,id)
             )
         except:
             return "update failed"
@@ -189,14 +192,10 @@ class DB_VPS(DatabaseConnectivity):
             print("Error closing database")
 
     def getVPS(self):
-        #self.cursor.execute("select id,name,description,image from vps")
-        #return self.cursor.fetchall();
         return self.db_get_all("select id,name,description,image from vps")
 
     def getIndVPS(self, id):
-        get_ind_vps = ("select * from vps where id=%s")
-        self.cursor.execute(get_ind_vps, (id,))
-        return self.cursor.fetchall();
+        return self.db_execute_query("select * from vps where id={}".format(id))
 
     def getBridge(self):
         self.cursor.execute("select id,device from bridge")
