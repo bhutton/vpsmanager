@@ -1,7 +1,7 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 import configparser
-import sqlite3 as sqlite
+# import sqlite3 as sqlite
 import os
 
 app = Flask(__name__)
@@ -63,44 +63,58 @@ class DatabaseConnectivity:
     def initialise_sqlite_database(self):
 
         self.cursor.execute(
-                    "CREATE TABLE disk"
-                    "(id int, name text, ord int, "
-                    "size int, vps_id int)")
+            "CREATE TABLE disk"
+            "(id int, name text, ord int, "
+            "size int, vps_id int)")
         self.cursor.execute(
-                    "CREATE TABLE vps "
-                    "(id int,name text,description text,"
-                    "ram int,console int,image int,path text,"
-                    "startscript text,stopscript text)")
+            "CREATE TABLE vps "
+            "(id int,name text,description text,"
+            "ram int,console int,image int,path text,"
+            "startscript text,stopscript text)")
         self.cursor.execute(
-                    "CREATE TABLE interface"
-                    "(bridge_id int,device int,id int,vps_id int)")
+            "CREATE TABLE interface"
+            "(bridge_id int,device int,id int,vps_id int)")
         self.cursor.execute(
-                    "CREATE TABLE bridge(device int,id int)")
+            "CREATE TABLE bridge(device int,id int)")
         self.cursor.execute(
-                    "CREATE TABLE console(device int, id int)")
+            "CREATE TABLE console(device int, id int)")
 
         self.cursor.execute(
-                    "INSERT INTO vps VALUES(878,'test','mytest'"
-                    ",512,1,1,'/tmp/','start','stop')")
-        self.cursor.execute(
-                    "INSERT INTO disk VALUES(878,'test',1,20,878)")
-
-        self.cursor.execute(
-                    "INSERT INTO interface VALUES(0,0,0,878)"
+            "CREATE TABLE users(id int, email text, name text, password text)"
         )
+
+        self.cursor.execute(
+            "INSERT INTO vps VALUES(878,'test','mytest'"
+            ",512,1,1,'/tmp/','start','stop')"
+        )
+
+        self.cursor.execute(
+            "INSERT INTO disk VALUES(878,'test',1,20,878)"
+        )
+
+        self.cursor.execute(
+            "INSERT INTO interface VALUES(0,0,0,878)"
+        )
+
+        self.cursor.execute(
+            "INSERT INTO users VALUES(21,'fred bloggs1','test1@email.com','abc1234'"
+        )
+
+
+
 
     def db_connect_mysql(self):
         try:
-            self.database_user = self.configuration.get('Database', 'database_user')
-            self.database_password = self.configuration.get('Database', 'database_password')
-            self.database_host = self.configuration.get('Database', 'database_host')
-            self.database_name = self.configuration.get('Database', 'database_name')
-            self.raise_on_warnings = self.configuration.get('Database', 'raise_on_warnings')
-
-            app.config['MYSQL_DATABASE_USER'] = self.database_user
-            app.config['MYSQL_DATABASE_PASSWORD'] = self.database_password
-            app.config['MYSQL_DATABASE_DB'] = self.database_name
-            app.config['MYSQL_DATABASE_HOST'] = self.database_host
+            # self.database_user = self.configuration.get('Database', 'database_user')
+            # self.database_password = self.configuration.get('Database', 'database_password')
+            # self.database_host = self.configuration.get('Database', 'database_host')
+            # self.database_name = self.configuration.get('Database', 'database_name')
+            # self.raise_on_warnings = self.configuration.get('Database', 'raise_on_warnings')
+            #
+            # app.config['MYSQL_DATABASE_USER'] = self.database_user
+            # app.config['MYSQL_DATABASE_PASSWORD'] = self.database_password
+            # app.config['MYSQL_DATABASE_DB'] = self.database_name
+            # app.config['MYSQL_DATABASE_HOST'] = self.database_host
 
             db_connector = MySQL()
             db_connector.init_app(app)
@@ -115,8 +129,11 @@ class DatabaseConnectivity:
         return self.cursor
 
     def db_execute_query(self, query):
-        self.cursor.execute(query)
-        return self.conn.commit()
+        try:
+            self.cursor.execute(query)
+            return self.conn.commit()
+        except:
+            return "error running query"
 
     def db_get_row(self, query):
         self.cursor.execute(query)
@@ -130,8 +147,9 @@ class DatabaseConnectivity:
 class DB_Users(DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
+        # self.conn = mysql.connect()
+        # self.cursor = self.conn.cursor()
+        self.db_connection()
 
     def __exit__(self):
         try:
@@ -171,21 +189,25 @@ class DB_Users(DatabaseConnectivity):
         return self.cursor.fetchall()
 
     def updateUserandPassword(self, name, email, password, id):
-        update_user = "update users set name=%s,email=%s,password=%s where id=%s"
+        update_user = 'update users set name="{}",email="{}",password="{}" where id={}'.format(name,email,password,id)
+        # update_user = 'update users set name="' + name + '",email="' + email + '",password="' + password + '" where id=' + id
+
         try:
-            self.cursor.execute(update_user, (name, email, password, id))
-            self.data = self.cursor.fetchall()
-            self.conn.commit()
+            self.db_execute_query(update_user)
+            # self.cursor.execute(update_user, (name, email, password, id))
+            # self.data = self.cursor.fetchall()
+            # self.conn.commit()
             return "update successful"
         except:
             return "update failed"
 
     def updateUser(self, name, email, id):
         update_user = "update users set name=%s,email=%s where id=%s"
-        self.cursor.execute(update_user, (name, email, id))
-        self.data = self.cursor.fetchall()
-        self.conn.commit()
-        return self.data
+        return self.db_execute_query(update_user)
+        # self.cursor.execute(update_user, (name, email, id))
+        # self.data = self.cursor.fetchall()
+        # self.conn.commit()
+        # return self.data
 
 
 class DB_VPS(DatabaseConnectivity):

@@ -16,17 +16,18 @@ class VPSManagerUserTests(VpsmanagerTestCase):
             inputPassword=password
         ), follow_redirects=True)
 
+
+    def test_add_delete_user(self):
+        rv = self.login("username", "password")
+        rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
+        assert len(rv.data) > 0, 'User Added Successfully'
+
     def test_update_user(self):
         u = user.User()
         rv = u.updateUser(21,'fred bloggs1','test1@email.com','abc1234')
         assert rv == "update successful"
         rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', 'abc123')
         assert rv == "update successful"
-
-    def test_add_delete_user(self):
-        rv = self.login("username", "password")
-        rv = self.addUser("Fred Bloggs","fred@bloggs.com","abc123")
-        assert len(rv.data) > 0, 'User Added Successfully'
 
     @patch('modules.database.DB_Users')
     def testDeleteUser(self, exec_func_db):
