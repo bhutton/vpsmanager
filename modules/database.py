@@ -213,8 +213,9 @@ class DB_Users(DatabaseConnectivity):
 class DB_VPS(DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        self.conn = mysql.connect()
-        self.cursor = self.conn.cursor()
+        # self.conn = mysql.connect()
+        # self.cursor = self.conn.cursor()
+        self.db_connection()
 
     def __exit__(self):
         try:
@@ -252,10 +253,8 @@ class DB_VPS(DatabaseConnectivity):
         return self.int[0]
 
     def addDevice(self, device, vps_id, bridge_id):
-        add_device = ("insert into interface (device,vps_id,bridge_id) values (%s,%s,%s)")
-        self.cursor.execute(add_device, (device, vps_id, bridge_id))
-        self.data = self.cursor.fetchone()
-        self.conn.commit()
+        add_device = 'insert into interface (device,vps_id,bridge_id) values ({},{},{})'.format(device,vps_id,bridge_id)
+        self.data = self.db_execute_query(add_device)
         return self.data
 
     def delNetwork(self, id):
