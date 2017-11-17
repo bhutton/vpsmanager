@@ -16,6 +16,17 @@ class VPSManagerUserTests(VpsmanagerTestCase):
             inputPassword=password
         ), follow_redirects=True)
 
+    def test_get_users(self):
+        u = user.User()
+        rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
+        users = u.getUsers()
+        assert users[0] != None
+
+    def test_get_user(self):
+        u = user.User()
+        rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
+        users = u.getUser(1)
+        assert users[0] != None
 
     def test_add_delete_user(self):
         rv = self.login("username", "password")

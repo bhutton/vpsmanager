@@ -1,7 +1,7 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 import configparser
-# import sqlite3 as sqlite
+import sqlite3 as sqlite
 import os
 
 app = Flask(__name__)
@@ -24,16 +24,10 @@ mysql.init_app(app)
 class DatabaseConnectivity:
 
     def __init__(self):
-        self.configuration = configparser.ConfigParser()
-        self.configuration.read(
-            "{}/../configuration.cfg".format(dir_path)
-        )
         try:
             self.database_driver = os.environ['DB_DRIVER']
         except:
-            self.database_driver = self.configuration.get(
-                'Database', 'database_driver'
-            )
+            self.database_driver = Config.get('Database', 'database_driver')
 
         self.db_connection
 
@@ -100,22 +94,8 @@ class DatabaseConnectivity:
             "INSERT INTO users VALUES(21,'fred bloggs1','test1@email.com','abc1234'"
         )
 
-
-
-
     def db_connect_mysql(self):
         try:
-            # self.database_user = self.configuration.get('Database', 'database_user')
-            # self.database_password = self.configuration.get('Database', 'database_password')
-            # self.database_host = self.configuration.get('Database', 'database_host')
-            # self.database_name = self.configuration.get('Database', 'database_name')
-            # self.raise_on_warnings = self.configuration.get('Database', 'raise_on_warnings')
-            #
-            # app.config['MYSQL_DATABASE_USER'] = self.database_user
-            # app.config['MYSQL_DATABASE_PASSWORD'] = self.database_password
-            # app.config['MYSQL_DATABASE_DB'] = self.database_name
-            # app.config['MYSQL_DATABASE_HOST'] = self.database_host
-
             db_connector = MySQL()
             db_connector.init_app(app)
             self.cnx = db_connector.connect()
@@ -147,23 +127,16 @@ class DatabaseConnectivity:
 class DB_Users(DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        # self.conn = mysql.connect()
-        # self.cursor = self.conn.cursor()
         self.db_connection()
 
     def __exit__(self):
-        try:
-            self.cnx.close()
-        except:
-            print("Error closing database")
+        super().__exit__()
 
     def getUsers(self):
-        self.cursor.execute("select id,name,email,password from users")
-        return self.cursor.fetchall()
+        return self.db_execute_query("select id,name,email,password from users")
 
     def getUser(self, id):
-        self.cursor.execute("select id,name,email,password from users where id = %s", (id,))
-        return self.cursor.fetchone()
+        return self.db_execute_query("select id,name,email,password from users where id = {}". format(id))
 
     def createUser(self, name, email, password):
         self.cursor.callproc('sp_createUser', (name, email, password))
@@ -189,32 +162,24 @@ class DB_Users(DatabaseConnectivity):
         return self.cursor.fetchall()
 
     def updateUserandPassword(self, name, email, password, id):
-        update_user = 'update users set name="{}",email="{}",password="{}" where id={}'.format(name,email,password,id)
-        # update_user = 'update users set name="' + name + '",email="' + email + '",password="' + password + '" where id=' + id
-
         try:
-            self.db_execute_query(update_user)
-            # self.cursor.execute(update_user, (name, email, password, id))
-            # self.data = self.cursor.fetchall()
-            # self.conn.commit()
-            return "update successful"
+            self.db_execute_query(
+                'update users set name="{}",email="{}",password="{}" where id={}'
+                    .format(name,email,password,id)
+            )
         except:
             return "update failed"
+
+        return "update successful"
 
     def updateUser(self, name, email, id):
         update_user = "update users set name=%s,email=%s where id=%s"
         return self.db_execute_query(update_user)
-        # self.cursor.execute(update_user, (name, email, id))
-        # self.data = self.cursor.fetchall()
-        # self.conn.commit()
-        # return self.data
 
 
 class DB_VPS(DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        # self.conn = mysql.connect()
-        # self.cursor = self.conn.cursor()
         self.db_connection()
 
     def __exit__(self):
@@ -254,8 +219,7 @@ class DB_VPS(DatabaseConnectivity):
 
     def addDevice(self, device, vps_id, bridge_id):
         add_device = 'insert into interface (device,vps_id,bridge_id) values ({},{},{})'.format(device,vps_id,bridge_id)
-        self.data = self.db_execute_query(add_device)
-        return self.data
+        return self.db_execute_query(add_device)
 
     def delNetwork(self, id):
         #self.cursor.execute("delete from interface where id=" + str(id))
