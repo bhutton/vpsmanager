@@ -1,15 +1,14 @@
 import unittest
-import modules.database
+import modules.database.database as database
 import modules.user as user
-import modules.graph
 from mock import patch
 from tests.test_vpsmanager import VpsmanagerTestCase
 
 class VPSManagerUserTests(VpsmanagerTestCase):
 
-    @patch('modules.database.DB_Users')
+    @patch('modules.database.database.DB_Users')
     def addUser(self, username, email, password, exec_func_user):
-        modules.database.DB_Users().createUser.return_value = 1
+        database.DB_Users().createUser.return_value = 1
         return self.app.post('/createUser', data=dict(
             inputName=username,
             inputEmail=email,
@@ -40,9 +39,9 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', 'abc123')
         assert rv == "update successful"
 
-    @patch('modules.database.DB_Users')
+    @patch('modules.database.database.DB_Users')
     def testDeleteUser(self, exec_func_db):
-        modules.database.DB_Users().deleteUser.return_value = ""
+        database.DB_Users().deleteUser.return_value = ""
 
         rv = self.login("username", "password")
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
@@ -67,9 +66,9 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         rv = self.app.get('/Login', follow_redirects=False)
         assert b'Login' in rv.data
 
-    @patch('modules.database.DB_VPS')
+    @patch('modules.database.database.DB_VPS')
     def testHomepageAuthenticated(self, exec_func_db):
-        modules.database.DB_VPS.getVPS.return_value = None
+        database.DB_VPS.getVPS.return_value = None
         rv = self.login("myusername", "mypassword")
         rv = self.app.get('/', follow_redirects=True)
         assert b'VPS Manager' in rv.data
@@ -78,7 +77,7 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         rv = self.app.get('/', follow_redirects=True)
         assert b'Login' in rv.data
 
-    @patch('modules.database.DB_Users')
+    @patch('modules.database.database.DB_Users')
     def testLogin(self, exec_func_db):
         return self.app.post('/validateLogin', data=dict(
             username='usernmae',

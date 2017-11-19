@@ -5,7 +5,7 @@ from mock import patch
 
 class MyTestCase(unittest.TestCase):
 
-    @patch('modules.database.DB_VPS')
+    @patch('modules.database.database.DB_VPS')
     def test_test_api_call(self, exec_function_db):
         exec_function_db.return_value = None
         v = vps.VPS()

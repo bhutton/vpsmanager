@@ -5,7 +5,7 @@ import modules.database
 class User:
 
     def __init__(self):
-        self.db = modules.database.DB_Users()
+        self.db = modules.database.database.DB_Users()
 
     def getUsers(self):
         return self.db.getUsers()

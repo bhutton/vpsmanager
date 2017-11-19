@@ -1,4 +1,4 @@
-import socket, modules.database, time, configparser
+import socket, modules.database.database, time, configparser
 import os 
 #import re
 import base64
@@ -38,7 +38,7 @@ class VPS:
 
     def __init__(self):
         self.return_values = {}
-        self.db = modules.database.DB_VPS()
+        self.db = modules.database.database.DB_VPS()
 
     def getVPS(self):
         vpsList = self.db.getVPS()
