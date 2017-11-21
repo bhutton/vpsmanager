@@ -5,7 +5,7 @@ import tempfile
 import modules.vps as vps
 import modules.database
 import modules.user as user
-import modules.graph
+import modules.graph as graph
 #import json
 from flask import json
 from contextlib import contextmanager
@@ -102,6 +102,10 @@ class testControlVPS(VpsmanagerTestCase):
 
         status = v.getStatus(878).json()
         assert 'Stopped' in status['status']
+
+    def test_graph(self):
+        g = graph.GraphTraffic()
+
 
 
 if __name__ == '__main__':
