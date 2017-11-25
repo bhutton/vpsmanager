@@ -103,7 +103,7 @@ class DatabaseConnectivity:
         )
 
         self.cursor.execute(
-            "INSERT INTO users VALUES(21,'test1@email.com','fred bloggs1','abc1234')"
+            "INSERT INTO users VALUES(21,'ben@benhutton.com.au','fred bloggs1','abc1234')"
         )
 
 

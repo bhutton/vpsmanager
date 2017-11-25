@@ -24,7 +24,7 @@ class VPSManagerUserTests(VpsmanagerTestCase):
     def test_get_user(self):
         u = user.User()
         rv = self.addUser("Fred Bloggs", "fred@bloggs.com", "abc123")
-        users = u.getUserByEmail('test1@email.com')
+        users = u.getUserByEmail('ben@benhutton.com.au')
         assert users[0] != None
 
     def test_add_delete_user(self):
