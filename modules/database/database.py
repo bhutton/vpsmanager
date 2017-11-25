@@ -11,7 +11,7 @@ app.config.from_object(__name__)
 class DB_Users(db_driver.DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        self.db_connection()
+        self.db_connect()
 
     def __exit__(self):
         super().__exit__()
@@ -67,7 +67,6 @@ class DB_Users(db_driver.DatabaseConnectivity):
 class DB_VPS(db_driver.DatabaseConnectivity):
     def __init__(self):
         super().__init__()
-        self.db_connection()
 
     def __exit__(self):
         try:

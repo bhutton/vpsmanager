@@ -3,6 +3,7 @@ import configparser
 
 from flask import Flask
 from flaskext.mysql import MySQL
+import sqlite3 as sqlite
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,7 +30,7 @@ class DatabaseConnectivity:
         except:
             self.database_driver = Config.get('Database', 'database_driver')
 
-        self.db_connection
+        self.db_connect()
 
     def __exit__(self):
         try:
@@ -38,21 +39,32 @@ class DatabaseConnectivity:
             print('failed to close database')
 
     @property
-    def db_connection(self):
+    def db_connect(self):
         if self.database_driver == 'mysql':
             return self.db_connect_mysql
         elif self.database_driver == 'sqlite':
             return self.db_connect_sqlite
 
-    @property
     def db_connect_sqlite(self):
         try:
             self.cnx = sqlite.connect(":memory:")
             self.cursor = self.cnx.cursor()
             self.initialise_sqlite_database()
-            return 'connection successful'
+            self.database_connected = True
         except:
+            self.database_connected = False
             return 'an error occured'
+
+    def db_connect_mysql(self):
+        try:
+            db_connector = MySQL()
+            db_connector.init_app(app)
+            self.cnx = db_connector.connect()
+            self.cursor = self.cnx.cursor()
+            self.database_connected = True
+        except:
+            self.database_connected = False
+            return "error connecting to database"
 
     def initialise_sqlite_database(self):
 
@@ -91,19 +103,10 @@ class DatabaseConnectivity:
         )
 
         self.cursor.execute(
-            "INSERT INTO users VALUES(21,'fred bloggs1','test1@email.com','abc1234'"
+            "INSERT INTO users VALUES(21,'test1@email.com','fred bloggs1','abc1234')"
         )
 
-    def db_connect_mysql(self):
-        try:
-            db_connector = MySQL()
-            db_connector.init_app(app)
-            self.cnx = db_connector.connect()
-            self.cursor = self.cnx.cursor()
-            self.database_connected = True
-        except:
-            self.database_connected = False
-            return "error connecting to database"
+
 
     def db_return_cursor(self):
         return self.cursor
