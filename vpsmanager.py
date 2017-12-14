@@ -451,7 +451,7 @@ def view_instance():
     id = request.args.get('id')
 
     vps = modules.vps.VPS()
-    row = vps.getIndVPS(id)
+    vps_row = vps.getIndVPS(id)
     disks = vps.getDisks(id)
     device = vps.getIntVPS(id)
     status = vps.getStatus(id).json()
@@ -464,7 +464,7 @@ def view_instance():
     active  = '/'
     title   = 'View VPS'
 
-    return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
+    return render_template('viewvps.html', menu=menu, menuProfile=menuProfile, user=session.get('user'), title=title, active=active, row=vps_row, disks=disks, device=device, status=status['status'], prefport=ShellInABoxPref, file=file, rootPath=rootPath)
 
 
 @app.route("/snapShot")

@@ -78,7 +78,8 @@ class DB_VPS(db_driver.DatabaseConnectivity):
         return self.db_get_all("select id,name,description,image from vps")
 
     def getIndVPS(self, id):
-        return self.db_execute_query("select * from vps where id={}".format(id))
+        row = self.db_get_all("select * from vps where id={}".format(id))
+        return row
 
     def getBridge(self):
         self.cursor.execute("select id,device from bridge")

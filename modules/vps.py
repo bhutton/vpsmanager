@@ -1,6 +1,5 @@
 import socket, modules.database.database, time, configparser
 import os 
-#import re
 import base64
 import requests
 from flask import jsonify, make_response, json
@@ -342,31 +341,31 @@ class VPS:
 
 
     def delVPS(self,id):
-        status = self.getStatus(id)
-        self.make_call_to_vpssvr(vps_del_vps + id)
+        # status = self.getStatus(id)
+        return self.make_call_to_vpssvr(vps_del_vps + id)
 
-        if (status == "Stopped"):
-            try:
-                self.db.delVPS(id)
-
-                data = str(id)
-
-                # Create a socket (SOCK_STREAM means a TCP socket)
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-                # Connect to server and send data
-                sock.connect((HOST, PORT))
-                sock.sendall(PassString + "," + data + ",delete\n")
-
-                # Receive data from the server and shut down
-                received = sock.recv(1024)
-            except:
-                return ("error","An unknown error has occurred")
-            finally:
-                sock.close()
-                return ("success","VPS Successfully Deleted")
-
-        return ("error","Error, VPS must be stopped before Deleting it!")
+        # if (status == "Stopped"):
+        #     try:
+        #         self.db.delVPS(id)
+        #
+        #         data = str(id)
+        #
+        #         # Create a socket (SOCK_STREAM means a TCP socket)
+        #         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #
+        #         # Connect to server and send data
+        #         sock.connect((HOST, PORT))
+        #         sock.sendall(PassString + "," + data + ",delete\n")
+        #
+        #         # Receive data from the server and shut down
+        #         received = sock.recv(1024)
+        #     except:
+        #         return ("error","An unknown error has occurred")
+        #     finally:
+        #         sock.close()
+        #         return ("success","VPS Successfully Deleted")
+        #
+        # return ("error","Error, VPS must be stopped before Deleting it!")
 
 
     def restartConsole(self,id):
