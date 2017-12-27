@@ -18,32 +18,22 @@ class User:
     
     def createUser(self,name,email,password):
         self.hashed_password = generate_password_hash(password)
-
         return self.db.createUser(name,email,self.hashed_password)
 
     def deleteUser(self,id):
         return self.db.deleteUser(id)
         
-    def checkUser(self,email,password):
-        data = self.db.checkUser(email)
-
-        if (check_password_hash(str(data[0]),password)):
-            return "valid"
-        else: 
-            return "invalid"
-
     def checkUsername(self,name):
         return self.db.checkUsername(name)
 
-
-    def checkPassword(self,newPassword,repPassword):
-        if (len(newPassword) > 0):
-            if (newPassword == repPassword):
-                return "match"
-            else:
-                return "missmatch"
-        else:
-            return "invalid"
+    # def checkPassword(self,newPassword,repPassword):
+    #     if (len(newPassword) > 0):
+    #         if (newPassword == repPassword):
+    #             return "match"
+    #         else:
+    #             return "missmatch"
+    #     else:
+    #         return "invalid"
 
     def updateUser(self,id,name,email,password=''):
         if (len(password) > 0):
