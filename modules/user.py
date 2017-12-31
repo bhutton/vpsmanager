@@ -26,14 +26,14 @@ class User:
     def checkUsername(self,name):
         return self.db.checkUsername(name)
 
-    # def checkPassword(self,newPassword,repPassword):
-    #     if (len(newPassword) > 0):
-    #         if (newPassword == repPassword):
-    #             return "match"
-    #         else:
-    #             return "missmatch"
-    #     else:
-    #         return "invalid"
+    def checkPassword(self,newPassword,repPassword):
+        if (len(newPassword) > 0):
+            if (newPassword == repPassword):
+                return "match"
+            else:
+                return "missmatch"
+        else:
+            return "invalid"
 
     def updateUser(self,id,name,email,password=''):
         if (len(password) > 0):

@@ -41,6 +41,12 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', 'abc123')
         assert rv == "update successful"
 
+    def test_check_passwords(self):
+        u = user.User()
+        assert u.checkPassword('abc124', 'abc124') == "match"
+        assert u.checkPassword('abc124', 'abc123') == "missmatch"
+        assert u.checkPassword('', '') == "invalid"
+
     @patch('modules.database.database.DB_Users')
     def testDeleteUser(self, exec_func_db):
         database.DB_Users().deleteUser.return_value = ""
