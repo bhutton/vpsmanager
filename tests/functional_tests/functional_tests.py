@@ -10,6 +10,7 @@ test_config = configparser.ConfigParser()
 test_config.read("{}/testing.cfg".format(dir_path))
 
 chrome_path = test_config.get('Chrome', 'executable_path')
+url = test_config.get('Chrome', 'url')
 
 
 class VPSManagerFunctionalTests(unittest.TestCase):
@@ -22,14 +23,14 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         options.binary_location = chrome_path
         options.add_argument('headless')
         options.add_argument('window-size=1200x600, chrome.verbose=true')
-        self.browser = webdriver.Chrome(options=options)
+        self.browser = webdriver.Chrome(chrome_options=options)
         self.browser.implicitly_wait(10)
 
     def tearDown(self):
         self.browser.quit()
 
     def login(self):
-        self.browser.get('http://localhost:3000')
+        self.browser.get(url)
         self.browser.get_screenshot_as_file('login screen.png')
         self.browser.find_element_by_id("username").send_keys("ben@benhutton.com.au")
         self.browser.get_screenshot_as_file('username.png')
