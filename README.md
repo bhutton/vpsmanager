@@ -4,4 +4,4 @@ freetype
 pkgconf
 py36-sqlite3
 
-Followed by "pip install -r requirem˚ents.txt"
+Followed by "pip install -r requirements.txt"
