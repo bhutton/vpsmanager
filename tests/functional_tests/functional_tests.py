@@ -43,7 +43,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         return self.browser.title
 
     def test_login_page(self):
-        assert 'Login - VPS Manager' in self.get_page('http://localhost:3000')
+        assert 'Login - VPS Manager' in self.get_page(url)
 
     def test_login(self):
         self.login()
@@ -52,43 +52,43 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def test_view_vps(self):
         self.login()
-        assert 'View VPS' in self.get_page('http://localhost:3000/viewVPS?id=878')
+        assert 'View VPS' in self.get_page(url + '/viewVPS?id=878')
 
     def test_create_vps(self):
         self.login()
-        assert 'Add VPS' in self.get_page('http://localhost:3000/AddVPS')
+        assert 'Add VPS' in self.get_page(url + '/AddVPS')
 
     def test_modify_vps(self):
         self.login()
-        assert 'Modify VPS' in self.get_page('http://localhost:3000/modifyVPS?id=878')
+        assert 'Modify VPS' in self.get_page(url + '/modifyVPS?id=878')
 
     def test_click_view_vps(self):
         self.login()
-        self.get_page('http://localhost:3000')
+        self.get_page(url)
         self.browser.find_element_by_id('878').click()
         assert 'View VPS' in self.browser.title
 
     def test_click_modify_vps(self):
         self.login()
-        self.get_page('http://localhost:3000')
+        self.get_page(url)
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify VPS' in self.browser.title
 
     def test_click_user_management(self):
         self.login()
-        self.get_page('http://localhost:3000')
+        self.get_page(url)
         self.browser.find_element_by_link_text('User Management').click()
         assert 'User Management' in self.browser.title
 
     def test_modify_user(self):
         self.login()
-        self.get_page('http://localhost:3000/UserManagement')
+        self.get_page(url + '/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
 
     def test_modify_update_user(self):
         self.login()
-        self.get_page('http://localhost:3000/UserManagement')
+        self.get_page(url + '/UserManagement')
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify User' in self.browser.title
 
@@ -98,7 +98,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
     def test_create_user(self):
         self.login()
-        self.get_page('http://localhost:3000/UserManagement')
+        self.get_page(url + '/UserManagement')
         self.browser.find_element_by_id('lnkAddUser').click()
         assert 'Add User' in self.browser.title
 
