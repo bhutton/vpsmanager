@@ -21,6 +21,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
 
         options = webdriver.ChromeOptions()
         options.binary_location = chrome_path
+        options.add_argument("--disable-infobars")
         options.add_argument('headless')
         options.add_argument('window-size=1200x600, chrome.verbose=true')
         self.browser = webdriver.Chrome(options=options)
@@ -35,11 +36,13 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.browser.find_element_by_id("username").send_keys("ben@benhutton.com.au")
         self.browser.get_screenshot_as_file('username.png')
         self.browser.find_element_by_id("password").send_keys("Lijnfe0912")
+        self.browser.get_screenshot_as_file('password.png')
         self.browser.find_element_by_id("btnSignIn").click()
+        self.browser.get_screenshot_as_file('click.png')
 
     def get_page(self, url):
         self.browser.get(url)
-        #time.sleep(1)
+        time.sleep(1)
         return self.browser.title
 
     def test_login_page(self):
@@ -101,6 +104,13 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page(url + '/UserManagement')
         self.browser.find_element_by_id('lnkAddUser').click()
         assert 'Add User' in self.browser.title
+
+    def test_start_vps(self):
+        self.login()
+        self.get_page(url + '/startVPS?id=878')
+        status = self.browser.find_element_by_id('status').text
+        assert 'Running' in status
+
 
 if __name__ == '__main__':
     unittest.main()

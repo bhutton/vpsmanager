@@ -28,6 +28,14 @@ class testControlVPS(VpsmanagerTestCase):
         rv = self.app.get(start_vps_cmd, follow_redirects=True)
         assert b'/stopVPS' in rv.data
 
+    @patch('modules.graph.GraphTraffic')
+    def test_start_vps(self, exec_func_graph):
+        modules.graph.GraphTraffic().return_value = "abc.txt"
+
+        rv = self.login("username", "password")
+        start_vps_cmd = "/startVPS?id=878"
+        rv = self.app.get(start_vps_cmd, follow_redirects=True)
+        assert b'/stopVPS' in rv.data
 
     @patch('modules.graph.GraphTraffic')
     @patch('modules.vps.VPS')
