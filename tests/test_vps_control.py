@@ -66,7 +66,15 @@ class testControlVPS(VpsmanagerTestCase):
         self.login("username", "password")
         rv = self.addVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
 
-        assert len(rv.data) > 0, 'VPS Successfully Created'
+        assert b'VPS Successfully Created' in rv.data
+
+    def testModifyVPS(self):
+
+        # Create VPS and return ID
+        self.login("username", "password")
+        rv = self.modifyVPS("UnitTest2", "Unit Test", "512MB", "20GB", "0", "1")
+
+        assert b'878' in rv.data
 
     @patch('modules.vps.VPS')
     def addVPS(self,
@@ -81,8 +89,8 @@ class testControlVPS(VpsmanagerTestCase):
         rv = self.app.get('/', follow_redirects=True)
         assert b'VPS Manager' in rv.data
 
-        exec_function_vps.getVPS.return_value = 123
-        exec_function_vps().createVPS.return_value = 123
+        exec_function_vps.getVPS.return_value = "VPS Successfully Created"
+        exec_function_vps().createVPS.return_value = "VPS Successfully Created"
 
         return self.app.post('/createVPS', data=dict(
             name="test",
@@ -92,6 +100,38 @@ class testControlVPS(VpsmanagerTestCase):
             bridge=1,
             image=1
         ), follow_redirects=True)
+
+    @patch('modules.vps.VPS')
+    def modifyVPS(self,
+               name,
+               description,
+               ram,
+               disk,
+               bridge,
+               password,
+               exec_function_vps):
+        rv = self.login('bhutton@abc.com', 'mypassword')
+        rv = self.app.get('/', follow_redirects=True)
+        # assert b'Machine successfully updated' in rv.data
+
+        exec_function_vps.getVPS.return_value = "VPS Successfully Updated"
+        # exec_function_vps().modifyVPS.return_value = "VPS Successfully Updated"
+        exec_function_vps().updateVPS.return_value = "Machine successfully updated"
+
+        return_value = self.app.post('/updateVPS', data=dict(
+            id=878,
+            name="test",
+            description="this is a test",
+            ram=1,
+            disk=10,
+            bridge=1,
+            image=1,
+            path="",
+            startscript = "",
+            stopscript = ""
+        ), follow_redirects=True)
+
+        return return_value
 
     @patch('modules.vps.VPS')
     def testDeleteVPS(self, exec_function_vps):

@@ -160,7 +160,7 @@ class DB_VPS(db_driver.DatabaseConnectivity):
             (name, description, ram, path, start_script, stop_script, image, id))
         self.row = self.cursor.fetchall()
 
-        self.conn.commit()
+        # self.conn.commit()
 
         return self.row
 

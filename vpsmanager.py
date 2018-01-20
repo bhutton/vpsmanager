@@ -533,7 +533,7 @@ def restart_console():
     return redirect('/viewVPS?id=' + id)
 
 
-@app.route("/updateVPS",methods=['POST'])
+@app.route("/updateVPS",methods=['POST', 'GET'])
 @check_auth
 def update_instance():
     id = request.form['id']

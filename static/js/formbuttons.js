@@ -42,7 +42,32 @@ $(function(){
             data: $('form').serialize(),
             type: 'POST',
             success: function(response){
-                window.location.href = "/modifyVPS?id=" + response + "&updated=yes";
+                var  args = response.split(',');
+
+                if (args[1] == "User Updated")
+                    window.location.href = "/UserManagement?userupdated=yes";
+                else
+                    window.location.href = "/modifyUser?id=" + args[0] + "&error=" + args[1];
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    });
+
+    $('#btnUpdateUser').click(function(){
+
+        $.ajax({
+            url: '/updateUser',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response){
+                var  args = response.split(',');
+
+                if (args[1] == "User Updated")
+                    window.location.href = "/UserManagement?userupdated=yes";
+                else
+                    window.location.href = "/modifyUser?id=" + args[0] + "&error=" + args[1];
             },
             error: function(error){
                 console.log(error);
@@ -127,24 +152,6 @@ $(function(){
         });
     });
 
-    $('#btnUpdateUser').click(function(){
-        
-        $.ajax({
-            url: '/updateUser',
-            data: $('form').serialize(),
-            type: 'POST',
-            success: function(response){
-                var  args = response.split(',');
 
-                if (args[1] == "User Updated") 
-                    window.location.href = "/UserManagement?userupdated=yes";
-                else
-                    window.location.href = "/modifyUser?id=" + args[0] + "&error=" + args[1];
-            },
-            error: function(error){
-                console.log(error);
-            }
-        });
-    });
 
 });

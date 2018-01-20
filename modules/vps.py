@@ -286,26 +286,31 @@ class VPS:
 
         return row2
 
-    '''def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
-        
-        try:
-            output = self.db.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
-            
-            self.data = str(id)
-            # Create a socket (SOCK_STREAM means a TCP socket)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
 
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + self.data + ",updatevps\n")
-    
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
+        # return self.make_call_to_vpssvr(PassString + "," + self.data + ",updatevps\n")
+        output = self.db.updateVPS(name, description, ram, id, path, startScript, stopScript, image)
+        return self.make_call_to_vpssvr(vps_update_vps + str(id))
 
-        finally:
-            sock.close()
-
-            return output'''
+        # return("VPS Successfully Updated")
+        # try:
+        #     output = self.db.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
+        #
+        #     self.data = str(id)
+        #     # Create a socket (SOCK_STREAM means a TCP socket)
+        #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #
+        #     # Connect to server and send data
+        #     sock.connect((HOST, PORT))
+        #     sock.sendall(PassString + "," + self.data + ",updatevps\n")
+        #
+        #     # Receive data from the server and shut down
+        #     received = sock.recv(1024)
+        #
+        # finally:
+        #     sock.close()
+        #
+        #     return output
         
         
     def createVPS(self,name,description,ram,con,image):
@@ -388,8 +393,6 @@ class VPS:
         elif (ram == "1GB"): ram = 1024
         elif (ram == "2GB"): ram = 2048
         elif (ram == "3GB"): ram = 3072
-
-
 
         return ram
 

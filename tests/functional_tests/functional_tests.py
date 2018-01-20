@@ -111,6 +111,12 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         status = self.browser.find_element_by_id('status').text
         assert 'Running' in status
 
+    def test_stop_vps(self):
+        self.login()
+        self.get_page(url + '/stopVPS?id=878')
+        status = self.browser.find_element_by_id('status').text
+        assert 'Stopped' in status
+
 
 if __name__ == '__main__':
     unittest.main()
