@@ -42,12 +42,7 @@ $(function(){
             data: $('form').serialize(),
             type: 'POST',
             success: function(response){
-                var  args = response.split(',');
-
-                if (args[1] == "User Updated")
-                    window.location.href = "/UserManagement?userupdated=yes";
-                else
-                    window.location.href = "/modifyUser?id=" + args[0] + "&error=" + args[1];
+                window.location.href = "/modifyVPS?id=" + response + "&updated=yes";
             },
             error: function(error){
                 console.log(error);
