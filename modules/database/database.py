@@ -128,7 +128,7 @@ class DB_VPS(db_driver.DatabaseConnectivity):
 
         self.cursor.execute("delete from disk where id=%s", (self.id,))
         self.data = self.cursor.fetchone()
-        self.conn.commit()
+        self.cnx.commit()
 
         return self.data
 
@@ -144,7 +144,7 @@ class DB_VPS(db_driver.DatabaseConnectivity):
         self.cursor.execute("update disk set name=%s where id=%s", (name, id))
 
         self.data = self.cursor.fetchone()
-        self.conn.commit()
+        self.cnx.commit()
 
         return self.data
 
@@ -159,6 +159,8 @@ class DB_VPS(db_driver.DatabaseConnectivity):
             "update vps set name=%s,description=%s,ram=%s,path=%s,startscript=%s,stopscript=%s,image=%s where id=%s",
             (name, description, ram, path, start_script, stop_script, image, id))
         self.row = self.cursor.fetchall()
+
+        self.cnx.commit()
 
         # self.conn.commit()
 

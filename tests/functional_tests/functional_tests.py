@@ -65,6 +65,14 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.login()
         assert 'Modify VPS' in self.get_page(url + '/modifyVPS?id=878')
 
+    # def test_update_vps(self):
+    #     self.login()
+    #     assert 'Modify VPS' in self.get_page(url + '/modifyVPS?id=878')
+    #     self.browser.find_element_by_id('btnUpdateVPS').click()
+    #     # assert 'Machine Updated' in self.browser.title
+    #     self.assertTrue(self.browser.find_element_by_id('success'))
+
+
     def test_click_view_vps(self):
         self.login()
         self.get_page(url)
@@ -76,6 +84,11 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.get_page(url)
         self.browser.find_element_by_link_text('edit').click()
         assert 'Modify VPS' in self.browser.title
+        self.browser.find_element_by_id('description').clear()
+        self.browser.find_element_by_id('description').send_keys('sometext')
+        self.browser.find_element_by_id('btnUpdateVPS').click()
+        self.browser.find_element_by_class_name('success')
+        assert 'sometext' in self.browser.find_element_by_id('description').get_attribute('value')
 
     def test_click_user_management(self):
         self.login()
