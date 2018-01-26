@@ -133,7 +133,7 @@ class DB_VPS(db_driver.DatabaseConnectivity):
         return self.data
 
     def getDisks(self, id):
-        self.cursor.execute("select * from disk where vps_id=%s", (id,))
+        self.cursor.execute("select * from disk where vps_id=" + id)
         return self.cursor.fetchall()
 
     def getDisk(self, id):
