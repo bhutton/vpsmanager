@@ -563,6 +563,7 @@ def create_instance():
     bridge = request.form['bridge']
     image = request.form['image']
     disk_name = ""
+    path = ""
 
     try:
         createDisk = request.form['createDisk']
@@ -590,7 +591,7 @@ def create_instance():
         ram = vps.convertRAM(ram)
         disk = vps.convertDisk(disk)
         console = vps.getMaxConsole()
-        vps_id = vps.createVPS(name,description,ram,console,image)
+        vps_id = vps.createVPS(name,description,ram,console,image,path)
         new_device = vps.getInt()
         bridge_id = vps.getBridgeID(bridge)
         vps.addDevice(new_device,vps_id,bridge_id)

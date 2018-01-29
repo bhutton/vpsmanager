@@ -67,6 +67,7 @@ class DB_Users(db_driver.DatabaseConnectivity):
 class DB_VPS(db_driver.DatabaseConnectivity):
     def __init__(self):
         super().__init__()
+        self.db_connect()
 
     def __exit__(self):
         try:
@@ -166,10 +167,11 @@ class DB_VPS(db_driver.DatabaseConnectivity):
 
         return self.row
 
-    def createVPS(self, name, description, ram, con, image):
-        self.cursor.execute("insert into vps (name,description,ram,console,image) values (%s,%s,%s,%s,%s)",
-                            (name, description, ram, con, image))
-        self.conn.commit()
+    def createVPS(self, name, description, ram, con, image, path):
+        self.cursor.execute("insert into vps (name,description,ram,console,image,path,startscript,stopscript,ip) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                            (name, description, ram, con, image,path,'','',''))
+
+        self.cnx.commit()
 
         self.cursor.execute('SELECT last_insert_id()')
         self.vps_id = self.cursor.fetchone()
@@ -179,14 +181,14 @@ class DB_VPS(db_driver.DatabaseConnectivity):
     def createDisk(self, name, order, disk, vps_id):
         self.cursor.callproc('sp_createDisks', (name, order, disk, vps_id))
 
-        self.conn.commit()
+        self.cnx.commit()
 
         return str(self.vps_id[0])
 
     def delVPS(self, id):
         self.cursor.execute("delete from vps where id=%s", (id,))
         self.data = self.cursor.fetchone()
-        self.conn.commit()
+        self.cnx.commit()
 
         return self.data
 

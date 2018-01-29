@@ -45,6 +45,11 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         time.sleep(1)
         return self.browser.title
 
+    def get_page_with_status(self, url):
+        self.browser.get(url)
+        time.sleep(1)
+        return self.browser.status_code
+
     def test_login_page(self):
         assert 'Login - VPS Manager' in self.get_page(url)
 
@@ -60,6 +65,16 @@ class VPSManagerFunctionalTests(unittest.TestCase):
     def test_create_vps(self):
         self.login()
         assert 'Add VPS' in self.get_page(url + '/AddVPS')
+
+        self.browser.find_element_by_id('name').send_keys('test')
+        self.browser.save_screenshot('add vps - name.png')
+
+        self.browser.find_element_by_id('description').send_keys('test')
+        self.browser.save_screenshot('add vps - description.png')
+
+        return_value = self.browser.find_element_by_id('btnCreateVPS').click()
+        # return_value = self.browser.current_url
+        self.assertEqual(200, return_value)
 
     def test_modify_vps(self):
         self.login()

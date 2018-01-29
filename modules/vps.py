@@ -313,36 +313,38 @@ class VPS:
         #     return output
         
         
-    def createVPS(self,name,description,ram,con,image):
-        return self.db.createVPS(name,description,ram,con,image)
+    def createVPS(self,name,description,ram,con,image,path):
+        return self.db.createVPS(name,description,ram,con,image,path)
 
 
     def createDisk(self,name,order,disk,vps_id,createDisk,createPath):
+
+        return self.make_call_to_vpssvr(vps_add_disk + str(id))
         
-        try:
-        
-            self.db.createDisk(name,order,disk,vps_id)
-
-            self.data = str(vps_id)
-
-            if (createPath == "on"):
-
-                # Create a socket (SOCK_STREAM means a TCP socket)
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            
-                # Connect to server and send data
-                sock.connect((HOST, PORT))
-                sock.settimeout(2048)
-                sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
-                
-                # Receive data from the server and shut down
-                received = sock.recv(1024)
-        finally:
-            if (createPath == "on"):
-                sock.close()
-        
-        return "created"
+        # # try:
+        # #
+        # #     self.db.createDisk(name,order,disk,vps_id)
+        # #
+        # #     self.data = str(vps_id)
+        # #
+        # #     if (createPath == "on"):
+        # #
+        # #         # Create a socket (SOCK_STREAM means a TCP socket)
+        # #         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # #
+        # #
+        # #         # Connect to server and send data
+        # #         sock.connect((HOST, PORT))
+        # #         sock.settimeout(2048)
+        # #         sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
+        # #
+        # #         # Receive data from the server and shut down
+        # #         received = sock.recv(1024)
+        # # finally:
+        # #     if (createPath == "on"):
+        # #         sock.close()
+        #
+        # return "created"
 
 
     def delVPS(self,id):
