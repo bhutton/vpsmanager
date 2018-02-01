@@ -29,8 +29,19 @@ class testControlVPS(VpsmanagerTestCase):
         assert b'/stopVPS' in rv.data
 
     @patch('modules.graph.GraphTraffic')
-    def test_start_vps(self, exec_func_graph):
+    @patch('modules.vps.VPS')
+    def test_start_vps(self, exec_func_vps, exec_func_graph):
         modules.graph.GraphTraffic().return_value = "abc.txt"
+        # self.app.get.json.return_value = "/stopVPS"
+        modules.vps.VPS().ctrlVPS.return_value = "Started VPS 123"
+        modules.vps.VPS().getIndVPS.return_value = self.getVPSData()
+        modules.vps.VPS().getStatus.return_value = \
+            MagicMock(
+                status_code=200,
+                response=json.dumps({'Status': 'Running'})
+            )
+
+        modules.vps.VPS().startVPS.return_value = b"/stopVPS"
 
         rv = self.login("username", "password")
         start_vps_cmd = "/startVPS?id=878"
@@ -145,7 +156,10 @@ class testControlVPS(VpsmanagerTestCase):
         rv = self.app.get(delete_cmd, follow_redirects=True)
         assert b'VPS Successfully Deleted' in rv.data
 
-    def test_get_vps_status(self):
+    @patch('modules.vps.VPS')
+    def test_get_vps_status(self, mock_vps):
+        expect_value = {'status': 'Stopped'}
+        modules.vps.VPS().getStatus().json.return_value = expect_value
         v = vps.VPS()
 
         status = v.getStatus(878).json()
