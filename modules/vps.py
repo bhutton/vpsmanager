@@ -31,6 +31,7 @@ vps_del_vps = Config.get('rest_calls','del_vps')
 vps_get_net_status = Config.get('rest_calls','net_status')
 vps_start_vps = Config.get('rest_calls','start_vps')
 vps_stop_vps = Config.get('rest_calls','stop_vps')
+vps_console_restart = Config.get('rest_calls','restart_console')
 
 
 class VPS:
@@ -96,7 +97,6 @@ class VPS:
 
 
     def addDevice(self,device,vps_id,bridge_id):
-
         self.db.addDevice(device,vps_id,bridge_id)
         return self.make_call_to_vpssvr(vps_update_vps + str(vps_id))
 
@@ -287,67 +287,18 @@ class VPS:
         return row2
 
     def updateVPS(self,name,description,ram,id,path,startScript,stopScript,image):
-
-        # return self.make_call_to_vpssvr(PassString + "," + self.data + ",updatevps\n")
         output = self.db.updateVPS(name, description, ram, id, path, startScript, stopScript, image)
         return self.make_call_to_vpssvr(vps_update_vps + str(id))
-
-        # return("VPS Successfully Updated")
-        # try:
-        #     output = self.db.updateVPS(name,description,ram,id,path,startScript,stopScript,image)
-        #
-        #     self.data = str(id)
-        #     # Create a socket (SOCK_STREAM means a TCP socket)
-        #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #
-        #     # Connect to server and send data
-        #     sock.connect((HOST, PORT))
-        #     sock.sendall(PassString + "," + self.data + ",updatevps\n")
-        #
-        #     # Receive data from the server and shut down
-        #     received = sock.recv(1024)
-        #
-        # finally:
-        #     sock.close()
-        #
-        #     return output
-        
         
     def createVPS(self,name,description,ram,con,image,path):
         return self.db.createVPS(name,description,ram,con,image,path)
 
 
     def createDisk(self,name,order,disk,vps_id,createDisk,createPath):
-
         return self.make_call_to_vpssvr(vps_add_disk + str(id))
-        
-        # # try:
-        # #
-        # #     self.db.createDisk(name,order,disk,vps_id)
-        # #
-        # #     self.data = str(vps_id)
-        # #
-        # #     if (createPath == "on"):
-        # #
-        # #         # Create a socket (SOCK_STREAM means a TCP socket)
-        # #         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # #
-        # #
-        # #         # Connect to server and send data
-        # #         sock.connect((HOST, PORT))
-        # #         sock.settimeout(2048)
-        # #         sock.sendall(PassString + "," + self.data + ",createvps," + createDisk + "\n")
-        # #
-        # #         # Receive data from the server and shut down
-        # #         received = sock.recv(1024)
-        # # finally:
-        # #     if (createPath == "on"):
-        # #         sock.close()
-        #
-        # return "created"
-
 
     def delVPS(self,id):
+        # self.db.delVPS(id)
         return self.make_call_to_vpssvr(vps_del_vps + id)
 
     def restartConsole(self,id):
@@ -370,24 +321,25 @@ class VPS:
 
 
     def ctrlVPS(self,id,command):
-        data = str(id)
-        command = command
-
-        # Create a socket (SOCK_STREAM means a TCP socket)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        try:
-            # Connect to server and send data
-            sock.connect((HOST, PORT))
-            sock.sendall(PassString + "," + data + "," + command + "\n")
-        
-            # Receive data from the server and shut down
-            received = sock.recv(1024)
-        finally:
-            sock.close()
-
-            if (command == "start"): time.sleep(1)
-            return received
+        return self.make_call_to_vpssvr(vps_start_vps + id)
+        # data = str(id)
+        # command = command
+        #
+        # # Create a socket (SOCK_STREAM means a TCP socket)
+        # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #
+        # try:
+        #     # Connect to server and send data
+        #     sock.connect((HOST, PORT))
+        #     sock.sendall(PassString + "," + data + "," + command + "\n")
+        #
+        #     # Receive data from the server and shut down
+        #     received = sock.recv(1024)
+        # finally:
+        #     sock.close()
+        #
+        #     if (command == "start"): time.sleep(1)
+        #     return received
 
 
     def convertRAM(self,ram):

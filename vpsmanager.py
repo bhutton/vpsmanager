@@ -613,7 +613,8 @@ def delete_instance():
 
     id = request.args.get('id')
     vps = modules.vps.VPS()
-    delstatus, message = vps.delVPS(id)
+    message = ""
+    delstatus = vps.delVPS(id)
     row = vps.getVPS()
 
     return render_template('index.html', menu=menu, title=title, active=active, row=row, delstatus=delstatus, message=message)

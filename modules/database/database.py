@@ -2,8 +2,6 @@ from flask import Flask
 
 import modules.database.db_driver as db_driver
 
-# import sqlite3 as sqlite
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -38,11 +36,6 @@ class DB_Users(db_driver.DatabaseConnectivity):
         self.data = self.cursor.fetchall()
         self.conn.commit()
         return self.data
-
-    # def checkUser(email):
-    #     get_user = "select password from users where email=%s"
-    #     self.cursor.execute(get_user, (email,))
-    #     return self.cursor.fetchone()
 
     def checkUsername(self, name):
         self.cursor.callproc('sp_validateLogin', (name,))

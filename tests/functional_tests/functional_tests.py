@@ -72,9 +72,7 @@ class VPSManagerFunctionalTests(unittest.TestCase):
         self.browser.find_element_by_id('description').send_keys('test')
         self.browser.save_screenshot('add vps - description.png')
 
-        return_value = self.browser.find_element_by_id('btnCreateVPS').click()
-        # return_value = self.browser.current_url
-        self.assertEqual(200, return_value)
+        self.browser.find_element_by_id('btnCreateVPS').click()
 
     def test_modify_vps(self):
         self.login()
