@@ -53,9 +53,12 @@ class DB_Users(db_driver.DatabaseConnectivity):
         return "update successful"
 
     def updateUser(self, name, email, id):
-        update_user = "update users set name=%s,email=%s where id=%s"
-        return self.db_execute_query(update_user)
-
+        try:
+            update_user = 'update users set name="{}",email="{}" where id={}'.format(name,email,id)
+            self.db_execute_query(update_user)
+            return "update successful"
+        except:
+            return "update failed"
 
 class DB_VPS(db_driver.DatabaseConnectivity):
     def __init__(self):

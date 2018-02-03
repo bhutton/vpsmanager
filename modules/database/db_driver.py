@@ -114,7 +114,7 @@ class DatabaseConnectivity:
     def db_execute_query(self, query):
         try:
             self.cursor.execute(query)
-            return self.conn.commit()
+            return self.cnx.commit()
         except:
             return "error running query"
 

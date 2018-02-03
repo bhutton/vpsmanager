@@ -40,6 +40,8 @@ class VPSManagerUserTests(VpsmanagerTestCase):
         assert rv == "update successful"
         rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', 'abc123')
         assert rv == "update successful"
+        rv = u.updateUser(21, 'fred bloggs2', 'test@email.com', '')
+        assert rv == "update successful"
 
     def test_check_passwords(self):
         u = user.User()
