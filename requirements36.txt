@@ -10,7 +10,7 @@ Flask-Testing==0.6.2
 hexagonit.recipe.download==1.7.1
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 MarkupSafe==0.23
 matplotlib==1.5.3
 mock==2.0.0
