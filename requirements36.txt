@@ -24,6 +24,6 @@ pytz==2016.7
 requests==2.14.2
 selenium==3.8.0
 six==1.10.0
-urllib3==1.22
+urllib3==1.26.5
 Werkzeug==0.11.11
 zc.buildout==2.9.5
