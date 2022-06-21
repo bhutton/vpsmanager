@@ -14,7 +14,7 @@ Jinja2==2.8
 MarkupSafe==0.23
 matplotlib==1.5.3
 mock==2.0.0
-numpy==1.11.2
+numpy==1.22.0
 packaging==16.8
 pbr==3.0.1
 PyMySQL==0.7.9
